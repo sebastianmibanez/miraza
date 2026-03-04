@@ -721,6 +721,293 @@
 
     footer p { font-size: 0.82rem; }
 
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: linear-gradient(135deg, #0d2550 0%, #112466 100%);
+      padding: 48px 6vw;
+      border-bottom: 1px solid rgba(245,166,35,0.18);
+    }
+
+    .stats-bar-inner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .sbar-item {
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      padding: 12px 24px;
+    }
+
+    .sbar-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .sbar-suffix {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .sbar-label {
+      display: block;
+      font-size: 0.76rem;
+      color: rgba(255,255,255,0.55);
+      margin-top: 7px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .sbar-divider {
+      width: 1px;
+      height: 56px;
+      background: rgba(255,255,255,0.1);
+      flex-shrink: 0;
+    }
+
+    /* ── TESTIMONIOS ── */
+    .testimonios {
+      padding: 100px 6vw;
+      background: var(--white);
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      max-width: 860px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .testim-card {
+      min-width: 100%;
+      padding: 0 52px;
+      box-sizing: border-box;
+    }
+
+    .testim-inner {
+      background: var(--light);
+      border-radius: 24px;
+      padding: 48px 48px 40px;
+      border: 1px solid rgba(10,31,68,0.07);
+      position: relative;
+    }
+
+    .testim-stars {
+      color: var(--gold);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+      display: block;
+    }
+
+    .testim-text {
+      font-size: 1.05rem;
+      color: var(--text);
+      line-height: 1.8;
+      font-style: italic;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .testim-text::before {
+      content: '\201C';
+      font-family: 'Playfair Display', serif;
+      font-size: 4.5rem;
+      color: var(--gold);
+      opacity: 0.25;
+      position: absolute;
+      top: -24px;
+      left: -8px;
+      line-height: 1;
+    }
+
+    .testim-author {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .testim-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .testim-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--navy);
+    }
+
+    .testim-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .testim-badge {
+      margin-left: auto;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: var(--gold);
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(10,31,68,0.14);
+      background: var(--white);
+      color: var(--navy);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.22s;
+      box-shadow: 0 4px 16px rgba(10,31,68,0.1);
+      z-index: 2;
+    }
+
+    .carousel-btn:hover {
+      background: var(--navy);
+      color: var(--gold);
+      border-color: var(--navy);
+      transform: translateY(-50%) scale(1.08);
+    }
+
+    .carousel-prev { left: 0; }
+    .carousel-next { right: 0; }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 30px;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(10,31,68,0.18);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 0;
+    }
+
+    .carousel-dot.active {
+      background: var(--blue);
+      width: 26px;
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── ENHANCED INPUTS ── */
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(27,77,184,0.11);
+      background: #f5f8ff;
+    }
+
+    /* ── CUSTOM CHECKBOX PILLS ── */
+    .check-item {
+      padding: 10px 14px;
+      border: 1.5px solid rgba(10,31,68,0.12);
+      border-radius: 10px;
+      background: var(--white);
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .check-item:has(input:checked) {
+      border-color: var(--blue);
+      background: rgba(27,77,184,0.06);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .check-item input[type="checkbox"] {
+      accent-color: var(--blue);
+    }
+
+    /* ── SHIMMER BUTTONS ── */
+    .btn-gold, .btn-submit, .nav-cta {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-gold::after, .btn-submit::after, .nav-cta::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+      transition: left 0.55s;
+      pointer-events: none;
+    }
+
+    .btn-gold:hover::after, .btn-submit:hover::after, .nav-cta:hover::after {
+      left: 150%;
+    }
+
+    /* Gradient submit button */
+    .btn-submit {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      letter-spacing: 0.02em;
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, var(--blue) 0%, #2358D4 100%);
+      box-shadow: 0 8px 28px rgba(27,77,184,0.35);
+      transform: translateY(-2px);
+    }
+
     /* ── ANIMATIONS ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(30px); }
@@ -776,6 +1063,17 @@
         flex-direction: column;
         text-align: center;
       }
+
+      /* Stats bar mobile */
+      .sbar-divider { display: none; }
+      .sbar-item { min-width: 50%; padding: 12px 8px; }
+      .sbar-num { font-size: 2rem; }
+
+      /* Carousel mobile */
+      .testim-card { padding: 0 6px; }
+      .testim-inner { padding: 30px 24px; }
+      .testim-badge { display: none; }
+      .carousel-btn { display: none; }
     }
   </style>
 </head>
@@ -787,6 +1085,7 @@
   <ul class="nav-links">
     <li><a href="#materias">Cursos</a></li>
     <li><a href="#porque">Nosotros</a></li>
+    <li><a href="#testimonios">Testimonios</a></li>
     <li><a href="#proceso">Proceso</a></li>
     <li><a href="#inscripcion">Inscripción</a></li>
   </ul>
@@ -804,6 +1103,7 @@
 <div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Menú móvil">
   <a href="#materias" onclick="closeMobileMenu()">Cursos</a>
   <a href="#porque" onclick="closeMobileMenu()">Nosotros</a>
+  <a href="#testimonios" onclick="closeMobileMenu()">Testimonios</a>
   <a href="#proceso" onclick="closeMobileMenu()">Proceso</a>
   <a href="#inscripcion" onclick="closeMobileMenu()">Inscripción</a>
 </div>
@@ -843,6 +1143,31 @@
         <div class="stat-number">Google<br><small style="font-size:1rem">Classroom</small></div>
         <div class="stat-label">Plataforma de clases</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<section class="stats-bar">
+  <div class="stats-bar-inner">
+    <div class="sbar-item">
+      <div><span class="sbar-num" data-target="4">0</span></div>
+      <span class="sbar-label">Materias PAES</span>
+    </div>
+    <div class="sbar-divider"></div>
+    <div class="sbar-item">
+      <div><span class="sbar-num" data-target="100">0</span><span class="sbar-suffix">%</span></div>
+      <span class="sbar-label">Clases online</span>
+    </div>
+    <div class="sbar-divider"></div>
+    <div class="sbar-item">
+      <div><span class="sbar-num" data-target="24">0</span><span class="sbar-suffix">h</span></div>
+      <span class="sbar-label">Respuesta máxima</span>
+    </div>
+    <div class="sbar-divider"></div>
+    <div class="sbar-item">
+      <div><span class="sbar-num" data-target="5">0</span><span class="sbar-suffix">★</span></div>
+      <span class="sbar-label">Calificación</span>
     </div>
   </div>
 </section>
@@ -927,6 +1252,97 @@
       <div class="visual-divider"></div>
       <div class="visual-author">Preuniversitario Miraza — donde cada alumno importa</div>
     </div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="testimonios" id="testimonios">
+  <div class="section-header">
+    <div class="section-tag">Testimonios</div>
+    <h2 class="section-title">Lo que dicen nuestros alumnos</h2>
+    <p class="section-sub">Experiencias reales de estudiantes que se prepararon con nosotros</p>
+  </div>
+
+  <div class="carousel-wrapper">
+    <div class="carousel-track" id="carouselTrack">
+
+      <!-- Testimonio 1 -->
+      <div class="testim-card">
+        <div class="testim-inner">
+          <span class="testim-stars">★★★★★</span>
+          <p class="testim-text">
+            Entré con muchísimo miedo a la Matemática y salí con estrategias claras para cada tipo de pregunta. Subí más de 70 puntos en mis ensayos durante el año. Los profes explican diferente, te hacen entender de verdad.
+          </p>
+          <div class="testim-author">
+            <div class="testim-avatar" style="background: linear-gradient(135deg, #1B4DB8, #3A6FD8)">S</div>
+            <div>
+              <div class="testim-name">Sofía M.</div>
+              <div class="testim-meta">4° Medio · Matemática M1 y M2</div>
+            </div>
+            <div class="testim-badge">PAES 2024</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonio 2 -->
+      <div class="testim-card">
+        <div class="testim-inner">
+          <span class="testim-stars">★★★★★</span>
+          <p class="testim-text">
+            El profesor de Lenguaje me cambió completamente la forma de leer. Aprendí que no hay que leer todo, sino leer con intención. Con esa sola estrategia mejoré mucho en los ensayos. Lo recomiendo al 100%.
+          </p>
+          <div class="testim-author">
+            <div class="testim-avatar" style="background: linear-gradient(135deg, #5B21B6, #7C3AED)">D</div>
+            <div>
+              <div class="testim-name">Diego R.</div>
+              <div class="testim-meta">Egresado · Lenguaje y Comunicación</div>
+            </div>
+            <div class="testim-badge">PAES 2024</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonio 3 -->
+      <div class="testim-card">
+        <div class="testim-inner">
+          <span class="testim-stars">★★★★★</span>
+          <p class="testim-text">
+            Historia era mi punto más débil y gracias a Miraza pude estructurar todo el contenido de una manera que nunca olvidé. El seguimiento personalizado marcó la diferencia: sentí que les importaba mi progreso de verdad.
+          </p>
+          <div class="testim-author">
+            <div class="testim-avatar" style="background: linear-gradient(135deg, #065F46, #059669)">V</div>
+            <div>
+              <div class="testim-name">Valentina P.</div>
+              <div class="testim-meta">4° Medio · Historia y Ciencias</div>
+            </div>
+            <div class="testim-badge">PAES 2024</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonio 4 -->
+      <div class="testim-card">
+        <div class="testim-inner">
+          <span class="testim-stars">★★★★★</span>
+          <p class="testim-text">
+            Lo que más valoro de Miraza es que no eres un número. Te monitorean, te preguntan cómo vas, ajustan el ritmo si necesitas. Los ensayos tipo PAES me prepararon mentalmente para el día de la prueba. ¡Entré sin nervios!
+          </p>
+          <div class="testim-author">
+            <div class="testim-avatar" style="background: linear-gradient(135deg, #B45309, #D97706)">M</div>
+            <div>
+              <div class="testim-name">Matías C.</div>
+              <div class="testim-meta">Egresado · Todas las materias</div>
+            </div>
+            <div class="testim-badge">PAES 2024</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="carousel-btn carousel-prev" id="carouselPrev" aria-label="Testimonio anterior">&#8592;</button>
+    <button class="carousel-btn carousel-next" id="carouselNext" aria-label="Testimonio siguiente">&#8594;</button>
+    <div class="carousel-dots" id="carouselDots"></div>
   </div>
 </section>
 
@@ -1058,6 +1474,112 @@
 <script>
   // ── Año dinámico en footer ──
   document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+  // ── Animated counters ──
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.target, 10);
+    const duration = 1600;
+    const start = performance.now();
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      el.textContent = Math.round(ease * target);
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(step);
+  }
+
+  const counterObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.6 });
+
+  document.querySelectorAll('.sbar-num[data-target]').forEach(function(el) {
+    counterObserver.observe(el);
+  });
+
+  // ── Scroll reveal ──
+  var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.materia-card, .feature, .paso, .form-wrapper, .porque-visual, .section-header, .testim-card').forEach(function(el) {
+    // Skip elements already animated by the hero
+    if (!el.closest('.hero')) {
+      el.classList.add('reveal');
+      revealObserver.observe(el);
+    }
+  });
+
+  // ── Testimonios carousel ──
+  var carouselTrack = document.getElementById('carouselTrack');
+  var dotsContainer = document.getElementById('carouselDots');
+  var carouselCards = carouselTrack.querySelectorAll('.testim-card');
+  var currentSlide = 0;
+  var autoTimer;
+
+  // Build dots
+  carouselCards.forEach(function(_, i) {
+    var dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Ir al testimonio ' + (i + 1));
+    dot.addEventListener('click', function() { goToSlide(i); resetAutoTimer(); });
+    dotsContainer.appendChild(dot);
+  });
+
+  function goToSlide(index) {
+    currentSlide = (index + carouselCards.length) % carouselCards.length;
+    carouselTrack.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+    document.querySelectorAll('.carousel-dot').forEach(function(d, i) {
+      d.classList.toggle('active', i === currentSlide);
+    });
+  }
+
+  function resetAutoTimer() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(function() { goToSlide(currentSlide + 1); }, 5200);
+  }
+
+  document.getElementById('carouselPrev').addEventListener('click', function() {
+    goToSlide(currentSlide - 1);
+    resetAutoTimer();
+  });
+
+  document.getElementById('carouselNext').addEventListener('click', function() {
+    goToSlide(currentSlide + 1);
+    resetAutoTimer();
+  });
+
+  // Pause on hover
+  var wrapper = carouselTrack.closest('.carousel-wrapper');
+  wrapper.addEventListener('mouseenter', function() { clearInterval(autoTimer); });
+  wrapper.addEventListener('mouseleave', resetAutoTimer);
+
+  // Touch / swipe support
+  var touchStartX = 0;
+  carouselTrack.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  carouselTrack.addEventListener('touchend', function(e) {
+    var diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      goToSlide(diff > 0 ? currentSlide + 1 : currentSlide - 1);
+      resetAutoTimer();
+    }
+  });
+
+  resetAutoTimer();
 
   // ── Hamburger menu ──
   const hamburger = document.getElementById('hamburger');
