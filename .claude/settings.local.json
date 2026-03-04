@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"\\\\\\\\wsl.localhost\\\\Ubuntu-24.04\\\\home\\\\seb\\\\miraza\\\\static\")",
+      "Bash(ls \"\\\\\\\\wsl.localhost\\\\Ubuntu-24.04\\\\home\\\\seb\\\\miraza\\\\templates\")"
+    ]
+  }
+}

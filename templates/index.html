@@ -152,14 +152,43 @@
     /* ── HERO ── */
     .hero {
       min-height: 100vh;
-      background:
-        radial-gradient(ellipse at 70% 50%, rgba(27,77,184,0.35) 0%, transparent 60%),
-        radial-gradient(ellipse at 20% 80%, rgba(245,166,35,0.12) 0%, transparent 50%),
-        var(--navy);
+      background: var(--navy);
       display: flex; align-items: center;
       padding: 120px 6vw 80px;
       position: relative;
       overflow: hidden;
+    }
+
+    /* ── HERO BACKGROUND SLIDES ── */
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 2.5s ease;
+      z-index: 0;
+    }
+
+    .hero-slide.active { opacity: 1; }
+
+    .hero-slide-1 {
+      background:
+        radial-gradient(ellipse at 70% 50%, rgba(27,77,184,0.42) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(245,166,35,0.14) 0%, transparent 50%),
+        #0A1F44;
+    }
+
+    .hero-slide-2 {
+      background:
+        radial-gradient(ellipse at 25% 35%, rgba(245,166,35,0.26) 0%, transparent 55%),
+        radial-gradient(ellipse at 78% 68%, rgba(27,77,184,0.45) 0%, transparent 60%),
+        #0B1E40;
+    }
+
+    .hero-slide-3 {
+      background:
+        radial-gradient(ellipse at 58% 75%, rgba(27,77,184,0.55) 0%, transparent 65%),
+        radial-gradient(ellipse at 30% 20%, rgba(100,170,255,0.18) 0%, transparent 50%),
+        #091830;
     }
 
     .hero::before {
@@ -169,6 +198,7 @@
       width: 600px; height: 600px;
       border-radius: 50%;
       border: 1px solid rgba(245,166,35,0.12);
+      z-index: 1;
     }
 
     .hero::after {
@@ -178,6 +208,7 @@
       width: 400px; height: 400px;
       border-radius: 50%;
       border: 1px solid rgba(245,166,35,0.08);
+      z-index: 1;
     }
 
     .hero-grid {
@@ -188,6 +219,8 @@
       max-width: 1200px;
       margin: 0 auto;
       width: 100%;
+      position: relative;
+      z-index: 2;
     }
 
     .hero-eyebrow {
@@ -311,7 +344,23 @@
     /* ── MATERIAS ── */
     .materias {
       padding: 100px 6vw;
-      background: var(--light);
+      background:
+        repeating-linear-gradient(
+          108deg,
+          transparent 0, transparent 44px,
+          rgba(27,77,184,0.03) 44px, rgba(27,77,184,0.03) 45px
+        ),
+        repeating-linear-gradient(
+          -28deg,
+          transparent 0, transparent 72px,
+          rgba(10,31,68,0.025) 72px, rgba(10,31,68,0.025) 74px
+        ),
+        repeating-linear-gradient(
+          68deg,
+          transparent 0, transparent 110px,
+          rgba(27,77,184,0.018) 110px, rgba(27,77,184,0.018) 111px
+        ),
+        linear-gradient(148deg, #eaeff9 0%, #f4f7fd 35%, #e6ecf6 65%, #f0f4fc 100%);
     }
 
     .section-header {
@@ -348,6 +397,7 @@
       gap: 24px;
       max-width: 1100px;
       margin: 0 auto;
+      perspective: 1200px;
     }
 
     .materia-card {
@@ -974,6 +1024,107 @@
       accent-color: var(--blue);
     }
 
+    /* ── FLIP CARDS ── */
+    .materia-card {
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      min-height: 280px;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1) !important;
+      box-shadow: none !important;
+    }
+
+    .materia-card::before { display: none !important; }
+    .materia-card:hover { transform: none !important; }
+    .materia-card.flipped { transform: rotateY(180deg) !important; }
+
+    .materia-front,
+    .materia-back {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 28px;
+    }
+
+    .materia-front {
+      background: var(--white);
+      border: 1px solid rgba(10,31,68,0.08);
+      box-shadow: 0 4px 24px rgba(10,31,68,0.07);
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+
+    .materia-card:hover .materia-front {
+      box-shadow: 0 16px 48px rgba(10,31,68,0.14);
+      transform: translateY(-4px);
+    }
+
+    .materia-back {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      transform: rotateY(180deg);
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    .materia-icon-bg {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .materia-big-icon {
+      font-size: 3.2rem;
+      line-height: 1;
+      display: block;
+    }
+
+    .materia-front .materia-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--navy);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .materia-hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .materia-back .materia-icon-sm {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .materia-back .materia-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .materia-back .materia-desc {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.7;
+    }
+
     /* ── SHIMMER BUTTONS ── */
     .btn-gold, .btn-submit, .nav-cta {
       position: relative;
@@ -1110,6 +1261,9 @@
 
 <!-- HERO -->
 <section class="hero">
+  <div class="hero-slide hero-slide-1 active"></div>
+  <div class="hero-slide hero-slide-2"></div>
+  <div class="hero-slide hero-slide-3"></div>
   <div class="hero-grid">
     <div class="hero-left">
       <div class="hero-eyebrow">Preuniversitario PAES 2025</div>
@@ -1181,26 +1335,75 @@
   </div>
 
   <div class="materias-grid">
-    <div class="materia-card">
-      <span class="materia-icon" aria-hidden="true">📐</span>
-      <div class="materia-name">Matemática</div>
-      <p class="materia-desc">Álgebra, geometría, estadística y resolución de problemas. Enfoque en los tipos de preguntas más frecuentes en la PAES M1 y M2.</p>
+
+    <!-- Matemática -->
+    <div class="materia-card" onclick="this.classList.toggle('flipped')"
+         role="button" tabindex="0" aria-label="Matemática — clic para ver descripción">
+      <div class="materia-front">
+        <div class="materia-icon-bg" style="background: linear-gradient(135deg, rgba(27,77,184,0.12), rgba(27,77,184,0.06))">
+          <span class="materia-big-icon" aria-hidden="true">📐</span>
+        </div>
+        <div class="materia-name">Matemática</div>
+        <span class="materia-hint">Clic para ver más →</span>
+      </div>
+      <div class="materia-back">
+        <span class="materia-icon-sm" aria-hidden="true">📐</span>
+        <div class="materia-name">Matemática</div>
+        <p class="materia-desc">Álgebra, geometría, estadística y resolución de problemas. Enfoque en los tipos de preguntas más frecuentes en la PAES M1 y M2.</p>
+      </div>
     </div>
-    <div class="materia-card">
-      <span class="materia-icon" aria-hidden="true">📖</span>
-      <div class="materia-name">Lenguaje</div>
-      <p class="materia-desc">Comprensión lectora, análisis de textos y vocabulario contextual. Estrategias para abordar todos los tipos de texto del PAES.</p>
+
+    <!-- Lenguaje -->
+    <div class="materia-card" onclick="this.classList.toggle('flipped')"
+         role="button" tabindex="0" aria-label="Lenguaje — clic para ver descripción">
+      <div class="materia-front">
+        <div class="materia-icon-bg" style="background: linear-gradient(135deg, rgba(91,33,182,0.12), rgba(91,33,182,0.06))">
+          <span class="materia-big-icon" aria-hidden="true">📖</span>
+        </div>
+        <div class="materia-name">Lenguaje</div>
+        <span class="materia-hint">Clic para ver más →</span>
+      </div>
+      <div class="materia-back">
+        <span class="materia-icon-sm" aria-hidden="true">📖</span>
+        <div class="materia-name">Lenguaje</div>
+        <p class="materia-desc">Comprensión lectora, análisis de textos y vocabulario contextual. Estrategias para abordar todos los tipos de texto del PAES.</p>
+      </div>
     </div>
-    <div class="materia-card">
-      <span class="materia-icon" aria-hidden="true">🗺️</span>
-      <div class="materia-name">Historia</div>
-      <p class="materia-desc">Historia de Chile, América y el mundo. Análisis de fuentes históricas y formación ciudadana con visión crítica.</p>
+
+    <!-- Historia -->
+    <div class="materia-card" onclick="this.classList.toggle('flipped')"
+         role="button" tabindex="0" aria-label="Historia — clic para ver descripción">
+      <div class="materia-front">
+        <div class="materia-icon-bg" style="background: linear-gradient(135deg, rgba(180,83,9,0.12), rgba(180,83,9,0.06))">
+          <span class="materia-big-icon" aria-hidden="true">🗺️</span>
+        </div>
+        <div class="materia-name">Historia</div>
+        <span class="materia-hint">Clic para ver más →</span>
+      </div>
+      <div class="materia-back">
+        <span class="materia-icon-sm" aria-hidden="true">🗺️</span>
+        <div class="materia-name">Historia</div>
+        <p class="materia-desc">Historia de Chile, América y el mundo. Análisis de fuentes históricas y formación ciudadana con visión crítica.</p>
+      </div>
     </div>
-    <div class="materia-card">
-      <span class="materia-icon" aria-hidden="true">🔬</span>
-      <div class="materia-name">Ciencias</div>
-      <p class="materia-desc">Biología, Física y Química. Preparación integral para el módulo electivo de Ciencias PAES con ejercicios aplicados.</p>
+
+    <!-- Ciencias -->
+    <div class="materia-card" onclick="this.classList.toggle('flipped')"
+         role="button" tabindex="0" aria-label="Ciencias — clic para ver descripción">
+      <div class="materia-front">
+        <div class="materia-icon-bg" style="background: linear-gradient(135deg, rgba(6,95,70,0.12), rgba(6,95,70,0.06))">
+          <span class="materia-big-icon" aria-hidden="true">🔬</span>
+        </div>
+        <div class="materia-name">Ciencias</div>
+        <span class="materia-hint">Clic para ver más →</span>
+      </div>
+      <div class="materia-back">
+        <span class="materia-icon-sm" aria-hidden="true">🔬</span>
+        <div class="materia-name">Ciencias</div>
+        <p class="materia-desc">Biología, Física y Química. Preparación integral para el módulo electivo de Ciencias PAES con ejercicios aplicados.</p>
+      </div>
     </div>
+
   </div>
 </section>
 
@@ -1475,6 +1678,25 @@
   // ── Año dinámico en footer ──
   document.getElementById('footerYear').textContent = new Date().getFullYear();
 
+  // ── Hero background carousel ──
+  var heroSlides = document.querySelectorAll('.hero-slide');
+  var currentHeroBg = 0;
+  setInterval(function() {
+    heroSlides[currentHeroBg].classList.remove('active');
+    currentHeroBg = (currentHeroBg + 1) % heroSlides.length;
+    heroSlides[currentHeroBg].classList.add('active');
+  }, 5500);
+
+  // ── Flip cards keyboard support ──
+  document.querySelectorAll('.materia-card').forEach(function(card) {
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.classList.toggle('flipped');
+      }
+    });
+  });
+
   // ── Animated counters ──
   function animateCounter(el) {
     const target = parseInt(el.dataset.target, 10);
@@ -1514,8 +1736,7 @@
     });
   }, { threshold: 0.1 });
 
-  document.querySelectorAll('.materia-card, .feature, .paso, .form-wrapper, .porque-visual, .section-header, .testim-card').forEach(function(el) {
-    // Skip elements already animated by the hero
+  document.querySelectorAll('.feature, .paso, .form-wrapper, .porque-visual, .section-header').forEach(function(el) {
     if (!el.closest('.hero')) {
       el.classList.add('reveal');
       revealObserver.observe(el);
