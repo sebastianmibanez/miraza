@@ -1,0 +1,13 @@
+# docker-compose.yml — Solo para desarrollo local
+# En producción se usa Render directamente (ver render.yaml)
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./database:/app/database
+    environment:
+      - FLASK_DEBUG=false
+      # Sin DATABASE_URL = usa SQLite automáticamente
+    restart: unless-stopped

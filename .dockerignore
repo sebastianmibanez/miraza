@@ -1,0 +1,14 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+venv/
+.venv/
+database/*.db
+.env
+.env.*
+*.md
+.DS_Store
+Thumbs.db
+render.yaml

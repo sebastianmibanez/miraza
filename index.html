@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miraza — Preuniversitario PAES</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Preuniversitario PAES online. Preparación en Matemática, Lenguaje, Historia y Ciencias con docentes especializados y seguimiento personalizado.">
+  <meta name="keywords" content="preuniversitario, PAES, preparación universitaria, Chile, online, matemática, lenguaje, historia, ciencias">
+  <link rel="canonical" href="https://miraza.cl/">
+
+  <!-- Open Graph (WhatsApp, redes sociales) -->
+  <meta property="og:title" content="Miraza — Preuniversitario PAES">
+  <meta property="og:description" content="Preparación PAES online con docentes especializados, metodología probada y seguimiento personalizado.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://miraza.cl/">
+  <meta property="og:locale" content="es_CL">
+  <!-- <meta property="og:image" content="https://miraza.cl/og-image.jpg"> -->
+
+  <!-- Favicon (reemplazar con el real cuando exista) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:   #0A1F44;
+      --blue:   #1B4DB8;
+      --gold:   #F5A623;
+      --gold-l: #FFD07A;
+      --light:  #F0F4FC;
+      --white:  #FFFFFF;
+      --text:   #1a1a2e;
+      --muted:  #6b7a99;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 6vw;
+      background: rgba(10,31,68,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.3s;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--white);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links {
+      display: flex; gap: 32px; list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-right {
+      display: flex; align-items: center; gap: 16px;
+    }
+
+    .nav-cta {
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Outfit', sans-serif;
+      text-decoration: none;
+    }
+
+    .nav-cta:hover { background: var(--gold-l); transform: translateY(-1px); }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 110;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* Mobile menu overlay */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10,31,68,0.98);
+      z-index: 99;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 1.3rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .mobile-menu a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 70% 50%, rgba(27,77,184,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(245,166,35,0.12) 0%, transparent 50%),
+        var(--navy);
+      display: flex; align-items: center;
+      padding: 120px 6vw 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      right: -100px; top: -100px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(245,166,35,0.12);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      right: 60px; top: 60px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      border: 1px solid rgba(245,166,35,0.08);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px; height: 2px;
+      background: var(--gold);
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 22px;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      color: rgba(255,255,255,0.65);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+
+    .hero-btns {
+      display: flex; gap: 14px; flex-wrap: wrap;
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: 'Outfit', sans-serif;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-gold:hover { background: var(--gold-l); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,166,35,0.3); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: 'Outfit', sans-serif;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* stats cards */
+    .hero-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      position: relative; z-index: 1;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 28px 24px;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-3px);
+    }
+
+    .stat-card:first-child {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 20px;
+    }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      color: var(--gold);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+
+    /* ── MATERIAS ── */
+    .materias {
+      padding: 100px 6vw;
+      background: var(--light);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      color: var(--blue);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      color: var(--navy);
+      line-height: 1.2;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-top: 12px;
+    }
+
+    .materias-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .materia-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 36px 28px;
+      border: 1px solid rgba(10,31,68,0.08);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .materia-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--blue), var(--gold));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+
+    .materia-card:hover::before { transform: scaleX(1); }
+    .materia-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(10,31,68,0.12); }
+
+    .materia-icon {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .materia-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .materia-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── POR QUÉ MIRAZA ── */
+    .porque {
+      padding: 100px 6vw;
+      background: var(--white);
+    }
+
+    .porque-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .porque-features {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .feature {
+      display: flex;
+      gap: 18px;
+    }
+
+    .feature-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .feature-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .feature-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .porque-visual {
+      background: linear-gradient(135deg, var(--navy) 0%, #1B4DB8 100%);
+      border-radius: 24px;
+      padding: 48px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .porque-visual::before {
+      content: '';
+      position: absolute;
+      bottom: -60px; right: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      border: 1px solid rgba(245,166,35,0.2);
+    }
+
+    .visual-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-style: italic;
+      line-height: 1.5;
+      margin-bottom: 24px;
+      position: relative; z-index: 1;
+    }
+
+    .visual-quote::before {
+      content: '\201C';
+      font-size: 4rem;
+      color: var(--gold);
+      line-height: 0;
+      vertical-align: -1rem;
+      margin-right: 4px;
+    }
+
+    .visual-author {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      position: relative; z-index: 1;
+    }
+
+    .visual-divider {
+      width: 40px; height: 2px;
+      background: var(--gold);
+      margin: 16px 0;
+    }
+
+    /* ── PROCESO ── */
+    .proceso {
+      padding: 100px 6vw;
+      background: var(--navy);
+      color: white;
+    }
+
+    .proceso .section-title { color: white; }
+    .proceso .section-sub { color: rgba(255,255,255,0.5); }
+
+    .pasos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2px;
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .paso {
+      padding: 40px 28px;
+      text-align: center;
+      position: relative;
+    }
+
+    .paso-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: rgba(245,166,35,0.2);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .paso-icon {
+      font-size: 1.8rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .paso-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: var(--gold);
+    }
+
+    .paso-desc {
+      font-size: 0.83rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+    }
+
+    /* ── INSCRIPCIÓN ── */
+    #inscripcion {
+      padding: 100px 6vw;
+      background: var(--light);
+    }
+
+    .form-wrapper {
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 24px;
+      padding: 56px 48px;
+      box-shadow: 0 20px 60px rgba(10,31,68,0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid rgba(10,31,68,0.15);
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--white);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(27,77,184,0.08);
+    }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    /* Fieldset reset for accessibility */
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+    }
+
+    fieldset > legend {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    .materias-check {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    /* Honeypot: invisible para humanos */
+    .ohnohoney {
+      opacity: 0;
+      position: absolute;
+      top: 0; left: 0;
+      height: 0; width: 0;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      transition: all 0.25s;
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover { background: var(--blue); transform: translateY(-2px); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .form-msg {
+      margin-top: 16px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: none;
+    }
+
+    .form-msg.success { background: #e6f9f0; color: #0d7a45; display: block; }
+    .form-msg.error   { background: #fdecea; color: #b91c1c; display: block; }
+
+    /* ── WHATSAPP FLOTANTE ── */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 90;
+      width: 60px; height: 60px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(37,211,102,0.4);
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px rgba(37,211,102,0.5);
+    }
+
+    .whatsapp-float svg {
+      width: 32px; height: 32px;
+      fill: white;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.5);
+      padding: 48px 6vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--white);
+    }
+
+    .footer-logo span { color: var(--gold); }
+
+    footer p { font-size: 0.82rem; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-left > * {
+      animation: fadeUp 0.7s ease both;
+    }
+    .hero-eyebrow  { animation-delay: 0.1s; }
+    .hero-title    { animation-delay: 0.25s; }
+    .hero-sub      { animation-delay: 0.4s; }
+    .hero-btns     { animation-delay: 0.55s; }
+
+    .stat-card {
+      animation: fadeUp 0.7s ease both;
+    }
+    .stat-card:nth-child(1) { animation-delay: 0.3s; }
+    .stat-card:nth-child(2) { animation-delay: 0.45s; }
+    .stat-card:nth-child(3) { animation-delay: 0.6s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-grid { grid-template-columns: 1fr; }
+
+      /* Stats: fila horizontal compacta en mobile en vez de ocultarlos */
+      .hero-stats {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-top: 32px;
+      }
+      .stat-card {
+        padding: 16px 12px;
+        text-align: center;
+      }
+      .stat-card:first-child {
+        grid-column: auto;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .stat-number { font-size: 1.6rem; }
+      .stat-label { font-size: 0.7rem; }
+
+      .porque-grid { grid-template-columns: 1fr; }
+      .form-wrapper { padding: 36px 24px; }
+      .form-row { grid-template-columns: 1fr; }
+      .materias-check { grid-template-columns: 1fr; }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Miraza<span>✦</span></div>
+  <ul class="nav-links">
+    <li><a href="#materias">Cursos</a></li>
+    <li><a href="#porque">Nosotros</a></li>
+    <li><a href="#proceso">Proceso</a></li>
+    <li><a href="#inscripcion">Inscripción</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#inscripcion" class="nav-cta">Inscríbete</a>
+    <button class="hamburger" id="hamburger" aria-label="Abrir menú de navegación" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile menu overlay -->
+<div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Menú móvil">
+  <a href="#materias" onclick="closeMobileMenu()">Cursos</a>
+  <a href="#porque" onclick="closeMobileMenu()">Nosotros</a>
+  <a href="#proceso" onclick="closeMobileMenu()">Proceso</a>
+  <a href="#inscripcion" onclick="closeMobileMenu()">Inscripción</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Preuniversitario PAES 2025</div>
+      <h1 class="hero-title">
+        Tu camino a la<br>
+        universidad<br>
+        <em>comienza aquí</em>
+      </h1>
+      <p class="hero-sub">
+        Preparación PAES online con docentes especializados, metodología probada y
+        seguimiento personalizado. Tus hijos merecen la mejor preparación.
+      </p>
+      <div class="hero-btns">
+        <a href="#inscripcion" class="btn-gold">Inscribirse ahora</a>
+        <a href="#materias" class="btn-outline">Ver cursos</a>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div>
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Online — accede desde cualquier lugar de Chile</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">4</div>
+        <div class="stat-label">Áreas PAES disponibles</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">Google<br><small style="font-size:1rem">Classroom</small></div>
+        <div class="stat-label">Plataforma de clases</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MATERIAS -->
+<section class="materias" id="materias">
+  <div class="section-header">
+    <div class="section-tag">Nuestros cursos</div>
+    <h2 class="section-title">Todas las pruebas PAES cubiertas</h2>
+    <p class="section-sub">Clases enfocadas en lo que realmente entra en la prueba</p>
+  </div>
+
+  <div class="materias-grid">
+    <div class="materia-card">
+      <span class="materia-icon" aria-hidden="true">📐</span>
+      <div class="materia-name">Matemática</div>
+      <p class="materia-desc">Álgebra, geometría, estadística y resolución de problemas. Enfoque en los tipos de preguntas más frecuentes en la PAES M1 y M2.</p>
+    </div>
+    <div class="materia-card">
+      <span class="materia-icon" aria-hidden="true">📖</span>
+      <div class="materia-name">Lenguaje</div>
+      <p class="materia-desc">Comprensión lectora, análisis de textos y vocabulario contextual. Estrategias para abordar todos los tipos de texto del PAES.</p>
+    </div>
+    <div class="materia-card">
+      <span class="materia-icon" aria-hidden="true">🗺️</span>
+      <div class="materia-name">Historia</div>
+      <p class="materia-desc">Historia de Chile, América y el mundo. Análisis de fuentes históricas y formación ciudadana con visión crítica.</p>
+    </div>
+    <div class="materia-card">
+      <span class="materia-icon" aria-hidden="true">🔬</span>
+      <div class="materia-name">Ciencias</div>
+      <p class="materia-desc">Biología, Física y Química. Preparación integral para el módulo electivo de Ciencias PAES con ejercicios aplicados.</p>
+    </div>
+  </div>
+</section>
+
+<!-- POR QUÉ MIRAZA -->
+<section class="porque" id="porque">
+  <div class="porque-grid">
+    <div>
+      <div class="section-tag">¿Por qué Miraza?</div>
+      <h2 class="section-title" style="text-align:left; margin-bottom: 40px;">
+        Preparación seria,<br>trato cercano
+      </h2>
+
+      <div class="porque-features">
+        <div class="feature">
+          <div class="feature-icon" aria-hidden="true">👩‍🏫</div>
+          <div>
+            <div class="feature-title">Docentes especializados en PAES</div>
+            <p class="feature-desc">Profesores con experiencia específica en la prueba, sus formatos y sus trampas más comunes.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" aria-hidden="true">🎯</div>
+          <div>
+            <div class="feature-title">Seguimiento personalizado</div>
+            <p class="feature-desc">Cada alumno tiene un avance monitoreado. No son un número más, son el futuro universitario de tu familia.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" aria-hidden="true">💻</div>
+          <div>
+            <div class="feature-title">100% online con Google Classroom</div>
+            <p class="feature-desc">Material disponible 24/7, clases en vivo y grabadas. Estudia desde donde estés, a tu ritmo.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" aria-hidden="true">📊</div>
+          <div>
+            <div class="feature-title">Ensayos y simulacros PAES</div>
+            <p class="feature-desc">Práctica constante con pruebas tipo PAES para que el día del examen no haya sorpresas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="porque-visual">
+      <div class="visual-quote">
+        El futuro universitario de tu hijo empieza con la preparación correcta hoy.
+      </div>
+      <div class="visual-divider"></div>
+      <div class="visual-author">Preuniversitario Miraza — donde cada alumno importa</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESO -->
+<section class="proceso" id="proceso">
+  <div class="section-header">
+    <div class="section-tag" style="color: var(--gold);">¿Cómo funciona?</div>
+    <h2 class="section-title">Del formulario al aula en 4 pasos</h2>
+    <p class="section-sub">Simple, rápido y sin complicaciones</p>
+  </div>
+
+  <div class="pasos-grid">
+    <div class="paso">
+      <div class="paso-num">01</div>
+      <span class="paso-icon" aria-hidden="true">📝</span>
+      <div class="paso-title">Te inscribes</div>
+      <p class="paso-desc">Completa el formulario con los datos del alumno y las materias de interés.</p>
+    </div>
+    <div class="paso">
+      <div class="paso-num">02</div>
+      <span class="paso-icon" aria-hidden="true">📞</span>
+      <div class="paso-title">Te contactamos</div>
+      <p class="paso-desc">En menos de 24 horas te escribimos para confirmar y resolver dudas.</p>
+    </div>
+    <div class="paso">
+      <div class="paso-num">03</div>
+      <span class="paso-icon" aria-hidden="true">🎓</span>
+      <div class="paso-title">Accedes al Classroom</div>
+      <p class="paso-desc">Recibes tu acceso a Google Classroom con todo el material y horarios.</p>
+    </div>
+    <div class="paso">
+      <div class="paso-num">04</div>
+      <span class="paso-icon" aria-hidden="true">🚀</span>
+      <div class="paso-title">Empiezas a prepararte</div>
+      <p class="paso-desc">Clases en vivo, guías, ensayos y seguimiento personalizado desde el primer día.</p>
+    </div>
+  </div>
+</section>
+
+<!-- INSCRIPCIÓN -->
+<section id="inscripcion">
+  <div class="section-header" style="padding-top: 100px;">
+    <div class="section-tag">¡Asegura tu cupo!</div>
+    <h2 class="section-title">Formulario de inscripción</h2>
+    <p class="section-sub">Completa el formulario y te contactamos en menos de 24 horas</p>
+  </div>
+
+  <div class="form-wrapper">
+    <form id="formInscripcion" role="form" aria-label="Formulario de inscripción" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Nombre del alumno" required autocomplete="given-name" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label for="apellido">Apellido</label>
+          <input type="text" id="apellido" name="apellido" placeholder="Apellido" required autocomplete="family-name" maxlength="100">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" name="email" placeholder="correo@ejemplo.com" required autocomplete="email" maxlength="254">
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono / WhatsApp</label>
+          <input type="tel" id="telefono" name="telefono" placeholder="+56 9 XXXX XXXX" required autocomplete="tel" maxlength="20">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="curso">Curso actual</label>
+        <select id="curso" name="curso" required>
+          <option value="" disabled selected>Selecciona el curso actual</option>
+          <option value="3ro Medio">3° Medio</option>
+          <option value="4to Medio">4° Medio</option>
+          <option value="Egresado">Egresado (repitiendo PAES)</option>
+        </select>
+      </div>
+
+      <fieldset>
+        <legend>Materias de interés</legend>
+        <div class="materias-check">
+          <label class="check-item"><input type="checkbox" name="materias" value="Matemática"> 📐 Matemática</label>
+          <label class="check-item"><input type="checkbox" name="materias" value="Lenguaje"> 📖 Lenguaje</label>
+          <label class="check-item"><input type="checkbox" name="materias" value="Historia"> 🗺️ Historia</label>
+          <label class="check-item"><input type="checkbox" name="materias" value="Ciencias"> 🔬 Ciencias</label>
+        </div>
+      </fieldset>
+
+      <div class="form-group">
+        <label for="mensaje">Mensaje o consulta (opcional)</label>
+        <textarea id="mensaje" name="mensaje" placeholder="¿Tienes alguna consulta específica?" maxlength="2000"></textarea>
+      </div>
+
+      <!-- Honeypot anti-bot (invisible para humanos) -->
+      <div class="ohnohoney" aria-hidden="true">
+        <label for="website">No completar este campo</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        Enviar inscripción
+      </button>
+    </form>
+
+    <div class="form-msg" id="formMsg"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Miraza<span>✦</span></div>
+  <p>Preuniversitario PAES · Online · Chile</p>
+  <p>© <span id="footerYear">2025</span> Miraza. Todos los derechos reservados.</p>
+</footer>
+
+<!-- WHATSAPP FLOTANTE -->
+<!-- TODO: Reemplazar XXXXXXXXX con el número real de WhatsApp -->
+<a href="https://wa.me/569XXXXXXXXX?text=Hola,%20me%20interesa%20el%20preuniversitario%20Miraza"
+   class="whatsapp-float" target="_blank" rel="noopener noreferrer"
+   aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script>
+  // ── Año dinámico en footer ──
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+  // ── Hamburger menu ──
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  hamburger.addEventListener('click', function() {
+    this.classList.toggle('active');
+    mobileMenu.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    this.setAttribute('aria-expanded', mobileMenu.classList.contains('open'));
+  });
+
+  function closeMobileMenu() {
+    hamburger.classList.remove('active');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
+
+  // ── Formulario ──
+  document.getElementById('formInscripcion').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('btnSubmit');
+    const msg = document.getElementById('formMsg');
+
+    const nombre   = document.getElementById('nombre').value.trim();
+    const apellido = document.getElementById('apellido').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const curso    = document.getElementById('curso').value;
+    const materias = [...document.querySelectorAll('.materias-check input:checked')].map(cb => cb.value);
+    const mensaje  = document.getElementById('mensaje').value.trim();
+    const website  = document.getElementById('website').value; // honeypot
+
+    // Validaciones frontend
+    if (!nombre || !apellido || !email || !telefono || !curso) {
+      msg.className = 'form-msg error';
+      msg.textContent = 'Por favor completa todos los campos obligatorios.';
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msg.className = 'form-msg error';
+      msg.textContent = 'Ingresa un correo electrónico válido.';
+      return;
+    }
+
+    if (!/^[\d\s\+\-\(\)]{7,20}$/.test(telefono)) {
+      msg.className = 'form-msg error';
+      msg.textContent = 'Ingresa un número de teléfono válido.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+    msg.className = 'form-msg';
+    msg.style.display = 'none';
+
+    try {
+      const res = await fetch('/inscripcion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, apellido, email, telefono, curso, materias, mensaje, website })
+      });
+
+      const data = await res.json();
+
+      if (data.ok) {
+        msg.className = 'form-msg success';
+        msg.textContent = data.mensaje;
+        // Reset form
+        document.getElementById('formInscripcion').reset();
+        btn.textContent = '¡Inscripción enviada! ✓';
+
+        // Rehabilitar botón después de 5 segundos por si quieren inscribir otra persona
+        setTimeout(function() {
+          btn.disabled = false;
+          btn.textContent = 'Enviar inscripción';
+        }, 5000);
+      } else {
+        msg.className = 'form-msg error';
+        msg.textContent = data.error || 'Ocurrió un error. Intenta de nuevo.';
+        btn.disabled = false;
+        btn.textContent = 'Enviar inscripción';
+      }
+    } catch (err) {
+      msg.className = 'form-msg error';
+      msg.textContent = 'Error de conexión. Intenta de nuevo.';
+      btn.disabled = false;
+      btn.textContent = 'Enviar inscripción';
+    }
+  });
+</script>
+
+</body>
+</html>

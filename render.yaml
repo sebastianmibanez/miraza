@@ -1,0 +1,29 @@
+# render.yaml — Render Blueprint
+# Conecta tu repo de GitHub a Render y esto configura todo automáticamente.
+# Docs: https://docs.render.com/blueprint-spec
+
+services:
+  # Web service (Flask app)
+  - type: web
+    name: miraza
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --access-logfile - app:app
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: FLASK_DEBUG
+        value: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: miraza-db
+          property: connectionString
+
+databases:
+  # PostgreSQL gratuito (90 días en free tier)
+  - name: miraza-db
+    plan: free
+    region: oregon
