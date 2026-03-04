@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miraza — Inscripciones</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #F0F4FC;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+    header {
+      background: #0A1F44;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .logo span { color: #F5A623; }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .badge {
+      background: rgba(245,166,35,0.15);
+      color: #F5A623;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .btn-logout {
+      background: transparent;
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+
+    main { padding: 32px; }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0A1F44;
+      margin-bottom: 6px;
+    }
+    .meta {
+      font-size: 0.85rem;
+      color: #6b7a99;
+      margin-bottom: 24px;
+    }
+
+    .table-wrap {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(10,31,68,0.08);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    thead {
+      background: #0A1F44;
+      color: rgba(255,255,255,0.75);
+    }
+
+    thead th {
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(10,31,68,0.06);
+      transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #F0F4FC; }
+
+    td {
+      padding: 14px 16px;
+      vertical-align: top;
+      color: #1a1a2e;
+    }
+
+    .td-id { color: #6b7a99; font-size: 0.78rem; }
+
+    .chip {
+      display: inline-block;
+      background: rgba(27,77,184,0.1);
+      color: #1B4DB8;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin: 2px 2px 2px 0;
+      white-space: nowrap;
+    }
+
+    .td-mensaje {
+      max-width: 200px;
+      color: #6b7a99;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 60px;
+      color: #6b7a99;
+    }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+    @media (max-width: 768px) {
+      main { padding: 16px; }
+      thead th, td { padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Miraza<span>✦</span></div>
+  <div class="header-right">
+    <div class="badge">{{ inscripciones|length }} inscripción{% if inscripciones|length != 1 %}es{% endif %}</div>
+    <a href="/admin/logout" class="btn-logout">Cerrar sesión</a>
+  </div>
+</header>
+
+<main>
+  <h1>Inscripciones</h1>
+  <p class="meta">Ordenadas por más reciente primero</p>
+
+  {% if inscripciones %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Curso</th>
+          <th>Materias</th>
+          <th>Mensaje</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ins in inscripciones %}
+        <tr>
+          <td class="td-id">{{ ins.id }}</td>
+          <td><strong>{{ ins.nombre }} {{ ins.apellido }}</strong></td>
+          <td>{{ ins.email }}</td>
+          <td>{{ ins.telefono }}</td>
+          <td>{{ ins.curso }}</td>
+          <td>
+            {% for m in ins.materias.split(', ') %}
+              {% if m %}<span class="chip">{{ m }}</span>{% endif %}
+            {% endfor %}
+          </td>
+          <td class="td-mensaje">{{ ins.mensaje or '—' }}</td>
+          <td style="white-space:nowrap; color:#6b7a99; font-size:0.78rem;">{{ ins.fecha }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon">📋</div>
+    <p>Todavía no hay inscripciones.</p>
+  </div>
+  {% endif %}
+</main>
+
+</body>
+</html>

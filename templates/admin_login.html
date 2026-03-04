@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miraza — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #0A1F44;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #0A1F44;
+      margin-bottom: 4px;
+    }
+    .logo span { color: #F5A623; }
+    .subtitle {
+      font-size: 0.85rem;
+      color: #6b7a99;
+      margin-bottom: 32px;
+    }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #0A1F44;
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid rgba(10,31,68,0.15);
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      color: #1a1a2e;
+      outline: none;
+      margin-bottom: 18px;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: #1B4DB8; box-shadow: 0 0 0 3px rgba(27,77,184,0.08); }
+    button {
+      width: 100%;
+      background: #0A1F44;
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      transition: background 0.2s;
+      margin-top: 4px;
+    }
+    button:hover { background: #1B4DB8; }
+    .error {
+      background: #fdecea;
+      color: #b91c1c;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      margin-bottom: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Miraza<span>✦</span></div>
+    <div class="subtitle">Panel de administración</div>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <label for="usuario">Usuario</label>
+      <input type="text" id="usuario" name="usuario" autocomplete="username" required autofocus>
+
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+      <button type="submit">Ingresar</button>
+    </form>
+  </div>
+</body>
+</html>

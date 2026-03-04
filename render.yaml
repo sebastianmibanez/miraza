@@ -21,6 +21,12 @@ services:
         fromDatabase:
           name: miraza-db
           property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USER
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
 
 databases:
   # PostgreSQL gratuito (90 días en free tier)

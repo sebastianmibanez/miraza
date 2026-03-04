@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from contextlib import contextmanager
 from collections import defaultdict
+from functools import wraps
 import os
 import re
+import secrets
 import time
 import logging
 from datetime import datetime, timezone
@@ -10,6 +12,9 @@ from datetime import datetime, timezone
 # ── Configuración ──────────────────────────────────────────────
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1MB max request
+app.secret_key = os.getenv('SECRET_KEY', os.urandom(32))
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Detectar motor de BD: PostgreSQL en producción, SQLite en desarrollo
 DATABASE_URL = os.getenv('DATABASE_URL')
@@ -286,6 +291,59 @@ def inscripcion():
     except Exception:
         logger.exception("Error guardando inscripción para %s", email)
         return jsonify({'ok': False, 'error': 'Error al guardar. Intenta de nuevo.'}), 500
+
+
+# ── Admin ──────────────────────────────────────────────────────
+ADMIN_USER = os.getenv('ADMIN_USER', '')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', '')
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated
+
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if not ADMIN_USER or not ADMIN_PASSWORD:
+        return 'Admin no configurado. Define ADMIN_USER, ADMIN_PASSWORD y SECRET_KEY en Render.', 503
+
+    error = None
+    if request.method == 'POST':
+        user = request.form.get('usuario', '')
+        pwd  = request.form.get('password', '')
+        user_ok = secrets.compare_digest(user, ADMIN_USER)
+        pwd_ok  = secrets.compare_digest(pwd, ADMIN_PASSWORD)
+        if user_ok and pwd_ok:
+            session['admin_logged_in'] = True
+            return redirect(url_for('admin'))
+        error = 'Usuario o contraseña incorrectos.'
+
+    return render_template('admin_login.html', error=error)
+
+
+@app.route('/admin/logout')
+def admin_logout():
+    session.clear()
+    return redirect(url_for('admin_login'))
+
+
+@app.route('/admin')
+@login_required
+def admin():
+    with get_db() as conn:
+        cur = db_execute(conn, '''
+            SELECT id, nombre, apellido, email, telefono, curso, materias, mensaje, fecha
+            FROM inscripciones
+            ORDER BY fecha DESC
+        ''')
+        cols = [d[0] for d in cur.description]
+        rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+    return render_template('admin.html', inscripciones=rows)
 
 
 # ── Error handlers ─────────────────────────────────────────────
