@@ -232,14 +232,46 @@
 
     /* ── PROFESORES ── */
     .profesores { padding: 100px 6vw; background: var(--white); }
-    .prof-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 28px; max-width: 1100px; margin: 0 auto; }
-    .prof-card { text-align: center; padding: 44px 28px 36px; background: var(--light); border-radius: 22px; border: 1px solid rgba(10,31,68,0.07); transition: all 0.3s; }
-    .prof-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(10,31,68,0.1); }
+    .prof-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 28px; max-width: 1100px; margin: 0 auto; perspective: 1200px; }
+    /* Flip card */
+    .prof-card { cursor: pointer; transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1); position: relative; min-height: 280px; border-radius: 22px; }
+    .prof-card.flipped { transform: rotateY(180deg); }
+    .prof-front, .prof-back { position: absolute; inset: 0; border-radius: 22px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 44px 28px 36px; text-align: center; }
+    .prof-front { background: var(--light); border: 1px solid rgba(10,31,68,0.07); box-shadow: 0 4px 16px rgba(10,31,68,0.06); transition: box-shadow 0.3s, transform 0.3s; }
+    .prof-card:not(.flipped):hover .prof-front { box-shadow: 0 20px 50px rgba(10,31,68,0.12); transform: translateY(-4px); }
+    .prof-back { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); transform: rotateY(180deg); color: white; gap: 10px; }
     .prof-avatar { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; background: linear-gradient(135deg, var(--navy), var(--blue)); color: var(--gold); font-family: 'Playfair Display', serif; font-weight: 900; border: 3px solid rgba(245,166,35,0.22); }
     .prof-name { font-family: 'Playfair Display', serif; font-size: 1.12rem; color: var(--navy); font-weight: 700; }
     .prof-divider { width: 36px; height: 2px; background: var(--gold); margin: 10px auto 12px; }
     .prof-materia { font-size: 0.88rem; color: var(--blue); font-weight: 600; margin-bottom: 14px; }
     .prof-badge { display: inline-block; background: linear-gradient(135deg, var(--navy), var(--blue)); color: var(--gold); padding: 5px 14px; border-radius: 20px; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.03em; }
+    .prof-hint { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; margin-top: 8px; }
+    /* Back side */
+    .prof-back-photo { width: 96px; height: 96px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 3px solid rgba(245,166,35,0.4); display: flex; align-items: center; justify-content: center; font-size: 2.8rem; margin-bottom: 14px; }
+    .prof-back-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--gold); font-weight: 700; }
+    .prof-back-divider { width: 32px; height: 2px; background: var(--gold); margin: 6px auto; }
+    .prof-back-materia { font-size: 0.8rem; color: rgba(255,255,255,0.7); font-weight: 600; }
+    .prof-back-bio { font-size: 0.8rem; color: rgba(255,255,255,0.82); line-height: 1.65; margin-top: 6px; }
+
+    /* ── FUNDADORAS ── */
+    .fundadoras { padding: 80px 6vw; background: var(--light); }
+    .fund-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; max-width: 760px; margin: 0 auto; perspective: 1200px; }
+    .fund-card { cursor: pointer; transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1); position: relative; min-height: 320px; border-radius: 24px; }
+    .fund-card.flipped { transform: rotateY(180deg); }
+    .fund-front, .fund-back { position: absolute; inset: 0; border-radius: 24px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 36px; text-align: center; }
+    .fund-front { background: var(--white); border: 1px solid rgba(10,31,68,0.08); box-shadow: 0 6px 28px rgba(10,31,68,0.08); transition: box-shadow 0.3s, transform 0.3s; }
+    .fund-card:not(.flipped):hover .fund-front { box-shadow: 0 20px 50px rgba(10,31,68,0.13); transform: translateY(-5px); }
+    .fund-back { background: linear-gradient(135deg, var(--navy) 0%, #1B4DB8 100%); transform: rotateY(180deg); color: white; gap: 12px; }
+    .fund-avatar { width: 108px; height: 108px; border-radius: 50%; margin: 0 auto 22px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; font-family: 'Playfair Display', serif; font-weight: 900; color: var(--gold); border: 3px solid rgba(245,166,35,0.25); }
+    .fund-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); font-weight: 700; }
+    .fund-role { font-size: 0.82rem; color: var(--blue); font-weight: 600; margin-top: 4px; }
+    .fund-divider { width: 36px; height: 2px; background: var(--gold); margin: 10px auto; }
+    .fund-hint { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; margin-top: 6px; }
+    .fund-back-photo { width: 108px; height: 108px; border-radius: 50%; background: rgba(255,255,255,0.14); border: 3px solid rgba(245,166,35,0.4); display: flex; align-items: center; justify-content: center; font-size: 3.2rem; margin-bottom: 14px; }
+    .fund-back-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); font-weight: 700; }
+    .fund-back-role { font-size: 0.78rem; color: rgba(255,255,255,0.65); font-weight: 600; }
+    .fund-back-divider { width: 32px; height: 2px; background: var(--gold); margin: 6px auto; }
+    .fund-back-bio { font-size: 0.85rem; color: rgba(255,255,255,0.85); line-height: 1.7; }
 
     /* ── PROCESO ── */
     .proceso { padding: 100px 6vw; background: var(--navy); color: white; }
@@ -717,28 +749,50 @@
   <div class="hc-dots-wrap" id="hcDots"></div>
 </div><!-- /hero-carousel -->
 
-<!-- STATS BAR -->
-<section class="stats-bar">
-  <div class="stats-bar-inner">
-    <div class="sbar-item">
-      <div><span class="sbar-num" data-target="4">0</span></div>
-      <span class="sbar-label">Materias PAES</span>
+<!-- FUNDADORAS -->
+<section class="fundadoras">
+  <div class="section-header">
+    <div class="section-tag">Quiénes somos</div>
+    <h2 class="section-title">Las personas detrás de Miraza</h2>
+    <p class="section-sub">Haz clic en cada tarjeta para conocernos</p>
+  </div>
+  <div class="fund-grid">
+
+    <div class="fund-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Valentina Miranda — clic para conocerla">
+      <div class="fund-front">
+        <div class="fund-avatar" style="background:linear-gradient(135deg,rgba(27,77,184,0.12),rgba(245,166,35,0.1))">V</div>
+        <div class="fund-name">Valentina Miranda</div>
+        <div class="fund-role">Co-fundadora · Miraza</div>
+        <div class="fund-divider"></div>
+        <span class="fund-hint">Clic para conocerla →</span>
+      </div>
+      <div class="fund-back">
+        <div class="fund-back-photo">👩‍💼</div>
+        <div class="fund-back-name">Valentina Miranda</div>
+        <div class="fund-back-role">Co-fundadora</div>
+        <div class="fund-back-divider"></div>
+        <p class="fund-back-bio">Apasionada por la educación y el acceso igualitario a la preparación universitaria. Creó Miraza para que cada estudiante, sin importar dónde esté, tenga la mejor preparación PAES.</p>
+      </div>
     </div>
-    <div class="sbar-divider"></div>
-    <div class="sbar-item">
-      <div><span class="sbar-num" data-target="100">0</span><span class="sbar-suffix">%</span></div>
-      <span class="sbar-label">Clases online</span>
+
+    <div class="fund-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Co-fundadora Arriaza — clic para conocerla">
+      <div class="fund-front">
+        <div class="fund-avatar" style="background:linear-gradient(135deg,rgba(6,95,70,0.12),rgba(245,166,35,0.1))">A</div>
+        <!-- TODO: completar nombre de pila -->
+        <div class="fund-name">Arriaza</div>
+        <div class="fund-role">Co-fundadora · Miraza</div>
+        <div class="fund-divider"></div>
+        <span class="fund-hint">Clic para conocerla →</span>
+      </div>
+      <div class="fund-back">
+        <div class="fund-back-photo">👩‍🎓</div>
+        <div class="fund-back-name">Arriaza</div>
+        <div class="fund-back-role">Co-fundadora</div>
+        <div class="fund-back-divider"></div>
+        <p class="fund-back-bio">Comprometida con acompañar a cada estudiante en su camino hacia la universidad. Su visión es que Miraza sea el puente entre el esfuerzo de hoy y el logro de mañana.</p>
+      </div>
     </div>
-    <div class="sbar-divider"></div>
-    <div class="sbar-item">
-      <div><span class="sbar-num" data-target="24">0</span><span class="sbar-suffix">h</span></div>
-      <span class="sbar-label">Respuesta máxima</span>
-    </div>
-    <div class="sbar-divider"></div>
-    <div class="sbar-item">
-      <div><span class="sbar-num" data-target="5">0</span><span class="sbar-suffix">★</span></div>
-      <span class="sbar-label">Calificación</span>
-    </div>
+
   </div>
 </section>
 
@@ -931,55 +985,6 @@
   </div>
 </section>
 
-<!-- POR QUÉ MIRAZA -->
-<section class="porque" id="porque">
-  <div class="porque-grid">
-    <div>
-      <div class="section-tag">¿Por qué Miraza?</div>
-      <h2 class="section-title" style="text-align:left;margin-bottom:40px;">
-        Preparación seria,<br>trato cercano
-      </h2>
-      <div class="porque-features">
-        <div class="feature">
-          <div class="feature-icon" aria-hidden="true">👩‍🏫</div>
-          <div>
-            <div class="feature-title">Docentes especializados en PAES</div>
-            <p class="feature-desc">Profesores con experiencia específica en la prueba, sus formatos y sus trampas más comunes.</p>
-          </div>
-        </div>
-        <div class="feature">
-          <div class="feature-icon" aria-hidden="true">🎯</div>
-          <div>
-            <div class="feature-title">Seguimiento personalizado</div>
-            <p class="feature-desc">Cada alumno tiene un avance monitoreado. No son un número más, son el futuro universitario de tu familia.</p>
-          </div>
-        </div>
-        <div class="feature">
-          <div class="feature-icon" aria-hidden="true">💻</div>
-          <div>
-            <div class="feature-title">100% online con Google Classroom</div>
-            <p class="feature-desc">Material disponible 24/7, clases en vivo y grabadas. Estudia desde donde estés, a tu ritmo.</p>
-          </div>
-        </div>
-        <div class="feature">
-          <div class="feature-icon" aria-hidden="true">📊</div>
-          <div>
-            <div class="feature-title">Ensayos y simulacros PAES</div>
-            <p class="feature-desc">Práctica constante con pruebas tipo PAES para que el día del examen no haya sorpresas.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="porque-visual">
-      <div class="visual-quote">
-        El futuro universitario de tu hijo empieza con la preparación correcta hoy.
-      </div>
-      <div class="visual-divider"></div>
-      <div class="visual-author">Preuniversitario Miraza — donde cada alumno importa</div>
-    </div>
-  </div>
-</section>
-
 <!-- PROFESORES -->
 <section class="profesores" id="profesores">
   <div class="section-header">
@@ -989,36 +994,76 @@
   </div>
   <div class="prof-grid">
 
-    <div class="prof-card">
-      <div class="prof-avatar">M</div>
-      <div class="prof-name">Prof. Martínez</div>
-      <div class="prof-divider"></div>
-      <div class="prof-materia">Matemática M1 y M2</div>
-      <span class="prof-badge">Especialista PAES</span>
+    <div class="prof-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Prof. Martínez — clic para conocerlo">
+      <div class="prof-front">
+        <div class="prof-avatar">M</div>
+        <div class="prof-name">Prof. Martínez</div>
+        <div class="prof-divider"></div>
+        <div class="prof-materia">Matemática M1 y M2</div>
+        <span class="prof-badge">Especialista PAES</span>
+        <span class="prof-hint">Clic para conocerlo →</span>
+      </div>
+      <div class="prof-back">
+        <div class="prof-back-photo">👨‍🏫</div>
+        <div class="prof-back-name">Prof. Martínez</div>
+        <div class="prof-back-divider"></div>
+        <div class="prof-back-materia">Matemática PAES M1 y M2</div>
+        <p class="prof-back-bio">Más de 5 años preparando estudiantes para la PAES. Especialista en álgebra, geometría y estadística. Su metodología se enfoca en los patrones de preguntas más frecuentes de la prueba.</p>
+      </div>
     </div>
 
-    <div class="prof-card">
-      <div class="prof-avatar">V</div>
-      <div class="prof-name">Prof. Valenzuela</div>
-      <div class="prof-divider"></div>
-      <div class="prof-materia">Lenguaje y Comunicación</div>
-      <span class="prof-badge">Experto en comprensión</span>
+    <div class="prof-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Prof. Valenzuela — clic para conocerla">
+      <div class="prof-front">
+        <div class="prof-avatar">V</div>
+        <div class="prof-name">Prof. Valenzuela</div>
+        <div class="prof-divider"></div>
+        <div class="prof-materia">Lenguaje y Comunicación</div>
+        <span class="prof-badge">Experto en comprensión</span>
+        <span class="prof-hint">Clic para conocerla →</span>
+      </div>
+      <div class="prof-back">
+        <div class="prof-back-photo">👩‍🏫</div>
+        <div class="prof-back-name">Prof. Valenzuela</div>
+        <div class="prof-back-divider"></div>
+        <div class="prof-back-materia">Lenguaje y Comunicación</div>
+        <p class="prof-back-bio">Experta en comprensión lectora y análisis textual. Enseña estrategias concretas para abordar cada tipo de texto de la PAES con eficiencia y precisión, optimizando el tiempo de respuesta.</p>
+      </div>
     </div>
 
-    <div class="prof-card">
-      <div class="prof-avatar">R</div>
-      <div class="prof-name">Prof. Rojas</div>
-      <div class="prof-divider"></div>
-      <div class="prof-materia">Historia y Cs. Sociales</div>
-      <span class="prof-badge">Magíster en Historia</span>
+    <div class="prof-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Prof. Rojas — clic para conocerlo">
+      <div class="prof-front">
+        <div class="prof-avatar">R</div>
+        <div class="prof-name">Prof. Rojas</div>
+        <div class="prof-divider"></div>
+        <div class="prof-materia">Historia y Cs. Sociales</div>
+        <span class="prof-badge">Magíster en Historia</span>
+        <span class="prof-hint">Clic para conocerlo →</span>
+      </div>
+      <div class="prof-back">
+        <div class="prof-back-photo">👨‍🎓</div>
+        <div class="prof-back-name">Prof. Rojas</div>
+        <div class="prof-back-divider"></div>
+        <div class="prof-back-materia">Historia y Cs. Sociales</div>
+        <p class="prof-back-bio">Magíster en Historia con visión crítica. Domina el análisis de fuentes históricas y la formación ciudadana. Su clase conecta los contenidos con la realidad actual para un aprendizaje duradero.</p>
+      </div>
     </div>
 
-    <div class="prof-card">
-      <div class="prof-avatar">C</div>
-      <div class="prof-name">Prof. Castillo</div>
-      <div class="prof-divider"></div>
-      <div class="prof-materia">Ciencias — Biología y Física</div>
-      <span class="prof-badge">Especialista PAES</span>
+    <div class="prof-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Prof. Castillo — clic para conocerla">
+      <div class="prof-front">
+        <div class="prof-avatar">C</div>
+        <div class="prof-name">Prof. Castillo</div>
+        <div class="prof-divider"></div>
+        <div class="prof-materia">Ciencias — Biología y Física</div>
+        <span class="prof-badge">Especialista PAES</span>
+        <span class="prof-hint">Clic para conocerla →</span>
+      </div>
+      <div class="prof-back">
+        <div class="prof-back-photo">👩‍🔬</div>
+        <div class="prof-back-name">Prof. Castillo</div>
+        <div class="prof-back-divider"></div>
+        <div class="prof-back-materia">Ciencias — Biología y Física</div>
+        <p class="prof-back-bio">Especialista en el módulo electivo de Ciencias PAES. Trabaja Biología, Física y Química con ejercicios aplicados y enfoque en los conceptos que más aparecen en la prueba real.</p>
+      </div>
     </div>
 
   </div>
@@ -1385,8 +1430,8 @@
 
   hcReset();
 
-  // ── Flip cards keyboard support (materias + programas) ──
-  document.querySelectorAll('.materia-card, .prog-card').forEach(function(card) {
+  // ── Flip cards keyboard support ──
+  document.querySelectorAll('.materia-card, .prog-card, .prof-card, .fund-card').forEach(function(card) {
     card.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.classList.toggle('flipped'); }
       if (e.key === 'Escape') { this.classList.remove('flipped'); }
@@ -1421,7 +1466,7 @@
       if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.feature, .paso, .form-wrapper, .porque-visual, .section-header, .prof-card, .promo-item, .faq-item').forEach(function(el) {
+  document.querySelectorAll('.feature, .paso, .form-wrapper, .section-header, .prof-card, .fund-card, .promo-item, .faq-item').forEach(function(el) {
     if (!el.closest('.hero-carousel')) { el.classList.add('reveal'); revealObserver.observe(el); }
   });
 
