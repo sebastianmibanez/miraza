@@ -366,6 +366,80 @@
     .stat-card:nth-child(2) { animation-delay: 0.45s; }
     .stat-card:nth-child(3) { animation-delay: 0.6s; }
 
+    /* ── HERO SECTION CAROUSEL ── */
+    .hero-carousel { position: relative; height: 100vh; overflow: hidden; }
+    .hc-track { display: flex; height: 100%; transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1); will-change: transform; }
+    .hc-slide { min-width: 100%; height: 100%; flex-shrink: 0; position: relative; overflow: hidden; }
+    .hc-slide.hero { min-height: unset; height: 100%; }
+
+    /* Slide 2 — métricas */
+    .hc-slide-metrics {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 48px;
+      background:
+        linear-gradient(135deg, rgba(10,31,68,0.95) 0%, rgba(17,36,102,0.92) 100%),
+        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600&q=80') center/cover no-repeat;
+    }
+    .hc-m-tag { color: var(--gold); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; justify-content: center; }
+    .hc-m-tag::before { content: ''; width: 28px; height: 2px; background: var(--gold); }
+    .hc-m-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--white); text-align: center; }
+    .hc-metrics-row { display: flex; align-items: center; flex-wrap: wrap; justify-content: center; }
+    .hc-metric { text-align: center; padding: 20px 48px; }
+    .hc-metric-num { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 5rem); font-weight: 900; color: var(--gold); line-height: 1; }
+    .hc-metric-lbl { display: block; font-size: 0.76rem; color: rgba(255,255,255,0.55); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; }
+    .hc-m-div { width: 1px; height: 72px; background: rgba(255,255,255,0.12); flex-shrink: 0; }
+
+    /* Slide 3 — materias */
+    .hc-slide-materias {
+      display: flex; flex-direction: column; justify-content: center; padding: 50px 6vw;
+      background:
+        repeating-linear-gradient(108deg, transparent 0, transparent 44px, rgba(27,77,184,0.03) 44px, rgba(27,77,184,0.03) 45px),
+        repeating-linear-gradient(-28deg, transparent 0, transparent 72px, rgba(10,31,68,0.025) 72px, rgba(10,31,68,0.025) 74px),
+        linear-gradient(148deg, #eaeff9 0%, #f4f7fd 40%, #f0f4fc 100%);
+    }
+    .hc-slide-materias .section-header { margin-bottom: 32px; }
+    .hc-slide-materias .materias-grid { max-width: 1100px; margin: 0 auto; }
+
+    /* Slide 4 — ¿por qué? */
+    .hc-slide-porque { display: flex; align-items: center; justify-content: center; padding: 40px 6vw; background: var(--light); overflow-y: auto; }
+    .hc-slide-porque .porque-grid { width: 100%; }
+
+    /* HC nav arrows */
+    .hc-nav-btn {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 30;
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      background: rgba(10,31,68,0.5); backdrop-filter: blur(8px);
+      color: white; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.22s; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .hc-nav-btn:hover { background: rgba(245,166,35,0.3); border-color: var(--gold); color: var(--gold); }
+    .hc-prev-btn { left: 20px; }
+    .hc-next-btn { right: 20px; }
+
+    /* HC dots */
+    .hc-dots-wrap { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 30; display: flex; gap: 8px; align-items: center; }
+    .hc-dot { width: 8px; height: 8px; border-radius: 4px; border: none; cursor: pointer; transition: all 0.3s; padding: 0; background: rgba(255,255,255,0.45); }
+    .hc-dot.active { background: var(--gold); width: 24px; }
+    .hero-carousel.on-light .hc-dot { background: rgba(10,31,68,0.22); }
+    .hero-carousel.on-light .hc-dot.active { background: var(--navy); width: 24px; }
+    .hero-carousel.on-light .hc-nav-btn { background: rgba(255,255,255,0.85); border-color: rgba(10,31,68,0.18); color: var(--navy); }
+    .hero-carousel.on-light .hc-nav-btn:hover { background: var(--white); border-color: var(--blue); color: var(--blue); }
+
+    /* ── PROGRAMAS ENTRY ANIMATION ── */
+    .programas { overflow: hidden; }
+    @keyframes slideFromLeft  { from { opacity: 0; transform: translateX(-110px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideFromRight { from { opacity: 0; transform: translateX( 110px); } to { opacity: 1; transform: translateX(0); } }
+    .prog-wrap { perspective: 1400px; }
+    .prog-wrap.from-left  { opacity: 0; transform: translateX(-110px); }
+    .prog-wrap.from-right { opacity: 0; transform: translateX( 110px); }
+    .programas-grid .prog-wrap:nth-child(1) { --pd: 0s;    }
+    .programas-grid .prog-wrap:nth-child(2) { --pd: 0.12s; }
+    .programas-grid .prog-wrap:nth-child(3) { --pd: 0.24s; }
+    .programas-grid .prog-wrap:nth-child(4) { --pd: 0.36s; }
+    .prog-wrap.from-left.slide-in  { animation: slideFromLeft  0.7s cubic-bezier(0.4,0,0.2,1) var(--pd,0s) forwards; }
+    .prog-wrap.from-right.slide-in { animation: slideFromRight 0.7s cubic-bezier(0.4,0,0.2,1) var(--pd,0s) forwards; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .programas-grid { grid-template-columns: 1fr; }
@@ -376,6 +450,14 @@
     }
 
     @media (max-width: 768px) {
+      .hc-prev-btn { left: 10px; }
+      .hc-next-btn { right: 10px; }
+      .hc-nav-btn { width: 36px; height: 36px; font-size: 0.85rem; }
+      .hc-slide-materias { overflow-y: auto; justify-content: flex-start; padding-top: 80px; }
+      .hc-metric { padding: 14px 20px; }
+      .hc-m-div { display: none; }
+      .prog-wrap.from-left, .prog-wrap.from-right { opacity: 1; transform: none; }
+      .prog-wrap.from-left.slide-in, .prog-wrap.from-right.slide-in { animation: none; }
       .nav-links { display: none; }
       .hamburger { display: flex; }
       .hero-grid { grid-template-columns: 1fr; }
@@ -434,55 +516,206 @@
   <a href="#inscripcion" onclick="closeMobileMenu()">Inscripción</a>
 </div>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-slide hero-slide-1 active"></div>
-  <div class="hero-slide hero-slide-2"></div>
-  <div class="hero-slide hero-slide-3"></div>
+<!-- HERO CAROUSEL -->
+<div class="hero-carousel" id="heroCarousel">
+  <div class="hc-track" id="hcTrack">
 
-  <!-- Clouds -->
-  <div class="cloud cloud-1" aria-hidden="true"></div>
-  <div class="cloud cloud-2" aria-hidden="true"></div>
-  <div class="cloud cloud-3" aria-hidden="true"></div>
-  <div class="cloud cloud-4" aria-hidden="true"></div>
-  <div class="cloud cloud-5" aria-hidden="true"></div>
-
-  <div class="hero-grid">
-    <div class="hero-left">
-      <div class="hero-eyebrow">Preuniversitario PAES 2025</div>
-      <h1 class="hero-title">
-        Tu camino a la<br>
-        universidad<br>
-        <em>comienza aquí</em>
-      </h1>
-      <p class="hero-sub">
-        Preparación PAES online con docentes especializados, metodología probada y
-        seguimiento personalizado. Tus hijos merecen la mejor preparación.
-      </p>
-      <div class="hero-btns">
-        <a href="#inscripcion" class="btn-gold">Inscribirse ahora</a>
-        <a href="#programas"   class="btn-outline">Ver programas</a>
-      </div>
-    </div>
-
-    <div class="hero-stats">
-      <div class="stat-card">
-        <div>
-          <div class="stat-number">100%</div>
-          <div class="stat-label">Online — accede desde cualquier lugar de Chile</div>
+    <!-- ① Hero -->
+    <section class="hc-slide hero">
+      <div class="hero-slide hero-slide-1 active"></div>
+      <div class="hero-slide hero-slide-2"></div>
+      <div class="hero-slide hero-slide-3"></div>
+      <div class="cloud cloud-1" aria-hidden="true"></div>
+      <div class="cloud cloud-2" aria-hidden="true"></div>
+      <div class="cloud cloud-3" aria-hidden="true"></div>
+      <div class="cloud cloud-4" aria-hidden="true"></div>
+      <div class="cloud cloud-5" aria-hidden="true"></div>
+      <div class="hero-grid">
+        <div class="hero-left">
+          <div class="hero-eyebrow">Preuniversitario PAES 2025</div>
+          <h1 class="hero-title">
+            Tu camino a la<br>
+            universidad<br>
+            <em>comienza aquí</em>
+          </h1>
+          <p class="hero-sub">
+            Preparación PAES online con docentes especializados, metodología probada y
+            seguimiento personalizado. Tus hijos merecen la mejor preparación.
+          </p>
+          <div class="hero-btns">
+            <a href="#inscripcion" class="btn-gold">Inscribirse ahora</a>
+            <a href="#programas"   class="btn-outline">Ver programas</a>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <div>
+              <div class="stat-number">100%</div>
+              <div class="stat-label">Online — accede desde cualquier lugar de Chile</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Áreas PAES disponibles</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">Google<br><small style="font-size:1rem">Classroom</small></div>
+            <div class="stat-label">Plataforma de clases</div>
+          </div>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number">4</div>
-        <div class="stat-label">Áreas PAES disponibles</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">Google<br><small style="font-size:1rem">Classroom</small></div>
-        <div class="stat-label">Plataforma de clases</div>
+    </section>
+
+    <!-- ② Métricas -->
+    <div class="hc-slide hc-slide-metrics">
+      <div style="width:100%;max-width:960px;padding:0 6vw;margin:0 auto;text-align:center;">
+        <div class="hc-m-tag">Miraza en números</div>
+        <h2 class="hc-m-title" style="margin:20px 0 52px;">Lo que nos define</h2>
+        <div class="hc-metrics-row">
+          <div class="hc-metric">
+            <div class="hc-metric-num">4</div>
+            <span class="hc-metric-lbl">Materias PAES</span>
+          </div>
+          <div class="hc-m-div"></div>
+          <div class="hc-metric">
+            <div class="hc-metric-num">100%</div>
+            <span class="hc-metric-lbl">Clases online</span>
+          </div>
+          <div class="hc-m-div"></div>
+          <div class="hc-metric">
+            <div class="hc-metric-num">24h</div>
+            <span class="hc-metric-lbl">Respuesta máxima</span>
+          </div>
+          <div class="hc-m-div"></div>
+          <div class="hc-metric">
+            <div class="hc-metric-num">5★</div>
+            <span class="hc-metric-lbl">Calificación</span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+
+    <!-- ③ Materias -->
+    <div class="hc-slide hc-slide-materias">
+      <div class="section-header">
+        <div class="section-tag">Nuestros cursos</div>
+        <h2 class="section-title">Todas las pruebas PAES cubiertas</h2>
+        <p class="section-sub">Clases enfocadas en lo que realmente entra en la prueba</p>
+      </div>
+      <div class="materias-grid">
+        <div class="materia-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Matemática — clic para ver descripción">
+          <div class="materia-front">
+            <div class="materia-icon-bg" style="background:linear-gradient(135deg,rgba(27,77,184,0.12),rgba(27,77,184,0.06))">
+              <span class="materia-big-icon" aria-hidden="true">📐</span>
+            </div>
+            <div class="materia-name">Matemática</div>
+            <span class="materia-hint">Clic para ver más →</span>
+          </div>
+          <div class="materia-back">
+            <span class="materia-icon-sm" aria-hidden="true">📐</span>
+            <div class="materia-name">Matemática</div>
+            <p class="materia-desc">Álgebra, geometría, estadística y resolución de problemas. Enfoque en los tipos de preguntas más frecuentes en la PAES M1 y M2.</p>
+          </div>
+        </div>
+        <div class="materia-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Lenguaje — clic para ver descripción">
+          <div class="materia-front">
+            <div class="materia-icon-bg" style="background:linear-gradient(135deg,rgba(91,33,182,0.12),rgba(91,33,182,0.06))">
+              <span class="materia-big-icon" aria-hidden="true">📖</span>
+            </div>
+            <div class="materia-name">Lenguaje</div>
+            <span class="materia-hint">Clic para ver más →</span>
+          </div>
+          <div class="materia-back">
+            <span class="materia-icon-sm" aria-hidden="true">📖</span>
+            <div class="materia-name">Lenguaje</div>
+            <p class="materia-desc">Comprensión lectora, análisis de textos y vocabulario contextual. Estrategias para abordar todos los tipos de texto del PAES.</p>
+          </div>
+        </div>
+        <div class="materia-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Historia — clic para ver descripción">
+          <div class="materia-front">
+            <div class="materia-icon-bg" style="background:linear-gradient(135deg,rgba(180,83,9,0.12),rgba(180,83,9,0.06))">
+              <span class="materia-big-icon" aria-hidden="true">🗺️</span>
+            </div>
+            <div class="materia-name">Historia</div>
+            <span class="materia-hint">Clic para ver más →</span>
+          </div>
+          <div class="materia-back">
+            <span class="materia-icon-sm" aria-hidden="true">🗺️</span>
+            <div class="materia-name">Historia</div>
+            <p class="materia-desc">Historia de Chile, América y el mundo. Análisis de fuentes históricas y formación ciudadana con visión crítica.</p>
+          </div>
+        </div>
+        <div class="materia-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Ciencias — clic para ver descripción">
+          <div class="materia-front">
+            <div class="materia-icon-bg" style="background:linear-gradient(135deg,rgba(6,95,70,0.12),rgba(6,95,70,0.06))">
+              <span class="materia-big-icon" aria-hidden="true">🔬</span>
+            </div>
+            <div class="materia-name">Ciencias</div>
+            <span class="materia-hint">Clic para ver más →</span>
+          </div>
+          <div class="materia-back">
+            <span class="materia-icon-sm" aria-hidden="true">🔬</span>
+            <div class="materia-name">Ciencias</div>
+            <p class="materia-desc">Biología, Física y Química. Preparación integral para el módulo electivo de Ciencias PAES con ejercicios aplicados.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ ¿Por qué Miraza? -->
+    <div class="hc-slide hc-slide-porque">
+      <div class="porque-grid" style="width:100%;max-width:1100px;">
+        <div>
+          <div class="section-tag">¿Por qué Miraza?</div>
+          <h2 class="section-title" style="text-align:left;margin-bottom:40px;">
+            Preparación seria,<br>trato cercano
+          </h2>
+          <div class="porque-features">
+            <div class="feature">
+              <div class="feature-icon" aria-hidden="true">👩‍🏫</div>
+              <div>
+                <div class="feature-title">Docentes especializados en PAES</div>
+                <p class="feature-desc">Profesores con experiencia específica en la prueba, sus formatos y sus trampas más comunes.</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon" aria-hidden="true">🎯</div>
+              <div>
+                <div class="feature-title">Seguimiento personalizado</div>
+                <p class="feature-desc">Cada alumno tiene un avance monitoreado. No son un número más, son el futuro universitario de tu familia.</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon" aria-hidden="true">💻</div>
+              <div>
+                <div class="feature-title">100% online con Google Classroom</div>
+                <p class="feature-desc">Material disponible 24/7, clases en vivo y grabadas. Estudia desde donde estés, a tu ritmo.</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="feature-icon" aria-hidden="true">📊</div>
+              <div>
+                <div class="feature-title">Ensayos y simulacros PAES</div>
+                <p class="feature-desc">Práctica constante con pruebas tipo PAES para que el día del examen no haya sorpresas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="porque-visual">
+          <div class="visual-quote">
+            El futuro universitario de tu hijo empieza con la preparación correcta hoy.
+          </div>
+          <div class="visual-divider"></div>
+          <div class="visual-author">Preuniversitario Miraza — donde cada alumno importa</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /hc-track -->
+  <button class="hc-nav-btn hc-prev-btn" id="hcPrev" aria-label="Anterior">&#8592;</button>
+  <button class="hc-nav-btn hc-next-btn" id="hcNext" aria-label="Siguiente">&#8594;</button>
+  <div class="hc-dots-wrap" id="hcDots"></div>
+</div><!-- /hero-carousel -->
 
 <!-- STATS BAR -->
 <section class="stats-bar">
@@ -592,97 +825,105 @@
   <div class="programas-grid">
 
     <!-- Intensivo -->
-    <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Programa Intensivo — clic para ver detalles">
-      <div class="prog-front">
-        <div class="prog-info prog-azul">
-          <div class="prog-icon">⚡</div>
-          <div class="prog-tipo">Programa Intensivo</div>
-          <div class="prog-nombre">Máxima preparación,<br>mínimo tiempo</div>
-          <div class="prog-fecha">Inicio: Noviembre 2025</div>
-          <div class="prog-hint">Clic para ver detalles →</div>
+    <div class="prog-wrap from-left">
+      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Programa Intensivo — clic para ver detalles">
+        <div class="prog-front">
+          <div class="prog-info prog-azul">
+            <div class="prog-icon">⚡</div>
+            <div class="prog-tipo">Programa Intensivo</div>
+            <div class="prog-nombre">Máxima preparación,<br>mínimo tiempo</div>
+            <div class="prog-fecha">Inicio: Noviembre 2025</div>
+            <div class="prog-hint">Clic para ver detalles →</div>
+          </div>
+          <div class="prog-photo prog-azul" style="background:linear-gradient(135deg,rgba(27,77,184,0.55),rgba(43,96,212,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">📝</div>
         </div>
-        <div class="prog-photo prog-azul" style="background:linear-gradient(135deg,rgba(27,77,184,0.55),rgba(43,96,212,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">📝</div>
-      </div>
-      <div class="prog-back">
-        <div class="prog-back-icon">⚡</div>
-        <div class="prog-back-tipo">Programa Intensivo</div>
-        <div class="prog-back-nombre">Máxima preparación, mínimo tiempo</div>
-        <div class="prog-back-desc">Diseñado para estudiantes que necesitan prepararse en poco tiempo antes de la PAES. Clases diarias de alta intensidad, ensayos semanales y corrección personalizada. Ideal para egresados y alumnos de 4° Medio.</div>
-        <div class="prog-back-actions">
-          <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
-          <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+        <div class="prog-back">
+          <div class="prog-back-icon">⚡</div>
+          <div class="prog-back-tipo">Programa Intensivo</div>
+          <div class="prog-back-nombre">Máxima preparación, mínimo tiempo</div>
+          <div class="prog-back-desc">Diseñado para estudiantes que necesitan prepararse en poco tiempo antes de la PAES. Clases diarias de alta intensidad, ensayos semanales y corrección personalizada. Ideal para egresados y alumnos de 4° Medio.</div>
+          <div class="prog-back-actions">
+            <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+            <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Anual -->
-    <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Programa Anual — clic para ver detalles">
-      <div class="prog-front">
-        <div class="prog-info prog-gold">
-          <div class="prog-icon">📅</div>
-          <div class="prog-tipo">Programa Anual</div>
-          <div class="prog-nombre">Preparación completa<br>durante todo el año</div>
-          <div class="prog-fecha">Inicio: Marzo 2026</div>
-          <div class="prog-hint">Clic para ver detalles →</div>
+    <div class="prog-wrap from-right">
+      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Programa Anual — clic para ver detalles">
+        <div class="prog-front">
+          <div class="prog-info prog-gold">
+            <div class="prog-icon">📅</div>
+            <div class="prog-tipo">Programa Anual</div>
+            <div class="prog-nombre">Preparación completa<br>durante todo el año</div>
+            <div class="prog-fecha">Inicio: Marzo 2026</div>
+            <div class="prog-hint">Clic para ver detalles →</div>
+          </div>
+          <div class="prog-photo prog-gold" style="background:linear-gradient(135deg,rgba(184,112,10,0.55),rgba(212,137,26,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🎓</div>
         </div>
-        <div class="prog-photo prog-gold" style="background:linear-gradient(135deg,rgba(184,112,10,0.55),rgba(212,137,26,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🎓</div>
-      </div>
-      <div class="prog-back">
-        <div class="prog-back-icon">📅</div>
-        <div class="prog-back-tipo">Programa Anual</div>
-        <div class="prog-back-nombre">Preparación completa durante todo el año</div>
-        <div class="prog-back-desc">El programa más completo. Desde marzo hasta noviembre, cubrimos todos los contenidos con calma y profundidad. Clases semanales, guías de ejercicios, ensayos mensuales y seguimiento personalizado del progreso.</div>
-        <div class="prog-back-actions">
-          <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
-          <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+        <div class="prog-back">
+          <div class="prog-back-icon">📅</div>
+          <div class="prog-back-tipo">Programa Anual</div>
+          <div class="prog-back-nombre">Preparación completa durante todo el año</div>
+          <div class="prog-back-desc">El programa más completo. Desde marzo hasta noviembre, cubrimos todos los contenidos con calma y profundidad. Clases semanales, guías de ejercicios, ensayos mensuales y seguimiento personalizado del progreso.</div>
+          <div class="prog-back-actions">
+            <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+            <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Por Materia -->
-    <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Por Materia — clic para ver detalles">
-      <div class="prog-front">
-        <div class="prog-info prog-navy">
-          <div class="prog-icon">📚</div>
-          <div class="prog-tipo">Por Materia</div>
-          <div class="prog-nombre">Refuerza donde más<br>lo necesitas</div>
-          <div class="prog-fecha">Incorporación inmediata</div>
-          <div class="prog-hint">Clic para ver detalles →</div>
+    <div class="prog-wrap from-left">
+      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Por Materia — clic para ver detalles">
+        <div class="prog-front">
+          <div class="prog-info prog-navy">
+            <div class="prog-icon">📚</div>
+            <div class="prog-tipo">Por Materia</div>
+            <div class="prog-nombre">Refuerza donde más<br>lo necesitas</div>
+            <div class="prog-fecha">Incorporación inmediata</div>
+            <div class="prog-hint">Clic para ver detalles →</div>
+          </div>
+          <div class="prog-photo prog-navy" style="background:linear-gradient(135deg,rgba(10,31,68,0.65),rgba(27,77,184,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🔍</div>
         </div>
-        <div class="prog-photo prog-navy" style="background:linear-gradient(135deg,rgba(10,31,68,0.65),rgba(27,77,184,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🔍</div>
-      </div>
-      <div class="prog-back">
-        <div class="prog-back-icon">📚</div>
-        <div class="prog-back-tipo">Por Materia</div>
-        <div class="prog-back-nombre">Refuerza exactamente donde más lo necesitas</div>
-        <div class="prog-back-desc">Elige solo las materias que necesitas trabajar. Perfecto para quienes tienen una base sólida en algunas áreas y solo requieren refuerzo puntual. Disponible para Matemática, Lenguaje, Historia y Ciencias.</div>
-        <div class="prog-back-actions">
-          <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
-          <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+        <div class="prog-back">
+          <div class="prog-back-icon">📚</div>
+          <div class="prog-back-tipo">Por Materia</div>
+          <div class="prog-back-nombre">Refuerza exactamente donde más lo necesitas</div>
+          <div class="prog-back-desc">Elige solo las materias que necesitas trabajar. Perfecto para quienes tienen una base sólida en algunas áreas y solo requieren refuerzo puntual. Disponible para Matemática, Lenguaje, Historia y Ciencias.</div>
+          <div class="prog-back-actions">
+            <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+            <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Pack Egresados -->
-    <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Pack Egresados — clic para ver detalles">
-      <div class="prog-front">
-        <div class="prog-info prog-teal">
-          <div class="prog-icon">🏆</div>
-          <div class="prog-tipo">Pack Egresados</div>
-          <div class="prog-nombre">Segunda oportunidad,<br>mejor resultado</div>
-          <div class="prog-fecha">Incorporación inmediata</div>
-          <div class="prog-hint">Clic para ver detalles →</div>
+    <div class="prog-wrap from-right">
+      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Pack Egresados — clic para ver detalles">
+        <div class="prog-front">
+          <div class="prog-info prog-teal">
+            <div class="prog-icon">🏆</div>
+            <div class="prog-tipo">Pack Egresados</div>
+            <div class="prog-nombre">Segunda oportunidad,<br>mejor resultado</div>
+            <div class="prog-fecha">Incorporación inmediata</div>
+            <div class="prog-hint">Clic para ver detalles →</div>
+          </div>
+          <div class="prog-photo prog-teal" style="background:linear-gradient(135deg,rgba(6,95,70,0.65),rgba(13,144,101,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🚀</div>
         </div>
-        <div class="prog-photo prog-teal" style="background:linear-gradient(135deg,rgba(6,95,70,0.65),rgba(13,144,101,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🚀</div>
-      </div>
-      <div class="prog-back">
-        <div class="prog-back-icon">🏆</div>
-        <div class="prog-back-tipo">Pack Egresados</div>
-        <div class="prog-back-nombre">Segunda oportunidad, mejor resultado</div>
-        <div class="prog-back-desc">Diseñado para quienes ya rindieron la PAES y quieren mejorar su puntaje. Diagnóstico inicial, plan de estudio personalizado y foco en los puntos débiles identificados en la prueba anterior. Flexibilidad total de horario.</div>
-        <div class="prog-back-actions">
-          <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
-          <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+        <div class="prog-back">
+          <div class="prog-back-icon">🏆</div>
+          <div class="prog-back-tipo">Pack Egresados</div>
+          <div class="prog-back-nombre">Segunda oportunidad, mejor resultado</div>
+          <div class="prog-back-desc">Diseñado para quienes ya rindieron la PAES y quieren mejorar su puntaje. Diagnóstico inicial, plan de estudio personalizado y foco en los puntos débiles identificados en la prueba anterior. Flexibilidad total de horario.</div>
+          <div class="prog-back-actions">
+            <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+            <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1091,7 +1332,7 @@
   // ── Año dinámico ──
   document.getElementById('footerYear').textContent = new Date().getFullYear();
 
-  // ── Hero background carousel ──
+  // ── Hero background carousel (gradient loop inside slide 1) ──
   var heroSlides = document.querySelectorAll('.hero-slide');
   var currentHeroBg = 0;
   setInterval(function() {
@@ -1099,6 +1340,50 @@
     currentHeroBg = (currentHeroBg + 1) % heroSlides.length;
     heroSlides[currentHeroBg].classList.add('active');
   }, 5500);
+
+  // ── Hero section carousel ──
+  var hcCarousel  = document.getElementById('heroCarousel');
+  var hcTrack     = document.getElementById('hcTrack');
+  var hcDotsWrap  = document.getElementById('hcDots');
+  var hcSlides    = hcTrack.querySelectorAll(':scope > .hc-slide');
+  var hcTotal     = hcSlides.length;
+  var hcCurrent   = 0;
+  var hcAuto;
+  var hcLightIdx  = [2, 3]; // slides 3 & 4 have light backgrounds
+
+  hcSlides.forEach(function(_, i) {
+    var d = document.createElement('button');
+    d.className = 'hc-dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('aria-label', 'Diapositiva ' + (i + 1));
+    d.addEventListener('click', function() { hcGo(i); hcReset(); });
+    hcDotsWrap.appendChild(d);
+  });
+
+  function hcGo(idx) {
+    hcCurrent = (idx + hcTotal) % hcTotal;
+    hcTrack.style.transform = 'translateX(-' + (hcCurrent * 100) + '%)';
+    hcDotsWrap.querySelectorAll('.hc-dot').forEach(function(d, i) {
+      d.classList.toggle('active', i === hcCurrent);
+    });
+    hcCarousel.classList.toggle('on-light', hcLightIdx.indexOf(hcCurrent) !== -1);
+  }
+
+  function hcReset() {
+    clearInterval(hcAuto);
+    hcAuto = setInterval(function() { hcGo(hcCurrent + 1); }, 6500);
+  }
+
+  document.getElementById('hcPrev').addEventListener('click', function() { hcGo(hcCurrent - 1); hcReset(); });
+  document.getElementById('hcNext').addEventListener('click', function() { hcGo(hcCurrent + 1); hcReset(); });
+
+  var hcTouchX = 0;
+  hcTrack.addEventListener('touchstart', function(e) { hcTouchX = e.touches[0].clientX; }, { passive: true });
+  hcTrack.addEventListener('touchend', function(e) {
+    var diff = hcTouchX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) { hcGo(diff > 0 ? hcCurrent + 1 : hcCurrent - 1); hcReset(); }
+  });
+
+  hcReset();
 
   // ── Flip cards keyboard support (materias + programas) ──
   document.querySelectorAll('.materia-card, .prog-card').forEach(function(card) {
@@ -1136,8 +1421,27 @@
       if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.feature, .paso, .form-wrapper, .porque-visual, .section-header, .prof-card, .prog-card, .promo-item, .faq-item').forEach(function(el) {
-    if (!el.closest('.hero')) { el.classList.add('reveal'); revealObserver.observe(el); }
+  document.querySelectorAll('.feature, .paso, .form-wrapper, .porque-visual, .section-header, .prof-card, .promo-item, .faq-item').forEach(function(el) {
+    if (!el.closest('.hero-carousel')) { el.classList.add('reveal'); revealObserver.observe(el); }
+  });
+
+  // ── Programas entry animation ──
+  var progObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        el.classList.add('slide-in');
+        el.addEventListener('animationend', function() {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          el.classList.remove('from-left', 'from-right', 'slide-in');
+        }, { once: true });
+        progObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('#programas .prog-wrap').forEach(function(el) {
+    progObserver.observe(el);
   });
 
   // ── Testimonios carousel ──
