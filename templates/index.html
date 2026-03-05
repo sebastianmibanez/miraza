@@ -170,20 +170,50 @@
     /* ── PROGRAMAS ── */
     .programas { padding: 100px 0; background: var(--white); }
     .programas .section-header { padding: 0 6vw; margin-bottom: 48px; }
-    .programa-banner { display: grid; grid-template-columns: 1fr 1fr; min-height: 230px; margin-bottom: 10px; overflow: hidden; }
-    .programa-info { padding: 52px 7vw; color: white; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
-    .programa-icon { font-size: 2.4rem; }
-    .programa-tipo { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; opacity: 0.72; }
-    .programa-nombre { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; line-height: 1.25; }
-    .programa-fecha { font-size: 0.88rem; opacity: 0.78; }
-    .btn-programa { display: inline-block; background: rgba(255,255,255,0.14); border: 1.5px solid rgba(255,255,255,0.38); color: white; padding: 10px 28px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: all 0.25s; align-self: flex-start; margin-top: 8px; }
-    .btn-programa:hover { background: rgba(255,255,255,0.26); border-color: white; transform: translateY(-2px); }
-    .programa-img { overflow: hidden; }
-    .programa-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
-    .programa-banner:hover .programa-img img { transform: scale(1.04); }
-    .prog-azul   { background: linear-gradient(135deg, #1B4DB8, #2B60D4); }
-    .prog-gold   { background: linear-gradient(135deg, #B8700A, #D4891A); }
-    .prog-navy   { background: linear-gradient(135deg, #0A1F44, #1B4DB8); }
+    .programas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 1280px; margin: 0 auto; perspective: 1400px; }
+
+    /* Flip card container */
+    .prog-card { height: 280px; cursor: pointer; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1); position: relative; }
+    .prog-card.flipped { transform: rotateY(180deg); }
+
+    /* Front & back share same space */
+    .prog-front, .prog-back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
+
+    /* Front: 2-column (color info + photo) */
+    .prog-front { display: grid; grid-template-columns: 1fr 1fr; }
+
+    /* Back: dark details */
+    .prog-back { transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; padding: 44px 52px; color: white; background: linear-gradient(135deg, #091830 0%, #1B4DB8 100%); gap: 10px; }
+
+    /* Front info panel */
+    .prog-info { padding: 44px 36px; color: white; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+    .prog-icon  { font-size: 2.2rem; }
+    .prog-tipo  { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; opacity: 0.72; }
+    .prog-nombre { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; line-height: 1.25; }
+    .prog-fecha { font-size: 0.84rem; opacity: 0.78; }
+    .prog-hint  { font-size: 0.7rem; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.55; font-weight: 600; margin-top: 6px; }
+
+    /* Front photo panel */
+    .prog-photo { overflow: hidden; }
+    .prog-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
+    .prog-card:not(.flipped):hover .prog-photo img { transform: scale(1.06); }
+
+    /* Back details */
+    .prog-back-icon  { font-size: 1.8rem; }
+    .prog-back-tipo  { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--gold); }
+    .prog-back-nombre { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); }
+    .prog-back-desc  { font-size: 0.88rem; color: rgba(255,255,255,0.82); line-height: 1.7; max-width: 520px; }
+    .prog-back-actions { display: flex; gap: 10px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
+    .prog-back-btn   { display: inline-block; background: var(--gold); color: var(--navy); padding: 11px 26px; border-radius: 8px; font-size: 0.88rem; font-weight: 700; text-decoration: none; transition: all 0.25s; }
+    .prog-back-btn:hover { background: var(--gold-l); transform: translateY(-2px); }
+    .prog-back-close { background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.22); color: rgba(255,255,255,0.7); padding: 10px 20px; border-radius: 8px; font-size: 0.82rem; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s; }
+    .prog-back-close:hover { background: rgba(255,255,255,0.18); color: white; }
+
+    /* Color accents */
+    .prog-azul  { background: linear-gradient(135deg, #1B4DB8, #2B60D4); }
+    .prog-gold  { background: linear-gradient(135deg, #B8700A, #D4891A); }
+    .prog-navy  { background: linear-gradient(135deg, #0A1F44, #1B4DB8); }
+    .prog-teal  { background: linear-gradient(135deg, #065F46, #0D9065); }
 
     /* ── POR QUÉ MIRAZA ── */
     .porque { padding: 100px 6vw; background: var(--light); }
@@ -338,8 +368,8 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
-      .programa-banner { grid-template-columns: 1fr; min-height: auto; }
-      .programa-img { height: 220px; }
+      .programas-grid { grid-template-columns: 1fr; }
+      .prog-card { height: 240px; }
       .inscripcion-grid { grid-template-columns: 1fr; }
       .inscripcion-promo { position: static; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
@@ -556,49 +586,107 @@
   <div class="section-header">
     <div class="section-tag">Programas PAES 2025</div>
     <h2 class="section-title">Elige el programa que te impulsa</h2>
-    <p class="section-sub">Formatos diseñados para cada etapa del proceso universitario</p>
+    <p class="section-sub">Haz clic en cada programa para conocer todos los detalles</p>
   </div>
 
-  <!-- Intensivo -->
-  <div class="programa-banner prog-azul">
-    <div class="programa-info">
-      <div class="programa-icon">⚡</div>
-      <div class="programa-tipo">Programa Intensivo</div>
-      <div class="programa-nombre">Máxima preparación,<br>mínimo tiempo</div>
-      <div class="programa-fecha">Inicio: Noviembre 2025</div>
-      <a href="#inscripcion" class="btn-programa">Inscribirse ahora</a>
-    </div>
-    <div class="programa-img">
-      <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80" alt="Programa Intensivo — estudiante concentrado">
-    </div>
-  </div>
+  <div class="programas-grid">
 
-  <!-- Anual -->
-  <div class="programa-banner prog-gold">
-    <div class="programa-info">
-      <div class="programa-icon">📅</div>
-      <div class="programa-tipo">Programa Anual</div>
-      <div class="programa-nombre">Preparación completa<br>durante todo el año</div>
-      <div class="programa-fecha">Inicio: Marzo 2026</div>
-      <a href="#inscripcion" class="btn-programa">Inscribirse ahora</a>
+    <!-- Intensivo -->
+    <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Programa Intensivo — clic para ver detalles">
+      <div class="prog-front">
+        <div class="prog-info prog-azul">
+          <div class="prog-icon">⚡</div>
+          <div class="prog-tipo">Programa Intensivo</div>
+          <div class="prog-nombre">Máxima preparación,<br>mínimo tiempo</div>
+          <div class="prog-fecha">Inicio: Noviembre 2025</div>
+          <div class="prog-hint">Clic para ver detalles →</div>
+        </div>
+        <div class="prog-photo prog-azul" style="background:linear-gradient(135deg,rgba(27,77,184,0.55),rgba(43,96,212,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">📝</div>
+      </div>
+      <div class="prog-back">
+        <div class="prog-back-icon">⚡</div>
+        <div class="prog-back-tipo">Programa Intensivo</div>
+        <div class="prog-back-nombre">Máxima preparación, mínimo tiempo</div>
+        <div class="prog-back-desc">Diseñado para estudiantes que necesitan prepararse en poco tiempo antes de la PAES. Clases diarias de alta intensidad, ensayos semanales y corrección personalizada. Ideal para egresados y alumnos de 4° Medio.</div>
+        <div class="prog-back-actions">
+          <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+          <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+        </div>
+      </div>
     </div>
-    <div class="programa-img">
-      <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&q=80" alt="Programa Anual — grupo de estudio">
-    </div>
-  </div>
 
-  <!-- Por materia -->
-  <div class="programa-banner prog-navy">
-    <div class="programa-info">
-      <div class="programa-icon">📚</div>
-      <div class="programa-tipo">Por Materia</div>
-      <div class="programa-nombre">Refuerza exactamente<br>donde más lo necesitas</div>
-      <div class="programa-fecha">Incorporación inmediata</div>
-      <a href="#inscripcion" class="btn-programa">Inscribirse ahora</a>
+    <!-- Anual -->
+    <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Programa Anual — clic para ver detalles">
+      <div class="prog-front">
+        <div class="prog-info prog-gold">
+          <div class="prog-icon">📅</div>
+          <div class="prog-tipo">Programa Anual</div>
+          <div class="prog-nombre">Preparación completa<br>durante todo el año</div>
+          <div class="prog-fecha">Inicio: Marzo 2026</div>
+          <div class="prog-hint">Clic para ver detalles →</div>
+        </div>
+        <div class="prog-photo prog-gold" style="background:linear-gradient(135deg,rgba(184,112,10,0.55),rgba(212,137,26,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🎓</div>
+      </div>
+      <div class="prog-back">
+        <div class="prog-back-icon">📅</div>
+        <div class="prog-back-tipo">Programa Anual</div>
+        <div class="prog-back-nombre">Preparación completa durante todo el año</div>
+        <div class="prog-back-desc">El programa más completo. Desde marzo hasta noviembre, cubrimos todos los contenidos con calma y profundidad. Clases semanales, guías de ejercicios, ensayos mensuales y seguimiento personalizado del progreso.</div>
+        <div class="prog-back-actions">
+          <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+          <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+        </div>
+      </div>
     </div>
-    <div class="programa-img">
-      <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80" alt="Por materia — estudiante individual">
+
+    <!-- Por Materia -->
+    <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Por Materia — clic para ver detalles">
+      <div class="prog-front">
+        <div class="prog-info prog-navy">
+          <div class="prog-icon">📚</div>
+          <div class="prog-tipo">Por Materia</div>
+          <div class="prog-nombre">Refuerza donde más<br>lo necesitas</div>
+          <div class="prog-fecha">Incorporación inmediata</div>
+          <div class="prog-hint">Clic para ver detalles →</div>
+        </div>
+        <div class="prog-photo prog-navy" style="background:linear-gradient(135deg,rgba(10,31,68,0.65),rgba(27,77,184,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🔍</div>
+      </div>
+      <div class="prog-back">
+        <div class="prog-back-icon">📚</div>
+        <div class="prog-back-tipo">Por Materia</div>
+        <div class="prog-back-nombre">Refuerza exactamente donde más lo necesitas</div>
+        <div class="prog-back-desc">Elige solo las materias que necesitas trabajar. Perfecto para quienes tienen una base sólida en algunas áreas y solo requieren refuerzo puntual. Disponible para Matemática, Lenguaje, Historia y Ciencias.</div>
+        <div class="prog-back-actions">
+          <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+          <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Pack Egresados -->
+    <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Pack Egresados — clic para ver detalles">
+      <div class="prog-front">
+        <div class="prog-info prog-teal">
+          <div class="prog-icon">🏆</div>
+          <div class="prog-tipo">Pack Egresados</div>
+          <div class="prog-nombre">Segunda oportunidad,<br>mejor resultado</div>
+          <div class="prog-fecha">Incorporación inmediata</div>
+          <div class="prog-hint">Clic para ver detalles →</div>
+        </div>
+        <div class="prog-photo prog-teal" style="background:linear-gradient(135deg,rgba(6,95,70,0.65),rgba(13,144,101,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🚀</div>
+      </div>
+      <div class="prog-back">
+        <div class="prog-back-icon">🏆</div>
+        <div class="prog-back-tipo">Pack Egresados</div>
+        <div class="prog-back-nombre">Segunda oportunidad, mejor resultado</div>
+        <div class="prog-back-desc">Diseñado para quienes ya rindieron la PAES y quieren mejorar su puntaje. Diagnóstico inicial, plan de estudio personalizado y foco en los puntos débiles identificados en la prueba anterior. Flexibilidad total de horario.</div>
+        <div class="prog-back-actions">
+          <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+          <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1012,10 +1100,11 @@
     heroSlides[currentHeroBg].classList.add('active');
   }, 5500);
 
-  // ── Flip cards keyboard support ──
-  document.querySelectorAll('.materia-card').forEach(function(card) {
+  // ── Flip cards keyboard support (materias + programas) ──
+  document.querySelectorAll('.materia-card, .prog-card').forEach(function(card) {
     card.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.classList.toggle('flipped'); }
+      if (e.key === 'Escape') { this.classList.remove('flipped'); }
     });
   });
 
@@ -1047,7 +1136,7 @@
       if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.feature, .paso, .form-wrapper, .porque-visual, .section-header, .prof-card, .programa-banner, .promo-item, .faq-item').forEach(function(el) {
+  document.querySelectorAll('.feature, .paso, .form-wrapper, .porque-visual, .section-header, .prof-card, .prog-card, .promo-item, .faq-item').forEach(function(el) {
     if (!el.closest('.hero')) { el.classList.add('reveal'); revealObserver.observe(el); }
   });
 
