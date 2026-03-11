@@ -47,7 +47,7 @@
       transition: all 0.3s;
     }
     .nav-logo { display: flex; align-items: center; text-decoration: none; }
-    .nav-logo img { height: 44px; width: auto; object-fit: contain; transition: opacity 0.2s; }
+    .nav-logo img { height: 88px; width: auto; object-fit: contain; transition: opacity 0.2s; }
     .nav-logo img:hover { opacity: 0.85; }
     .nav-links { display: flex; gap: 22px; list-style: none; }
     .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.02em; transition: color 0.2s; }
@@ -157,7 +157,7 @@
 <!-- NAV -->
 <nav>
   <a href="{{ url_for('index') }}" class="nav-logo">
-    <img src="{{ url_for('static', filename='miraza.png') }}" alt="Miraza" height="44">
+    <img src="{{ url_for('static', filename='miraza.png') }}" alt="Miraza" height="88">
   </a>
   <ul class="nav-links">
     <li><a href="{{ url_for('quienes_somos') }}"  {% if active == 'quienes-somos'  %}class="active"{% endif %}>Quiénes Somos</a></li>
