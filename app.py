@@ -183,7 +183,31 @@ def set_security_headers(response):
 # ── Rutas ──────────────────────────────────────────────────────
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', active='index')
+
+@app.route('/quienes-somos')
+def quienes_somos():
+    return render_template('quienes-somos.html', active='quienes-somos')
+
+@app.route('/planes')
+def planes():
+    return render_template('planes.html', active='planes')
+
+@app.route('/aranceles')
+def aranceles():
+    return render_template('aranceles.html', active='aranceles')
+
+@app.route('/apoyo')
+def apoyo():
+    return render_template('apoyo.html', active='apoyo')
+
+@app.route('/testimonios')
+def testimonios():
+    return render_template('testimonios.html', active='testimonios')
+
+@app.route('/contacto')
+def contacto():
+    return render_template('contacto.html', active='contacto')
 
 
 @app.route('/robots.txt')

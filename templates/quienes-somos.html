@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% block title %}Quiénes Somos — Miraza{% endblock %}
+{% block meta_desc %}Conoce a las fundadoras y el equipo docente de Miraza. Nuestra historia, misión y compromiso con la educación personalizada en Chile.{% endblock %}
+
+{% block extra_styles %}
+<style>
+  /* ── PAGE CONTENT LAYOUT ── */
+  .qs-page { padding: 80px 6vw 100px; }
+  .qs-inner { max-width: 1100px; margin: 0 auto; }
+
+  /* ── MISIÓN / VALORES ── */
+  .mision-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    margin-bottom: 100px;
+  }
+  .mision-card {
+    background: var(--white); border: 1px solid rgba(10,31,68,0.08);
+    border-radius: 20px; padding: 40px 36px;
+    box-shadow: 0 4px 20px rgba(10,31,68,0.06);
+  }
+  .mision-card-icon { font-size: 2.4rem; margin-bottom: 16px; display: block; }
+  .mision-card h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--navy); margin-bottom: 12px; }
+  .mision-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.78; }
+  .mision-card.dark {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a3870 100%);
+    border: none; color: white;
+  }
+  .mision-card.dark h3 { color: var(--gold); }
+  .mision-card.dark p { color: rgba(255,255,255,0.75); }
+
+  /* ── ORIGEN ── */
+  .origen-section { margin-bottom: 100px; }
+  .origen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .origen-visual {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a3870 100%);
+    border-radius: 24px; padding: 56px 48px; color: white; position: relative; overflow: hidden;
+  }
+  .origen-visual::before {
+    content: '\201C'; font-family: 'Playfair Display', serif;
+    font-size: 14rem; color: rgba(245,166,35,0.07);
+    position: absolute; top: -50px; left: 10px; line-height: 1; pointer-events: none;
+  }
+  .origen-visual-tag { color: var(--gold); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; position: relative; }
+  .origen-visual h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 20px; position: relative; }
+  .origen-visual p { font-size: 0.9rem; color: rgba(255,255,255,0.78); line-height: 1.85; position: relative; }
+  .origen-visual p + p { margin-top: 14px; }
+  .origen-values { display: flex; flex-direction: column; gap: 24px; }
+  .origen-value { display: flex; gap: 16px; align-items: flex-start; }
+  .origen-value-num {
+    width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: var(--gold); font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .origen-value h4 { font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 4px; }
+  .origen-value p { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+
+  /* ── FUNDADORAS (esferas grandes) ── */
+  .fundadoras-section { margin-bottom: 80px; }
+  .sphere-section-title {
+    text-align: center; font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; color: var(--navy); margin-bottom: 40px;
+  }
+  .sphere-section-title::after {
+    content: ''; display: block; width: 40px; height: 2px;
+    background: var(--gold); margin: 10px auto 0;
+  }
+  .spheres-row { display: flex; justify-content: center; gap: 64px; flex-wrap: wrap; perspective: 1200px; margin-bottom: 0; }
+  .sphere-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+  .sphere-lg {
+    width: 220px; height: 220px; cursor: pointer;
+    transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.4,0.2,0.2,1);
+    border-radius: 50%; position: relative;
+  }
+  .sphere-lg.flipped { transform: rotateY(180deg); }
+  .sphere-lg-front, .sphere-lg-back {
+    position: absolute; inset: 0; border-radius: 50%;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden; padding: 20px; text-align: center;
+  }
+  .sphere-lg-front { box-shadow: 0 12px 40px rgba(10,31,68,0.28), inset 0 -4px 20px rgba(0,0,0,0.2); }
+  .sphere-lg-back { background: linear-gradient(160deg, #06101f 0%, #0A1F44 100%); transform: rotateY(180deg); gap: 5px; }
+  .sphere-lg-initial { font-family: 'Playfair Display', serif; font-size: 4.5rem; color: var(--gold); font-weight: 900; line-height: 1; }
+  .sphere-lg-hint { font-size: 0.62rem; color: rgba(255,255,255,0.4); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 8px; }
+  .sphere-back-name { font-family: 'Playfair Display', serif; font-size: 0.9rem; color: var(--gold); font-weight: 700; }
+  .sphere-back-role { font-size: 0.68rem; color: rgba(255,255,255,0.6); font-weight: 600; }
+  .sphere-back-bio { font-size: 0.72rem; color: rgba(255,255,255,0.82); line-height: 1.5; margin-top: 5px; }
+  .sphere-label-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--navy); font-weight: 700; text-align: center; }
+  .sphere-label-role { font-size: 0.76rem; color: var(--blue); font-weight: 600; text-align: center; margin-top: 2px; }
+
+  /* Bio expandida fundadoras */
+  .fundadoras-bios { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 52px; }
+  .fund-bio-card {
+    background: var(--white); border: 1px solid rgba(10,31,68,0.08);
+    border-radius: 20px; padding: 36px 32px;
+    box-shadow: 0 4px 20px rgba(10,31,68,0.06);
+  }
+  .fund-bio-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .fund-bio-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900;
+    color: var(--gold); flex-shrink: 0;
+  }
+  .fund-bio-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--navy); font-weight: 700; }
+  .fund-bio-role { font-size: 0.78rem; color: var(--blue); font-weight: 600; margin-top: 2px; }
+  .fund-bio-text { font-size: 0.87rem; color: var(--muted); line-height: 1.8; }
+  .fund-bio-text p + p { margin-top: 10px; }
+
+  /* ── STAFF (esferas pequeñas) ── */
+  .staff-section { background: var(--light); border-radius: 24px; padding: 60px 48px; margin-bottom: 80px; }
+  .sphere-sm {
+    width: 148px; height: 148px; cursor: pointer;
+    transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.4,0.2,0.2,1);
+    border-radius: 50%; position: relative;
+  }
+  .sphere-sm.flipped { transform: rotateY(180deg); }
+  .sphere-sm-front, .sphere-sm-back {
+    position: absolute; inset: 0; border-radius: 50%;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden; padding: 14px; text-align: center;
+  }
+  .sphere-sm-front { background: var(--white); border: 2px solid rgba(10,31,68,0.1); box-shadow: 0 6px 24px rgba(10,31,68,0.09); }
+  .sphere-sm-back { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); transform: rotateY(180deg); gap: 4px; }
+  .sphere-sm-initial { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 900; line-height: 1; }
+  .sphere-sm-hint { font-size: 0.58rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 6px; }
+  .sphere-sm-back-name { font-family: 'Playfair Display', serif; font-size: 0.78rem; color: var(--gold); font-weight: 700; }
+  .sphere-sm-back-subj { font-size: 0.64rem; color: rgba(255,255,255,0.72); line-height: 1.4; margin-top: 2px; }
+  .sphere-sm-label-name { font-family: 'Playfair Display', serif; font-size: 0.88rem; color: var(--navy); font-weight: 700; text-align: center; }
+  .sphere-sm-label-subj { font-size: 0.7rem; color: var(--muted); text-align: center; margin-top: 1px; }
+
+  /* Staff bios expandidas */
+  .staff-bios { display: flex; flex-direction: column; gap: 16px; margin-top: 48px; }
+  .staff-bio-row {
+    display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: flex-start;
+    background: var(--white); border-radius: 14px; padding: 20px 24px;
+    border: 1px solid rgba(10,31,68,0.07);
+  }
+  .staff-bio-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900;
+    color: var(--gold);
+  }
+  .staff-bio-name { font-weight: 700; font-size: 0.92rem; color: var(--navy); margin-bottom: 2px; }
+  .staff-bio-subj { font-size: 0.78rem; color: var(--blue); font-weight: 600; margin-bottom: 8px; }
+  .staff-bio-text { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
+
+  /* ── FAQ ── */
+  .faq-section { margin-bottom: 0; }
+  .faq-list { display: flex; flex-direction: column; gap: 10px; }
+  .faq-item { background: var(--white); border: 1px solid rgba(10,31,68,0.09); border-radius: 14px; overflow: hidden; transition: border-color 0.2s; }
+  .faq-item[open] { border-color: rgba(27,77,184,0.3); }
+  .faq-question { padding: 20px 26px; font-weight: 600; font-size: 0.95rem; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; color: var(--navy); }
+  .faq-question::-webkit-details-marker { display: none; }
+  .faq-question::after { content: '+'; font-size: 1.4rem; font-weight: 300; color: var(--blue); transition: transform 0.3s; flex-shrink: 0; margin-left: 16px; }
+  .faq-item[open] .faq-question::after { transform: rotate(45deg); }
+  .faq-answer { padding: 0 26px 20px; font-size: 0.88rem; color: var(--muted); line-height: 1.78; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .mision-grid { grid-template-columns: 1fr; }
+    .origen-grid { grid-template-columns: 1fr; }
+    .fundadoras-bios { grid-template-columns: 1fr; }
+    .staff-section { padding: 40px 24px; }
+  }
+  @media (max-width: 768px) {
+    .spheres-row { gap: 32px; }
+    .sphere-lg { width: 175px; height: 175px; }
+    .sphere-lg-initial { font-size: 3.6rem; }
+    .sphere-sm { width: 120px; height: 120px; }
+    .sphere-sm-initial { font-size: 2.2rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Page hero -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-tag">Nuestra historia</div>
+    <h1>¿Quiénes <em>Somos</em>?</h1>
+    <p>Un equipo comprometido con transformar la educación en Chile, haciendo que la preparación de calidad sea accesible para todos.</p>
+  </div>
+</div>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+  <a href="{{ url_for('index') }}">Inicio</a>
+  <span>›</span>
+  <span>Quiénes Somos</span>
+</div>
+
+<div class="qs-page">
+  <div class="qs-inner">
+
+    <!-- ── MISIÓN Y VISIÓN ── -->
+    <div class="section-header reveal">
+      <div class="section-tag">Lo que nos mueve</div>
+      <h2 class="section-title">Misión, Visión y Valores</h2>
+    </div>
+    <div class="mision-grid">
+      <div class="mision-card reveal">
+        <span class="mision-card-icon">🎯</span>
+        <h3>Nuestra Misión</h3>
+        <p>Democratizar el acceso a una educación de excelencia. Creemos que la calidad de la preparación académica no puede depender del código postal ni del presupuesto familiar. Cada estudiante merece lo mejor.</p>
+      </div>
+      <div class="mision-card reveal">
+        <span class="mision-card-icon">🔭</span>
+        <h3>Nuestra Visión</h3>
+        <p>Ser el referente de educación personalizada online en Chile, donde cada alumno tenga un plan diseñado a su medida, con el seguimiento y el apoyo humano que marca la diferencia entre aprobar y transformar su vida.</p>
+      </div>
+      <div class="mision-card dark reveal">
+        <span class="mision-card-icon">💡</span>
+        <h3>Nuestros Valores</h3>
+        <p>Cercanía, excelencia académica, compromiso real con el resultado de cada alumno y acceso igualitario. No somos una academia masiva: somos un equipo que conoce a cada estudiante por su nombre.</p>
+      </div>
+      <div class="mision-card reveal">
+        <span class="mision-card-icon">🤝</span>
+        <h3>Nuestro Compromiso</h3>
+        <p>Acompañamos a cada alumno desde la primera clase hasta el día del examen. Nos comunicamos con las familias, ajustamos el plan cuando es necesario y celebramos cada logro. Porque el éxito de tu hijo es el nuestro.</p>
+      </div>
+    </div>
+
+    <!-- ── CÓMO NACE MIRAZA ── -->
+    <div class="origen-section">
+      <div class="section-header reveal">
+        <div class="section-tag">Nuestra historia</div>
+        <h2 class="section-title">¿Cómo nace Miraza?</h2>
+      </div>
+      <div class="origen-grid">
+        <div class="origen-visual reveal">
+          <div class="origen-visual-tag">El origen</div>
+          <h3>De una idea a un proyecto de impacto</h3>
+          <p>Miraza nace de una convicción profunda: que la calidad de la preparación universitaria no puede depender de dónde vives ni de cuánto puedes gastar. Valentina y su socia lo vieron de primera mano: estudiantes con enorme potencial que no llegaban a la universidad por falta de acceso a preparación de calidad.</p>
+          <p>Lo que comenzó como clases de refuerzo entre conocidos se convirtió rápidamente en un proyecto de impacto real. Hoy, Miraza es sinónimo de compromiso, cercanía y resultados concretos, con un equipo docente que entiende que enseñar es mucho más que transmitir contenido.</p>
+        </div>
+        <div class="origen-values">
+          <div class="origen-value reveal">
+            <div class="origen-value-num">1</div>
+            <div>
+              <h4>El diagnóstico como punto de partida</h4>
+              <p>Antes de empezar, entendemos exactamente dónde está cada estudiante. Cada plan es diseñado a medida, no es un modelo genérico.</p>
+            </div>
+          </div>
+          <div class="origen-value reveal">
+            <div class="origen-value-num">2</div>
+            <div>
+              <h4>Clases con propósito</h4>
+              <p>Cada sesión tiene un objetivo claro y medible. No llenamos horas: generamos avances reales que el alumno y la familia pueden ver.</p>
+            </div>
+          </div>
+          <div class="origen-value reveal">
+            <div class="origen-value-num">3</div>
+            <div>
+              <h4>Seguimiento continuo</h4>
+              <p>El progreso se mide, se comunica y se ajusta. Docentes, alumnos y familias están siempre en la misma página.</p>
+            </div>
+          </div>
+          <div class="origen-value reveal">
+            <div class="origen-value-num">4</div>
+            <div>
+              <h4>100% online, 100% presente</h4>
+              <p>La tecnología nos permite llegar a cualquier rincón de Chile sin sacrificar la cercanía. Google Classroom, clases en vivo y material siempre disponible.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FUNDADORAS ── -->
+    <div class="fundadoras-section">
+      <div class="section-header reveal">
+        <div class="section-tag">Las personas detrás</div>
+        <h2 class="section-title">Nuestras Fundadoras</h2>
+        <p class="section-sub">Haz clic en las esferas para conocerlas</p>
+      </div>
+
+      <div class="spheres-row">
+        <div class="sphere-wrap reveal">
+          <div class="sphere-lg" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Valentina Miranda">
+            <div class="sphere-lg-front" style="background:linear-gradient(135deg,#0A1F44,#1B4DB8);">
+              <div class="sphere-lg-initial">V</div>
+              <div class="sphere-lg-hint">clic para conocerla →</div>
+            </div>
+            <div class="sphere-lg-back">
+              <div class="sphere-back-name">Valentina Miranda</div>
+              <div class="sphere-back-role">Co-fundadora</div>
+              <p class="sphere-back-bio">Apasionada por el acceso igualitario a la educación. Creó Miraza para que cada estudiante tenga la mejor preparación.</p>
+            </div>
+          </div>
+          <div>
+            <div class="sphere-label-name">Valentina Miranda</div>
+            <div class="sphere-label-role">Co-fundadora · Miraza</div>
+          </div>
+        </div>
+
+        <div class="sphere-wrap reveal">
+          <div class="sphere-lg" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Co-fundadora Arriaza">
+            <div class="sphere-lg-front" style="background:linear-gradient(135deg,#065F46,#0D9065);">
+              <div class="sphere-lg-initial">A</div>
+              <div class="sphere-lg-hint">clic para conocerla →</div>
+            </div>
+            <div class="sphere-lg-back">
+              <div class="sphere-back-name">Arriaza</div>
+              <div class="sphere-back-role">Co-fundadora</div>
+              <p class="sphere-back-bio">Comprometida con acompañar a cada estudiante. Miraza es el puente entre el esfuerzo de hoy y el logro de mañana.</p>
+            </div>
+          </div>
+          <div>
+            <div class="sphere-label-name">Arriaza</div><!-- TODO: nombre de pila -->
+            <div class="sphere-label-role">Co-fundadora · Miraza</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bios expandidas -->
+      <div class="fundadoras-bios">
+        <div class="fund-bio-card reveal">
+          <div class="fund-bio-header">
+            <div class="fund-bio-avatar" style="background:linear-gradient(135deg,rgba(27,77,184,0.12),rgba(245,166,35,0.1));">V</div>
+            <div>
+              <div class="fund-bio-name">Valentina Miranda</div>
+              <div class="fund-bio-role">Co-fundadora · Miraza</div>
+            </div>
+          </div>
+          <div class="fund-bio-text">
+            <p>Valentina es una educadora apasionada por la equidad en el acceso al conocimiento. Con experiencia en preparación para pruebas estandarizadas, identificó tempranamente que los mejores recursos estaban concentrados en pocas manos.</p>
+            <p>Su convicción de que el talento está distribuido equitativamente en Chile, pero las oportunidades no, la llevó a crear Miraza: una plataforma donde cada alumno recibe atención de calidad sin importar su ubicación o situación económica.</p>
+          </div>
+        </div>
+
+        <div class="fund-bio-card reveal">
+          <div class="fund-bio-header">
+            <div class="fund-bio-avatar" style="background:linear-gradient(135deg,rgba(6,95,70,0.12),rgba(245,166,35,0.1));">A</div>
+            <div>
+              <div class="fund-bio-name">Arriaza</div><!-- TODO: nombre de pila -->
+              <div class="fund-bio-role">Co-fundadora · Miraza</div>
+            </div>
+          </div>
+          <div class="fund-bio-text">
+            <p>Con un profundo compromiso por el acompañamiento estudiantil, Arriaza aporta a Miraza su visión de la educación como proceso integral. Para ella, preparar a un alumno no es solo enseñar contenidos: es fortalecer la confianza y la autonomía.</p>
+            <p>Su experiencia trabajando con estudiantes de distintos perfiles y necesidades la convirtió en el pilar humano de Miraza: el vínculo entre el equipo docente, los alumnos y las familias.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EQUIPO DOCENTE ── -->
+    <div class="section-header reveal">
+      <div class="section-tag">El equipo</div>
+      <h2 class="section-title">Nuestro Staff Docente</h2>
+      <p class="section-sub">Especialistas comprometidos con el resultado de cada alumno</p>
+    </div>
+
+    <div class="staff-section reveal">
+      <!-- Esferas pequeñas -->
+      <div class="spheres-row" style="margin-bottom: 0; perspective: 1200px;">
+        <div class="sphere-wrap">
+          <div class="sphere-sm" onclick="this.classList.toggle('flipped')" role="button" tabindex="0">
+            <div class="sphere-sm-front"><div class="sphere-sm-initial" style="color:#1B4DB8">M</div><div class="sphere-sm-hint">clic →</div></div>
+            <div class="sphere-sm-back"><div class="sphere-sm-back-name">Prof. Martínez</div><div class="sphere-sm-back-subj">Matemática PAES M1 y M2</div></div>
+          </div>
+          <div class="sphere-sm-label-name">Prof. Martínez</div>
+          <div class="sphere-sm-label-subj">Matemática</div>
+        </div>
+        <div class="sphere-wrap">
+          <div class="sphere-sm" onclick="this.classList.toggle('flipped')" role="button" tabindex="0">
+            <div class="sphere-sm-front"><div class="sphere-sm-initial" style="color:#5B21B6">V</div><div class="sphere-sm-hint">clic →</div></div>
+            <div class="sphere-sm-back" style="background:linear-gradient(135deg,#3B0764,#5B21B6);"><div class="sphere-sm-back-name">Prof. Valenzuela</div><div class="sphere-sm-back-subj">Lenguaje y Comunicación</div></div>
+          </div>
+          <div class="sphere-sm-label-name">Prof. Valenzuela</div>
+          <div class="sphere-sm-label-subj">Lenguaje</div>
+        </div>
+        <div class="sphere-wrap">
+          <div class="sphere-sm" onclick="this.classList.toggle('flipped')" role="button" tabindex="0">
+            <div class="sphere-sm-front"><div class="sphere-sm-initial" style="color:#B45309">R</div><div class="sphere-sm-hint">clic →</div></div>
+            <div class="sphere-sm-back" style="background:linear-gradient(135deg,#78350F,#B45309);"><div class="sphere-sm-back-name">Prof. Rojas</div><div class="sphere-sm-back-subj">Historia y Cs. Sociales</div></div>
+          </div>
+          <div class="sphere-sm-label-name">Prof. Rojas</div>
+          <div class="sphere-sm-label-subj">Historia</div>
+        </div>
+        <div class="sphere-wrap">
+          <div class="sphere-sm" onclick="this.classList.toggle('flipped')" role="button" tabindex="0">
+            <div class="sphere-sm-front"><div class="sphere-sm-initial" style="color:#065F46">C</div><div class="sphere-sm-hint">clic →</div></div>
+            <div class="sphere-sm-back" style="background:linear-gradient(135deg,#022c22,#065F46);"><div class="sphere-sm-back-name">Prof. Castillo</div><div class="sphere-sm-back-subj">Ciencias PAES</div></div>
+          </div>
+          <div class="sphere-sm-label-name">Prof. Castillo</div>
+          <div class="sphere-sm-label-subj">Ciencias</div>
+        </div>
+        <div class="sphere-wrap">
+          <div class="sphere-sm" onclick="this.classList.toggle('flipped')" role="button" tabindex="0">
+            <div class="sphere-sm-front"><div class="sphere-sm-initial" style="color:#0A1F44">S</div><div class="sphere-sm-hint">clic →</div></div>
+            <div class="sphere-sm-back"><div class="sphere-sm-back-name">Prof. Soto</div><div class="sphere-sm-back-subj">Apoyo Sicopedagógico</div></div>
+          </div>
+          <div class="sphere-sm-label-name">Prof. Soto</div>
+          <div class="sphere-sm-label-subj">Sicopedagogía</div>
+        </div>
+      </div>
+
+      <!-- Bios del staff -->
+      <div class="staff-bios">
+        <div class="staff-bio-row">
+          <div class="staff-bio-avatar" style="background:linear-gradient(135deg,rgba(27,77,184,0.12),rgba(27,77,184,0.05));">M</div>
+          <div>
+            <div class="staff-bio-name">Prof. Martínez</div>
+            <div class="staff-bio-subj">Matemática PAES M1 y M2</div>
+            <p class="staff-bio-text">Más de 5 años preparando estudiantes para la PAES. Especialista en álgebra, geometría y estadística. Su metodología se enfoca en los patrones de preguntas más frecuentes de la prueba, logrando avances medibles en pocas semanas.</p>
+          </div>
+        </div>
+        <div class="staff-bio-row">
+          <div class="staff-bio-avatar" style="background:linear-gradient(135deg,rgba(91,33,182,0.12),rgba(91,33,182,0.05));">V</div>
+          <div>
+            <div class="staff-bio-name">Prof. Valenzuela</div>
+            <div class="staff-bio-subj">Lenguaje y Comunicación</div>
+            <p class="staff-bio-text">Experta en comprensión lectora y análisis textual. Enseña estrategias concretas para abordar cada tipo de texto del PAES con eficiencia, optimizando el tiempo de respuesta y mejorando la comprensión global.</p>
+          </div>
+        </div>
+        <div class="staff-bio-row">
+          <div class="staff-bio-avatar" style="background:linear-gradient(135deg,rgba(180,83,9,0.12),rgba(180,83,9,0.05));">R</div>
+          <div>
+            <div class="staff-bio-name">Prof. Rojas</div>
+            <div class="staff-bio-subj">Historia y Ciencias Sociales</div>
+            <p class="staff-bio-text">Magíster en Historia con visión crítica. Domina el análisis de fuentes históricas y la formación ciudadana. Su clase conecta los contenidos con la realidad actual para un aprendizaje duradero y significativo.</p>
+          </div>
+        </div>
+        <div class="staff-bio-row">
+          <div class="staff-bio-avatar" style="background:linear-gradient(135deg,rgba(6,95,70,0.12),rgba(6,95,70,0.05));">C</div>
+          <div>
+            <div class="staff-bio-name">Prof. Castillo</div>
+            <div class="staff-bio-subj">Ciencias PAES — Biología, Física y Química</div>
+            <p class="staff-bio-text">Especialista en el módulo electivo de Ciencias PAES. Trabaja las tres disciplinas con ejercicios aplicados y un enfoque en los conceptos que más aparecen en la prueba real, logrando alta eficiencia en el estudio.</p>
+          </div>
+        </div>
+        <div class="staff-bio-row">
+          <div class="staff-bio-avatar" style="background:linear-gradient(135deg,rgba(10,31,68,0.12),rgba(10,31,68,0.05));">S</div>
+          <div>
+            <div class="staff-bio-name">Prof. Soto</div>
+            <div class="staff-bio-subj">Apoyo Sicopedagógico</div>
+            <p class="staff-bio-text">Especialista en aprendizaje diferenciado. Trabaja con estudiantes que requieren metodologías adaptadas, realizando diagnósticos individuales y diseñando planes personalizados que potencian las fortalezas de cada alumno.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FAQ ── -->
+    <div class="faq-section">
+      <div class="section-header reveal">
+        <div class="section-tag">Preguntas frecuentes</div>
+        <h2 class="section-title">Lo que nos preguntan</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item reveal">
+          <summary class="faq-question">¿En qué se diferencia Miraza de otros preuniversitarios?</summary>
+          <div class="faq-answer">En Miraza no somos una academia masiva. Trabajamos con grupos reducidos para garantizar que cada docente conozca el progreso individual de cada alumno. Además, ofrecemos apoyo sicopedagógico integrado, algo que pocas plataformas consideran como parte esencial del proceso educativo.</div>
+        </details>
+        <details class="faq-item reveal">
+          <summary class="faq-question">¿Cuáles son los programas disponibles?</summary>
+          <div class="faq-answer">Contamos con cuatro programas: <strong>Preparación PAES</strong> (todas las materias o por área), <strong>Mejora tu NEM</strong>, <strong>Nivelación de Estudios</strong> (básica y media) y <strong>Clases Especializadas</strong> para estudiantes con necesidades de aprendizaje. Todos incluyen diagnóstico inicial.</div>
+        </details>
+        <details class="faq-item reveal">
+          <summary class="faq-question">¿Cómo son las clases? ¿En vivo o grabadas?</summary>
+          <div class="faq-answer">Las clases son en vivo a través de Google Meet y quedan grabadas en Google Classroom para que puedas revisarlas cuando quieras. Todo el material, guías y ensayos también están disponibles 24/7 en la plataforma.</div>
+        </details>
+        <details class="faq-item reveal">
+          <summary class="faq-question">¿Puedo hablar con el docente fuera de clase?</summary>
+          <div class="faq-answer">Sí. Nuestros docentes mantienen canales de comunicación directa con los alumnos y las familias. Si surge una duda entre sesiones, se puede consultar por el canal asignado y el tiempo de respuesta máximo es de 24 horas hábiles.</div>
+        </details>
+        <details class="faq-item reveal">
+          <summary class="faq-question">¿Cómo me inscribo?</summary>
+          <div class="faq-answer">Puedes inscribirte desde nuestra <a href="{{ url_for('contacto') }}" style="color:var(--blue);font-weight:600;">página de contacto</a> o escribirnos directamente por WhatsApp. Te contactamos en menos de 24 horas para coordinar el diagnóstico inicial y el inicio de clases.</div>
+        </details>
+      </div>
+    </div>
+
+  </div><!-- /qs-inner -->
+</div><!-- /qs-page -->
+
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+  document.querySelectorAll('.sphere-lg, .sphere-sm').forEach(function(card) {
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.classList.toggle('flipped'); }
+      if (e.key === 'Escape') { this.classList.remove('flipped'); }
+    });
+  });
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('visible'); obs.unobserve(entry.target); }
+      });
+    }, { threshold: 0.1 });
+    obs.observe(el);
+  });
+</script>
+{% endblock %}
