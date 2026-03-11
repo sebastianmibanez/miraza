@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+
+{% block title %}Aranceles — Miraza Preuniversitario{% endblock %}
+{% block meta_desc %}Conoce los aranceles y valores de los planes de Miraza. Educación de calidad a precio justo, con opciones para cada presupuesto.{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .aranceles-wrap { max-width: 1100px; margin: 0 auto; padding: 80px 6vw 100px; }
+
+  /* ── PRICING CARDS ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 72px;
+    align-items: start;
+  }
+
+  .pricing-card {
+    background: var(--white);
+    border: 1.5px solid rgba(10,31,68,0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s, transform 0.3s;
+    box-shadow: 0 2px 12px rgba(10,31,68,0.06);
+  }
+  .pricing-card:hover { box-shadow: 0 12px 36px rgba(10,31,68,0.13); transform: translateY(-4px); }
+  .pricing-card.featured {
+    border-color: var(--gold);
+    box-shadow: 0 8px 32px rgba(245,166,35,0.18);
+    transform: translateY(-8px);
+  }
+  .pricing-card.featured:hover { transform: translateY(-12px); }
+
+  .pricing-badge {
+    background: var(--gold);
+    color: var(--navy);
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 7px 16px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pricing-header {
+    padding: 32px 28px 24px;
+    border-bottom: 1px solid rgba(10,31,68,0.07);
+  }
+  .pricing-plan-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 10px;
+  }
+  .pricing-card.featured .pricing-plan-name { color: #b87900; }
+  .pricing-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    color: var(--navy);
+    margin-bottom: 16px;
+    line-height: 1.25;
+  }
+  .pricing-price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .price-currency { font-size: 1rem; font-weight: 600; color: var(--muted); }
+  .price-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .pricing-card.featured .price-amount { color: var(--blue); }
+  .price-period { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+  .price-note { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+  .pricing-body { padding: 28px 28px 32px; flex: 1; display: flex; flex-direction: column; }
+
+  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 28px; flex: 1; }
+  .pricing-features li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 0.87rem; color: var(--text); line-height: 1.5;
+  }
+  .pricing-features li .fi {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(27,77,184,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; color: var(--blue); font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .pricing-card.featured .pricing-features li .fi { background: rgba(245,166,35,0.15); color: #b87900; }
+  .pricing-features li .fi::before { content: '✓'; }
+
+  .pricing-divider { height: 1px; background: rgba(10,31,68,0.07); margin: 16px 0; }
+  .pricing-extras { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+  .pricing-extras li { font-size: 0.82rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+  .pricing-extras li::before { content: '+'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+  .btn-pricing {
+    display: block; width: 100%;
+    padding: 14px 20px; border-radius: 10px;
+    font-size: 0.9rem; font-weight: 700;
+    text-align: center; cursor: pointer;
+    border: none; font-family: 'Outfit', sans-serif;
+    text-decoration: none; transition: all 0.25s;
+  }
+  .btn-pricing.primary { background: linear-gradient(135deg, var(--navy), var(--blue)); color: var(--white); }
+  .btn-pricing.primary:hover { box-shadow: 0 6px 20px rgba(27,77,184,0.3); transform: translateY(-2px); }
+  .btn-pricing.gold { background: var(--gold); color: var(--navy); }
+  .btn-pricing.gold:hover { background: var(--gold-l); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245,166,35,0.3); }
+  .btn-pricing.outline { background: transparent; border: 1.5px solid rgba(10,31,68,0.18); color: var(--navy); }
+  .btn-pricing.outline:hover { background: var(--light); }
+
+  /* ── PACK EGRESADOS (ancho completo) ── */
+  .pack-egresados {
+    background: linear-gradient(135deg, #0A1F44 0%, #1a3870 100%);
+    border-radius: 20px;
+    padding: 48px 52px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    margin-bottom: 72px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pack-egresados::before {
+    content: '';
+    position: absolute; right: -80px; top: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    border: 1px solid rgba(245,166,35,0.12);
+  }
+  .pack-egresados::after {
+    content: '';
+    position: absolute; left: -50px; bottom: -50px;
+    width: 220px; height: 220px; border-radius: 50%;
+    border: 1px solid rgba(245,166,35,0.08);
+  }
+  .pack-left { position: relative; z-index: 1; }
+  .pack-tag { display: inline-block; background: var(--gold); color: var(--navy); font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 18px; }
+  .pack-title { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 2.5vw, 2rem); color: var(--white); margin-bottom: 14px; line-height: 1.2; }
+  .pack-desc { color: rgba(255,255,255,0.65); font-size: 0.92rem; line-height: 1.72; }
+  .pack-right { position: relative; z-index: 1; }
+  .pack-price-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .pack-price-label { font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .pack-price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
+  .pack-price-curr { font-size: 1rem; color: var(--gold); font-weight: 600; }
+  .pack-price-num { font-family: 'Playfair Display', serif; font-size: 2.4rem; color: var(--white); line-height: 1; }
+  .pack-price-period { font-size: 0.82rem; color: rgba(255,255,255,0.5); }
+  .pack-price-note { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+  .pack-includes { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .pack-includes li { display: flex; align-items: center; gap: 10px; font-size: 0.87rem; color: rgba(255,255,255,0.75); }
+  .pack-includes li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+  /* ── NOTAS ADICIONALES ── */
+  .notas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 72px; }
+  .nota-card {
+    background: var(--light);
+    border-radius: 14px;
+    padding: 24px 22px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .nota-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .nota-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .nota-card p { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── FAQ ── */
+  .faq-item { border: 1px solid rgba(10,31,68,0.1); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+  .faq-item.open { box-shadow: 0 4px 16px rgba(10,31,68,0.08); }
+  .faq-question { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; cursor: pointer; background: var(--white); font-weight: 600; font-size: 0.94rem; color: var(--navy); transition: background 0.2s; user-select: none; border: none; width: 100%; text-align: left; font-family: 'Outfit', sans-serif; }
+  .faq-question:hover { background: var(--light); }
+  .faq-arrow { transition: transform 0.3s; font-size: 0.75rem; color: var(--blue); flex-shrink: 0; margin-left: 12px; }
+  .faq-item.open .faq-arrow { transform: rotate(180deg); }
+  .faq-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s; background: var(--white); font-size: 0.9rem; color: var(--muted); line-height: 1.75; }
+  .faq-item.open .faq-answer { max-height: 320px; padding-bottom: 20px; }
+
+  /* ── CTA BANNER ── */
+  .aranceles-cta {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a3870 100%);
+    border-radius: 20px;
+    padding: 60px 48px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .aranceles-cta::before { content: ''; position: absolute; right: -60px; top: -60px; width: 260px; height: 260px; border-radius: 50%; border: 1px solid rgba(245,166,35,0.15); }
+  .aranceles-cta h2 { font-family: 'Playfair Display', serif; color: var(--white); font-size: clamp(1.6rem, 2.5vw, 2.2rem); margin-bottom: 14px; position: relative; z-index: 1; }
+  .aranceles-cta p { color: rgba(255,255,255,0.65); font-size: 1rem; margin-bottom: 32px; position: relative; z-index: 1; }
+  .aranceles-cta .cta-btns { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; position: relative; z-index: 1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .pricing-grid { grid-template-columns: 1fr 1fr; }
+    .notas-grid { grid-template-columns: 1fr 1fr; }
+    .pack-egresados { grid-template-columns: 1fr; gap: 32px; padding: 36px 28px; }
+  }
+  @media (max-width: 600px) {
+    .pricing-grid { grid-template-columns: 1fr; }
+    .pricing-card.featured { transform: none; }
+    .notas-grid { grid-template-columns: 1fr; }
+    .aranceles-cta { padding: 44px 24px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-tag">Transparencia Total</div>
+    <h1>Aranceles <em>& Valores</em></h1>
+    <p>Planes accesibles diseñados para que el presupuesto nunca sea un obstáculo en tu camino educativo.</p>
+  </div>
+</section>
+
+<div class="aranceles-wrap">
+
+  <!-- SECTION HEADER -->
+  <div class="section-header reveal">
+    <span class="section-tag">Precios mensuales</span>
+    <h2 class="section-title">Sin letras chicas, sin sorpresas</h2>
+    <p class="section-sub">Todos los valores incluyen IVA. Pago mensual, sin contratos de largo plazo.</p>
+  </div>
+
+  <!-- PRICING CARDS -->
+  <div class="pricing-grid">
+
+    <!-- PREPARACIÓN PAES -->
+    <div class="pricing-card reveal">
+      <div class="pricing-header">
+        <div class="pricing-plan-name">Plan 01</div>
+        <div class="pricing-title">Preparación PAES</div>
+        <div class="pricing-price">
+          <span class="price-currency">$</span>
+          <span class="price-amount">69.900</span>
+          <span class="price-period">/mes</span>
+        </div>
+        <div class="price-note">por asignatura · IVA incluido</div>
+      </div>
+      <div class="pricing-body">
+        <ul class="pricing-features">
+          <li><span class="fi"></span>3 clases en vivo por semana</li>
+          <li><span class="fi"></span>Material de estudio completo</li>
+          <li><span class="fi"></span>Simulacros mensuales corregidos</li>
+          <li><span class="fi"></span>Banco de +2.000 preguntas</li>
+          <li><span class="fi"></span>Grupos de máximo 12 alumnos</li>
+          <li><span class="fi"></span>Chat de consultas con el profe</li>
+        </ul>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-extras">
+          <li>Descuento 15% al contratar 2 materias</li>
+          <li>Descuento 25% al contratar 3 o más materias</li>
+        </ul>
+        <a href="{{ url_for('contacto') }}" class="btn-pricing primary">Inscribirme</a>
+      </div>
+    </div>
+
+    <!-- MEJORA TU NEM (FEATURED) -->
+    <div class="pricing-card featured reveal">
+      <div class="pricing-badge">⭐ Más elegido</div>
+      <div class="pricing-header">
+        <div class="pricing-plan-name">Plan 02</div>
+        <div class="pricing-title">Mejora tu NEM</div>
+        <div class="pricing-price">
+          <span class="price-currency">$</span>
+          <span class="price-amount">59.900</span>
+          <span class="price-period">/mes</span>
+        </div>
+        <div class="price-note">por materia · IVA incluido</div>
+      </div>
+      <div class="pricing-body">
+        <ul class="pricing-features">
+          <li><span class="fi"></span>2 clases de refuerzo por semana</li>
+          <li><span class="fi"></span>Diagnóstico inicial gratuito</li>
+          <li><span class="fi"></span>Guías y tareas semanales</li>
+          <li><span class="fi"></span>Reporte mensual para apoderados</li>
+          <li><span class="fi"></span>Comunicación directa con el profe</li>
+          <li><span class="fi"></span>Plan de estudio personalizado</li>
+        </ul>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-extras">
+          <li>Pack todas las materias: $149.900/mes</li>
+          <li>Acceso a diagnóstico sicopedagógico opcional</li>
+        </ul>
+        <a href="{{ url_for('contacto') }}" class="btn-pricing gold">Inscribirme</a>
+      </div>
+    </div>
+
+    <!-- NIVELACIÓN DE ESTUDIOS -->
+    <div class="pricing-card reveal">
+      <div class="pricing-header">
+        <div class="pricing-plan-name">Plan 03</div>
+        <div class="pricing-title">Nivelación de Estudios</div>
+        <div class="pricing-price">
+          <span class="price-currency">$</span>
+          <span class="price-amount">54.900</span>
+          <span class="price-period">/mes</span>
+        </div>
+        <div class="price-note">por asignatura · IVA incluido</div>
+      </div>
+      <div class="pricing-body">
+        <ul class="pricing-features">
+          <li><span class="fi"></span>2 clases semanales adaptadas</li>
+          <li><span class="fi"></span>Diagnóstico inicial incluido</li>
+          <li><span class="fi"></span>Material didáctico personalizado</li>
+          <li><span class="fi"></span>Informe mensual de avance</li>
+          <li><span class="fi"></span>Básica y media disponibles</li>
+          <li><span class="fi"></span>Ritmo ajustado al estudiante</li>
+        </ul>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-extras">
+          <li>Apoyo sicopedagógico disponible como complemento</li>
+          <li>Descuento hermanos: 20% en la segunda inscripción</li>
+        </ul>
+        <a href="{{ url_for('contacto') }}" class="btn-pricing primary">Inscribirme</a>
+      </div>
+    </div>
+
+  </div><!-- /pricing-grid -->
+
+  <!-- PACK EGRESADOS (ancho completo) -->
+  <div class="pack-egresados reveal">
+    <div class="pack-left">
+      <span class="pack-tag">Pack Especial</span>
+      <h2 class="pack-title">Clases Especializadas<br>& Apoyo Sicopedagógico</h2>
+      <p class="pack-desc">Diseñado para estudiantes con necesidades educativas especiales o que requieren una intervención profesional. Coordinación entre sicopedagoga y docente para un acompañamiento integral.</p>
+    </div>
+    <div class="pack-right">
+      <div class="pack-price-box">
+        <div class="pack-price-label">Desde</div>
+        <div class="pack-price-row">
+          <span class="pack-price-curr">$</span>
+          <span class="pack-price-num">79.900</span>
+          <span class="pack-price-period">/mes</span>
+        </div>
+        <div class="pack-price-note">Valor según evaluación y plan personalizado · IVA incluido</div>
+      </div>
+      <ul class="pack-includes">
+        <li>Diagnóstico sicopedagógico inicial</li>
+        <li>Sesiones individuales o grupos pequeños (máx. 6)</li>
+        <li>Plan de intervención personalizado</li>
+        <li>Coordinación con colegio si se requiere</li>
+        <li>Acompañamiento familiar incluido</li>
+      </ul>
+      <a href="{{ url_for('apoyo') }}" class="btn-gold" style="display:block;text-align:center;">Conocer más →</a>
+    </div>
+  </div>
+
+  <!-- NOTAS ADICIONALES -->
+  <div class="notas-grid reveal">
+    <div class="nota-card">
+      <span class="nota-icon">🗓️</span>
+      <div>
+        <h4>Sin contratos largos</h4>
+        <p>Pago mes a mes. Puedes pausar o cancelar con 5 días de aviso, sin penalización.</p>
+      </div>
+    </div>
+    <div class="nota-card">
+      <span class="nota-icon">💳</span>
+      <div>
+        <h4>Medios de pago</h4>
+        <p>Transferencia bancaria, WebPay o depósito. El pago se realiza entre el 1° y 5° de cada mes.</p>
+      </div>
+    </div>
+    <div class="nota-card">
+      <span class="nota-icon">🎓</span>
+      <div>
+        <h4>Becas y descuentos</h4>
+        <p>Evaluamos casos sociales. Si el costo es un obstáculo, conversemos — siempre buscamos una solución.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ ARANCELES -->
+  <div class="reveal" style="margin-bottom:72px">
+    <div class="section-header" style="margin-bottom:36px">
+      <span class="section-tag">Preguntas frecuentes</span>
+      <h2 class="section-title">Dudas sobre los pagos</h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false">
+        ¿Hay matrícula o cobros de inscripción?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-answer">No. No cobramos matrícula ni cuota de inscripción. El primer pago corresponde al primer mes de clases y cubre todos los materiales incluidos en el plan.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false">
+        ¿Puedo pedir una clase de prueba antes de pagar?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-answer">Sí. Ofrecemos una sesión de orientación gratuita donde conoces al equipo, evaluamos tu nivel y respondemos tus dudas. Así decides con información completa si Miraza es para ti.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false">
+        ¿Los precios cambian en el año?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-answer">Los precios son fijos durante el año lectivo. Si hay algún ajuste, se avisa con al menos 30 días de anticipación. Los estudiantes activos tienen garantizado su precio por el período vigente.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" aria-expanded="false">
+        ¿Qué pasa si falto a una clase?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-answer">Todas las clases quedan grabadas y disponibles en tu canal privado. Puedes recuperarlas cuando quieras. También hay una sesión de consultas semanal adicional para resolver dudas acumuladas.</div>
+    </div>
+  </div>
+
+  <!-- CTA BANNER -->
+  <div class="aranceles-cta reveal">
+    <h2>¿Listo para empezar?</h2>
+    <p>Agenda tu sesión de orientación gratuita hoy mismo.</p>
+    <div class="cta-btns">
+      <a href="{{ url_for('contacto') }}" class="btn-gold">Quiero inscribirme</a>
+      <a href="{{ url_for('planes') }}" class="btn-outline">Ver planes →</a>
+    </div>
+  </div>
+
+</div><!-- /aranceles-wrap -->
+
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+  document.querySelectorAll('.faq-question').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var item = this.closest('.faq-item');
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(i) {
+        i.classList.remove('open');
+        i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        this.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+</script>
+{% endblock %}
