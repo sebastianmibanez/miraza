@@ -472,12 +472,165 @@
     .prog-wrap.from-left.slide-in  { animation: slideFromLeft  0.7s cubic-bezier(0.4,0,0.2,1) var(--pd,0s) forwards; }
     .prog-wrap.from-right.slide-in { animation: slideFromRight 0.7s cubic-bezier(0.4,0,0.2,1) var(--pd,0s) forwards; }
 
+    /* ── QUIÉNES SOMOS ── */
+    .quienes-somos { padding: 100px 6vw; background: var(--light); }
+
+    .sphere-section-title {
+      text-align: center; font-family: 'Playfair Display', serif;
+      font-size: 1.35rem; color: var(--navy); margin-bottom: 40px;
+    }
+    .sphere-section-title::after {
+      content: ''; display: block; width: 40px; height: 2px;
+      background: var(--gold); margin: 10px auto 0;
+    }
+
+    /* Row wrapper */
+    .spheres-row { display: flex; justify-content: center; gap: 52px; flex-wrap: wrap; margin-bottom: 72px; perspective: 1200px; }
+    .sphere-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+    /* Large sphere (founders) */
+    .sphere-lg {
+      width: 220px; height: 220px; cursor: pointer;
+      transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.4,0.2,0.2,1);
+      border-radius: 50%; position: relative;
+    }
+    .sphere-lg.flipped { transform: rotateY(180deg); }
+    .sphere-lg-front, .sphere-lg-back {
+      position: absolute; inset: 0; border-radius: 50%;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      overflow: hidden; padding: 20px; text-align: center;
+    }
+    .sphere-lg-front {
+      box-shadow: 0 12px 40px rgba(10,31,68,0.28), inset 0 -4px 20px rgba(0,0,0,0.2);
+      transition: box-shadow 0.3s;
+    }
+    .sphere-lg:not(.flipped):hover .sphere-lg-front { box-shadow: 0 20px 56px rgba(10,31,68,0.38), inset 0 -4px 20px rgba(0,0,0,0.2); }
+    .sphere-lg-back {
+      background: linear-gradient(160deg, #06101f 0%, #0A1F44 100%);
+      transform: rotateY(180deg); gap: 5px;
+    }
+    .sphere-lg-initial { font-family: 'Playfair Display', serif; font-size: 4.5rem; color: var(--gold); font-weight: 900; line-height: 1; }
+    .sphere-lg-hint { font-size: 0.62rem; color: rgba(255,255,255,0.4); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 8px; }
+    .sphere-back-name { font-family: 'Playfair Display', serif; font-size: 0.9rem; color: var(--gold); font-weight: 700; }
+    .sphere-back-role { font-size: 0.68rem; color: rgba(255,255,255,0.6); font-weight: 600; }
+    .sphere-back-bio { font-size: 0.72rem; color: rgba(255,255,255,0.82); line-height: 1.5; margin-top: 5px; }
+    .sphere-label-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--navy); font-weight: 700; text-align: center; }
+    .sphere-label-role { font-size: 0.76rem; color: var(--blue); font-weight: 600; text-align: center; margin-top: 2px; }
+
+    /* Small sphere (staff) */
+    .sphere-sm {
+      width: 148px; height: 148px; cursor: pointer;
+      transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.4,0.2,0.2,1);
+      border-radius: 50%; position: relative;
+    }
+    .sphere-sm.flipped { transform: rotateY(180deg); }
+    .sphere-sm-front, .sphere-sm-back {
+      position: absolute; inset: 0; border-radius: 50%;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      overflow: hidden; padding: 14px; text-align: center;
+    }
+    .sphere-sm-front {
+      background: var(--white); border: 2px solid rgba(10,31,68,0.1);
+      box-shadow: 0 6px 24px rgba(10,31,68,0.09); transition: box-shadow 0.3s;
+    }
+    .sphere-sm:not(.flipped):hover .sphere-sm-front { box-shadow: 0 14px 40px rgba(10,31,68,0.16); }
+    .sphere-sm-back {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      transform: rotateY(180deg); gap: 4px;
+    }
+    .sphere-sm-initial { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 900; line-height: 1; }
+    .sphere-sm-hint { font-size: 0.58rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 6px; }
+    .sphere-sm-back-name { font-family: 'Playfair Display', serif; font-size: 0.78rem; color: var(--gold); font-weight: 700; }
+    .sphere-sm-back-subj { font-size: 0.64rem; color: rgba(255,255,255,0.72); line-height: 1.4; margin-top: 2px; }
+    .sphere-sm-label-name { font-family: 'Playfair Display', serif; font-size: 0.88rem; color: var(--navy); font-weight: 700; text-align: center; }
+    .sphere-sm-label-subj { font-size: 0.7rem; color: var(--muted); text-align: center; margin-top: 1px; }
+
+    /* "Cómo nace Miraza" box */
+    .miraza-origen {
+      max-width: 880px; margin: 0 auto 80px;
+      background: linear-gradient(135deg, var(--navy) 0%, #1a3870 100%);
+      border-radius: 24px; padding: 52px 60px;
+      position: relative; overflow: hidden; color: white;
+    }
+    .miraza-origen::before {
+      content: '\201C'; font-family: 'Playfair Display', serif;
+      font-size: 14rem; color: rgba(245,166,35,0.07);
+      position: absolute; top: -56px; left: 16px; line-height: 1; pointer-events: none;
+    }
+    .miraza-origen-tag { color: var(--gold); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+    .miraza-origen h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 18px; }
+    .miraza-origen p { font-size: 0.92rem; color: rgba(255,255,255,0.80); line-height: 1.85; }
+    .miraza-origen p + p { margin-top: 12px; }
+
+    /* FAQ inside quienes somos (light bg variant) */
+    .qs-faq { max-width: 820px; margin: 72px auto 0; }
+    .qs-faq-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--navy); text-align: center; margin-bottom: 28px; }
+    .qs-faq-title::after { content: ''; display: block; width: 40px; height: 2px; background: var(--gold); margin: 10px auto 0; }
+    .qs-faq .faq-list { gap: 10px; }
+    .qs-faq .faq-item { background: var(--white); border: 1px solid rgba(10,31,68,0.09); }
+    .qs-faq .faq-item[open] { border-color: rgba(27,77,184,0.3); }
+    .qs-faq .faq-question { color: var(--navy); }
+    .qs-faq .faq-question::after { color: var(--blue); }
+    .qs-faq .faq-answer { color: var(--muted); }
+
+    /* ── PROGRAMAS – new back content ── */
+    .prog-back-options { display: flex; flex-direction: column; gap: 5px; margin: 4px 0; }
+    .prog-back-option { font-size: 0.80rem; color: rgba(255,255,255,0.78); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .prog-back-option::before { content: '→'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+    .prog-back-option strong { color: white; }
+    .prog-back-price { color: var(--gold); font-weight: 700; white-space: nowrap; font-size: 0.80rem; }
+
+    /* Aranceles summary */
+    .aranceles-wrap { background: var(--light); padding: 64px 6vw; }
+    .aranceles-wrap .section-header { margin-bottom: 40px; }
+    .aranceles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+    .arancel-card { background: var(--white); border: 1px solid rgba(10,31,68,0.08); border-radius: 16px; padding: 28px 24px; }
+    .arancel-plan { font-weight: 700; font-size: 0.9rem; color: var(--navy); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .arancel-plan-icon { font-size: 1.2rem; }
+    .arancel-items { display: flex; flex-direction: column; gap: 9px; }
+    .arancel-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; padding-bottom: 9px; border-bottom: 1px solid rgba(10,31,68,0.06); }
+    .arancel-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .arancel-row span { color: var(--muted); }
+    .arancel-row strong { color: var(--navy); font-weight: 700; }
+    .arancel-row .gratis { color: #0d7a45; font-weight: 700; }
+    .aranceles-note { text-align: center; font-size: 0.80rem; color: var(--muted); margin-top: 28px; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+    /* ── APOYO SICOPEDAGOGICO ── */
+    .apoyo { padding: 100px 6vw; background: var(--navy); color: white; }
+    .apoyo .section-tag { color: var(--gold); }
+    .apoyo .section-title { color: white; }
+    .apoyo .section-sub { color: rgba(255,255,255,0.52); }
+    .apoyo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; max-width: 1100px; margin: 0 auto; align-items: center; }
+    .apoyo-carousel-wrap { position: relative; border-radius: 20px; overflow: hidden; aspect-ratio: 4/3; }
+    .apoyo-track { display: flex; height: 100%; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); }
+    .apoyo-slide { min-width: 100%; height: 100%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+    .apoyo-s1 { background: linear-gradient(135deg, #1a3a6e, #2B60D4); }
+    .apoyo-s2 { background: linear-gradient(135deg, #065F46, #0D9065); }
+    .apoyo-s3 { background: linear-gradient(135deg, #5B21B6, #7C3AED); }
+    .apoyo-s4 { background: linear-gradient(135deg, #7C2D12, #C2410C); }
+    .apoyo-cdots { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+    .apoyo-dot { width: 7px; height: 7px; border-radius: 50%; border: none; background: rgba(255,255,255,0.38); cursor: pointer; transition: all 0.3s; padding: 0; }
+    .apoyo-dot.active { background: var(--gold); width: 22px; border-radius: 4px; }
+    .apoyo-content { display: flex; flex-direction: column; gap: 26px; }
+    .apoyo-content h3 { font-family: 'Playfair Display', serif; font-size: 1.55rem; line-height: 1.35; }
+    .apoyo-content h3 em { font-style: italic; color: var(--gold); }
+    .apoyo-features { display: flex; flex-direction: column; gap: 18px; }
+    .apoyo-feat { display: flex; gap: 14px; align-items: flex-start; }
+    .apoyo-feat-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .apoyo-feat-title { font-weight: 700; font-size: 0.92rem; color: var(--gold); margin-bottom: 3px; }
+    .apoyo-feat-desc { font-size: 0.82rem; color: rgba(255,255,255,0.68); line-height: 1.6; }
+    .apoyo-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: var(--navy); padding: 13px 26px; border-radius: 10px; font-weight: 700; text-decoration: none; font-size: 0.90rem; transition: all 0.25s; align-self: flex-start; }
+    .apoyo-cta:hover { background: var(--gold-l); transform: translateY(-2px); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .programas-grid { grid-template-columns: 1fr; }
       .prog-card { height: 240px; }
       .inscripcion-grid { grid-template-columns: 1fr; }
       .inscripcion-promo { position: static; }
+      .apoyo-grid { grid-template-columns: 1fr; gap: 48px; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
     }
 
@@ -514,6 +667,13 @@
       .faq-answer { padding: 0 20px 18px; }
       .form-wrapper { padding: 32px 24px; }
       .cloud-3, .cloud-5 { display: none; }
+      .spheres-row { gap: 28px; }
+      .sphere-lg { width: 175px; height: 175px; }
+      .sphere-lg-initial { font-size: 3.6rem; }
+      .sphere-sm { width: 120px; height: 120px; }
+      .sphere-sm-initial { font-size: 2.2rem; }
+      .miraza-origen { padding: 36px 28px; }
+      .miraza-origen::before { font-size: 9rem; }
     }
   </style>
 </head>
@@ -523,12 +683,12 @@
 <nav>
   <div class="nav-logo">Miraza<span>✦</span></div>
   <ul class="nav-links">
-    <li><a href="#materias">Cursos</a></li>
-    <li><a href="#programas">Programas</a></li>
-    <li><a href="#porque">Nosotros</a></li>
-    <li><a href="#profesores">Equipo</a></li>
+    <li><a href="#quienes-somos">Quiénes Somos</a></li>
+    <li><a href="#programas">Planes</a></li>
+    <li><a href="#aranceles">Aranceles</a></li>
+    <li><a href="#profesores">Apoyo Sicoped.</a></li>
     <li><a href="#testimonios">Testimonios</a></li>
-    <li><a href="#inscripcion">Inscripción</a></li>
+    <li><a href="#inscripcion">Contáctanos</a></li>
   </ul>
   <div class="nav-right">
     <a href="#inscripcion" class="nav-cta">Inscríbete</a>
@@ -540,12 +700,12 @@
 
 <!-- Mobile menu -->
 <div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Menú móvil">
-  <a href="#materias"    onclick="closeMobileMenu()">Cursos</a>
-  <a href="#programas"   onclick="closeMobileMenu()">Programas</a>
-  <a href="#porque"      onclick="closeMobileMenu()">Nosotros</a>
-  <a href="#profesores"  onclick="closeMobileMenu()">Equipo</a>
-  <a href="#testimonios" onclick="closeMobileMenu()">Testimonios</a>
-  <a href="#inscripcion" onclick="closeMobileMenu()">Inscripción</a>
+  <a href="#quienes-somos" onclick="closeMobileMenu()">Quiénes Somos</a>
+  <a href="#programas"     onclick="closeMobileMenu()">Planes</a>
+  <a href="#aranceles"     onclick="closeMobileMenu()">Aranceles</a>
+  <a href="#profesores"    onclick="closeMobileMenu()">Apoyo Sicopedagógico</a>
+  <a href="#testimonios"   onclick="closeMobileMenu()">Testimonios</a>
+  <a href="#inscripcion"   onclick="closeMobileMenu()">Contáctanos</a>
 </div>
 
 <!-- HERO CAROUSEL -->
@@ -749,169 +909,375 @@
   <div class="hc-dots-wrap" id="hcDots"></div>
 </div><!-- /hero-carousel -->
 
-<!-- FUNDADORAS -->
-<section class="fundadoras">
+<!-- QUIÉNES SOMOS -->
+<section class="quienes-somos" id="quienes-somos">
   <div class="section-header">
-    <div class="section-tag">Quiénes somos</div>
-    <h2 class="section-title">Las personas detrás de Miraza</h2>
-    <p class="section-sub">Haz clic en cada tarjeta para conocernos</p>
+    <div class="section-tag">Nuestra historia</div>
+    <h2 class="section-title">¿Quiénes Somos?</h2>
+    <p class="section-sub">El equipo y la historia detrás de Miraza</p>
   </div>
-  <div class="fund-grid">
 
-    <div class="fund-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Valentina Miranda — clic para conocerla">
-      <div class="fund-front">
-        <div class="fund-avatar" style="background:linear-gradient(135deg,rgba(27,77,184,0.12),rgba(245,166,35,0.1))">V</div>
-        <div class="fund-name">Valentina Miranda</div>
-        <div class="fund-role">Co-fundadora · Miraza</div>
-        <div class="fund-divider"></div>
-        <span class="fund-hint">Clic para conocerla →</span>
+  <!-- ── Fundadoras (grandes esferas) ── -->
+  <h3 class="sphere-section-title">Nuestras Fundadoras</h3>
+  <div class="spheres-row">
+
+    <!-- Valentina -->
+    <div class="sphere-wrap">
+      <div class="sphere-lg" onclick="this.classList.toggle('flipped')"
+           role="button" tabindex="0" aria-label="Valentina Miranda — clic para conocerla">
+        <div class="sphere-lg-front" style="background:linear-gradient(135deg,#0A1F44,#1B4DB8);">
+          <div class="sphere-lg-initial">V</div>
+          <div class="sphere-lg-hint">clic para conocerla →</div>
+        </div>
+        <div class="sphere-lg-back">
+          <div class="sphere-back-name">Valentina Miranda</div>
+          <div class="sphere-back-role">Co-fundadora</div>
+          <p class="sphere-back-bio">Apasionada por el acceso igualitario a la educación. Creó Miraza para que cada estudiante, sin importar dónde esté, tenga la mejor preparación.</p>
+        </div>
       </div>
-      <div class="fund-back">
-        <div class="fund-back-photo">👩‍💼</div>
-        <div class="fund-back-name">Valentina Miranda</div>
-        <div class="fund-back-role">Co-fundadora</div>
-        <div class="fund-back-divider"></div>
-        <p class="fund-back-bio">Apasionada por la educación y el acceso igualitario a la preparación universitaria. Creó Miraza para que cada estudiante, sin importar dónde esté, tenga la mejor preparación PAES.</p>
+      <div>
+        <div class="sphere-label-name">Valentina Miranda</div>
+        <div class="sphere-label-role">Co-fundadora · Miraza</div>
       </div>
     </div>
 
-    <div class="fund-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Co-fundadora Arriaza — clic para conocerla">
-      <div class="fund-front">
-        <div class="fund-avatar" style="background:linear-gradient(135deg,rgba(6,95,70,0.12),rgba(245,166,35,0.1))">A</div>
-        <!-- TODO: completar nombre de pila -->
-        <div class="fund-name">Arriaza</div>
-        <div class="fund-role">Co-fundadora · Miraza</div>
-        <div class="fund-divider"></div>
-        <span class="fund-hint">Clic para conocerla →</span>
+    <!-- Arriaza -->
+    <div class="sphere-wrap">
+      <div class="sphere-lg" onclick="this.classList.toggle('flipped')"
+           role="button" tabindex="0" aria-label="Co-fundadora Arriaza — clic para conocerla">
+        <div class="sphere-lg-front" style="background:linear-gradient(135deg,#065F46,#0D9065);">
+          <div class="sphere-lg-initial">A</div>
+          <div class="sphere-lg-hint">clic para conocerla →</div>
+        </div>
+        <div class="sphere-lg-back">
+          <div class="sphere-back-name">Arriaza</div><!-- TODO: nombre de pila -->
+          <div class="sphere-back-role">Co-fundadora</div>
+          <p class="sphere-back-bio">Comprometida con acompañar a cada estudiante en su camino. Miraza es el puente entre el esfuerzo de hoy y el logro de mañana.</p>
+        </div>
       </div>
-      <div class="fund-back">
-        <div class="fund-back-photo">👩‍🎓</div>
-        <div class="fund-back-name">Arriaza</div>
-        <div class="fund-back-role">Co-fundadora</div>
-        <div class="fund-back-divider"></div>
-        <p class="fund-back-bio">Comprometida con acompañar a cada estudiante en su camino hacia la universidad. Su visión es que Miraza sea el puente entre el esfuerzo de hoy y el logro de mañana.</p>
+      <div>
+        <div class="sphere-label-name">Arriaza</div>
+        <div class="sphere-label-role">Co-fundadora · Miraza</div>
       </div>
     </div>
 
-  </div>
-</section>
+  </div><!-- /spheres-row fundadoras -->
 
-<!-- PROGRAMAS -->
+  <!-- ── Cómo nace Miraza ── -->
+  <div class="miraza-origen">
+    <div class="miraza-origen-tag">Nuestra historia</div>
+    <h3>¿Cómo nace Miraza?</h3>
+    <p>Miraza nace de una convicción profunda: que la calidad de la preparación universitaria no puede depender de dónde vives ni de cuánto puedes gastar. Valentina y su socia fundaron Miraza con la misión de democratizar el acceso a una educación de excelencia.</p>
+    <p>Lo que comenzó como clases de refuerzo entre cercanos se convirtió rápidamente en un proyecto de impacto real, donde cada alumno recibe atención personalizada, seguimiento constante y las herramientas concretas para alcanzar sus metas académicas. Hoy, Miraza es sinónimo de compromiso, cercanía y resultados.</p>
+  </div>
+
+  <!-- ── Staff docente (esferas pequeñas) ── -->
+  <h3 class="sphere-section-title">Nuestro Equipo Docente</h3>
+  <div class="spheres-row">
+
+    <div class="sphere-wrap">
+      <div class="sphere-sm" onclick="this.classList.toggle('flipped')"
+           role="button" tabindex="0" aria-label="Prof. Martínez — Matemática">
+        <div class="sphere-sm-front">
+          <div class="sphere-sm-initial" style="color:#1B4DB8">M</div>
+          <div class="sphere-sm-hint">clic →</div>
+        </div>
+        <div class="sphere-sm-back">
+          <div class="sphere-sm-back-name">Prof. Martínez</div>
+          <div class="sphere-sm-back-subj">Matemática PAES M1 y M2</div>
+        </div>
+      </div>
+      <div class="sphere-sm-label-name">Prof. Martínez</div>
+      <div class="sphere-sm-label-subj">Matemática</div>
+    </div>
+
+    <div class="sphere-wrap">
+      <div class="sphere-sm" onclick="this.classList.toggle('flipped')"
+           role="button" tabindex="0" aria-label="Prof. Valenzuela — Lenguaje">
+        <div class="sphere-sm-front">
+          <div class="sphere-sm-initial" style="color:#5B21B6">V</div>
+          <div class="sphere-sm-hint">clic →</div>
+        </div>
+        <div class="sphere-sm-back" style="background:linear-gradient(135deg,#3B0764,#5B21B6);">
+          <div class="sphere-sm-back-name">Prof. Valenzuela</div>
+          <div class="sphere-sm-back-subj">Lenguaje y Comunicación</div>
+        </div>
+      </div>
+      <div class="sphere-sm-label-name">Prof. Valenzuela</div>
+      <div class="sphere-sm-label-subj">Lenguaje</div>
+    </div>
+
+    <div class="sphere-wrap">
+      <div class="sphere-sm" onclick="this.classList.toggle('flipped')"
+           role="button" tabindex="0" aria-label="Prof. Rojas — Historia">
+        <div class="sphere-sm-front">
+          <div class="sphere-sm-initial" style="color:#B45309">R</div>
+          <div class="sphere-sm-hint">clic →</div>
+        </div>
+        <div class="sphere-sm-back" style="background:linear-gradient(135deg,#78350F,#B45309);">
+          <div class="sphere-sm-back-name">Prof. Rojas</div>
+          <div class="sphere-sm-back-subj">Historia y Cs. Sociales</div>
+        </div>
+      </div>
+      <div class="sphere-sm-label-name">Prof. Rojas</div>
+      <div class="sphere-sm-label-subj">Historia</div>
+    </div>
+
+    <div class="sphere-wrap">
+      <div class="sphere-sm" onclick="this.classList.toggle('flipped')"
+           role="button" tabindex="0" aria-label="Prof. Castillo — Ciencias">
+        <div class="sphere-sm-front">
+          <div class="sphere-sm-initial" style="color:#065F46">C</div>
+          <div class="sphere-sm-hint">clic →</div>
+        </div>
+        <div class="sphere-sm-back" style="background:linear-gradient(135deg,#022c22,#065F46);">
+          <div class="sphere-sm-back-name">Prof. Castillo</div>
+          <div class="sphere-sm-back-subj">Ciencias PAES</div>
+        </div>
+      </div>
+      <div class="sphere-sm-label-name">Prof. Castillo</div>
+      <div class="sphere-sm-label-subj">Ciencias</div>
+    </div>
+
+    <div class="sphere-wrap">
+      <div class="sphere-sm" onclick="this.classList.toggle('flipped')"
+           role="button" tabindex="0" aria-label="Prof. Soto — Apoyo Sicopedagógico">
+        <div class="sphere-sm-front">
+          <div class="sphere-sm-initial" style="color:#0A1F44">S</div>
+          <div class="sphere-sm-hint">clic →</div>
+        </div>
+        <div class="sphere-sm-back">
+          <div class="sphere-sm-back-name">Prof. Soto</div>
+          <div class="sphere-sm-back-subj">Apoyo Sicopedagógico</div>
+        </div>
+      </div>
+      <div class="sphere-sm-label-name">Prof. Soto</div>
+      <div class="sphere-sm-label-subj">Sicopedagogía</div>
+    </div>
+
+  </div><!-- /spheres-row staff -->
+
+  <!-- ── FAQ integrado ── -->
+  <div class="qs-faq">
+    <h3 class="qs-faq-title">Preguntas Frecuentes</h3>
+    <div class="faq-list">
+
+      <details class="faq-item">
+        <summary class="faq-question">¿Qué es Preuniversitario Miraza?</summary>
+        <div class="faq-answer">Miraza es un preuniversitario 100% online especializado en preparación PAES, nivelación de estudios y apoyo sicopedagógico. Ofrecemos clases en vivo y grabadas, material actualizado y seguimiento personalizado, con docentes que conocen en profundidad cada materia.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">¿Cuáles son los programas disponibles?</summary>
+        <div class="faq-answer">Contamos con cuatro programas: <strong>Preparación PAES</strong>, <strong>Mejora tu NEM</strong> (por materia o todas), <strong>Nivelación de Estudios</strong> (Básica y Media) y <strong>Clases Especializadas</strong> para estudiantes con necesidades de aprendizaje. Todos incluyen diagnóstico inicial.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">¿Cómo son las clases? ¿Son en vivo o grabadas?</summary>
+        <div class="faq-answer">Las clases son en vivo a través de Google Meet y quedan grabadas en Google Classroom para que puedas revisarlas cuando quieras. Todo el material, guías y ensayos también están disponibles en la plataforma 24/7.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">¿Cómo me inscribo?</summary>
+        <div class="faq-answer">Completa el formulario de inscripción más abajo y te contactamos en menos de 24 horas por WhatsApp o correo para confirmar tu cupo y resolver dudas. También puedes escribirnos directamente al WhatsApp si tienes preguntas antes de inscribirte.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-question">¿Cuántos alumnos hay por clase?</summary>
+        <div class="faq-answer">Trabajamos en grupos reducidos para garantizar atención personalizada. Siempre priorizamos que el docente pueda hacer seguimiento individual a cada estudiante. No somos una clase masiva sin retroalimentación.</div>
+      </details>
+
+    </div>
+  </div><!-- /qs-faq -->
+
+</section><!-- /quienes-somos -->
+
+<!-- PROGRAMAS / PLANES -->
 <section class="programas" id="programas">
   <div class="section-header">
-    <div class="section-tag">Programas PAES 2025</div>
-    <h2 class="section-title">Elige el programa que te impulsa</h2>
-    <p class="section-sub">Haz clic en cada programa para conocer todos los detalles</p>
+    <div class="section-tag">Nuestros Planes 2025</div>
+    <h2 class="section-title">Elige el camino que te impulsa</h2>
+    <p class="section-sub">Haz clic en cada plan para ver opciones y valores</p>
   </div>
 
   <div class="programas-grid">
 
-    <!-- Intensivo -->
+    <!-- 1. Preparación PAES -->
     <div class="prog-wrap from-left">
-      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Programa Intensivo — clic para ver detalles">
+      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Preparación PAES — clic para ver detalles">
         <div class="prog-front">
           <div class="prog-info prog-azul">
-            <div class="prog-icon">⚡</div>
-            <div class="prog-tipo">Programa Intensivo</div>
-            <div class="prog-nombre">Máxima preparación,<br>mínimo tiempo</div>
-            <div class="prog-fecha">Inicio: Noviembre 2025</div>
-            <div class="prog-hint">Clic para ver detalles →</div>
+            <div class="prog-icon">🎯</div>
+            <div class="prog-tipo">Plan estrella</div>
+            <div class="prog-nombre">Preparación<br>PAES</div>
+            <div class="prog-fecha">desde $59.990/mes</div>
+            <div class="prog-hint">Clic para ver opciones →</div>
           </div>
-          <div class="prog-photo prog-azul" style="background:linear-gradient(135deg,rgba(27,77,184,0.55),rgba(43,96,212,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">📝</div>
+          <div class="prog-photo" style="background:linear-gradient(135deg,rgba(27,77,184,0.6),rgba(43,96,212,0.9));display:flex;align-items:center;justify-content:center;font-size:5rem;">🎯</div>
         </div>
         <div class="prog-back">
-          <div class="prog-back-icon">⚡</div>
-          <div class="prog-back-tipo">Programa Intensivo</div>
-          <div class="prog-back-nombre">Máxima preparación, mínimo tiempo</div>
-          <div class="prog-back-desc">Diseñado para estudiantes que necesitan prepararse en poco tiempo antes de la PAES. Clases diarias de alta intensidad, ensayos semanales y corrección personalizada. Ideal para egresados y alumnos de 4° Medio.</div>
+          <div class="prog-back-icon">🎯</div>
+          <div class="prog-back-tipo">Preparación PAES</div>
+          <div class="prog-back-nombre">Todas las pruebas, un solo camino</div>
+          <div class="prog-back-desc">Preparación integral para la PAES con docentes especializados, ensayos semanales y seguimiento personalizado. Ideal para 4° Medio y egresados.</div>
+          <div class="prog-back-options">
+            <div class="prog-back-option">Matemática M1 y M2 <span class="prog-back-price">$59.990/mes</span></div>
+            <div class="prog-back-option">Lenguaje <span class="prog-back-price">$54.990/mes</span></div>
+            <div class="prog-back-option">Historia <span class="prog-back-price">$54.990/mes</span></div>
+            <div class="prog-back-option">Ciencias <span class="prog-back-price">$54.990/mes</span></div>
+            <div class="prog-back-option">Pack completo <strong>todas las materias</strong> <span class="prog-back-price">$99.990/mes</span></div>
+          </div>
           <div class="prog-back-actions">
-            <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+            <a href="#inscripcion" class="prog-back-btn">Inscribirse</a>
             <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Anual -->
+    <!-- 2. Mejora tu NEM -->
     <div class="prog-wrap from-right">
-      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Programa Anual — clic para ver detalles">
+      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Mejora tu NEM — clic para ver detalles">
         <div class="prog-front">
           <div class="prog-info prog-gold">
-            <div class="prog-icon">📅</div>
-            <div class="prog-tipo">Programa Anual</div>
-            <div class="prog-nombre">Preparación completa<br>durante todo el año</div>
-            <div class="prog-fecha">Inicio: Marzo 2026</div>
-            <div class="prog-hint">Clic para ver detalles →</div>
+            <div class="prog-icon">📊</div>
+            <div class="prog-tipo">NEM</div>
+            <div class="prog-nombre">Mejora<br>tu NEM</div>
+            <div class="prog-fecha">desde $34.990/mes</div>
+            <div class="prog-hint">Clic para ver opciones →</div>
           </div>
-          <div class="prog-photo prog-gold" style="background:linear-gradient(135deg,rgba(184,112,10,0.55),rgba(212,137,26,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🎓</div>
+          <div class="prog-photo" style="background:linear-gradient(135deg,rgba(184,112,10,0.6),rgba(212,137,26,0.9));display:flex;align-items:center;justify-content:center;font-size:5rem;">📊</div>
         </div>
         <div class="prog-back">
-          <div class="prog-back-icon">📅</div>
-          <div class="prog-back-tipo">Programa Anual</div>
-          <div class="prog-back-nombre">Preparación completa durante todo el año</div>
-          <div class="prog-back-desc">El programa más completo. Desde marzo hasta noviembre, cubrimos todos los contenidos con calma y profundidad. Clases semanales, guías de ejercicios, ensayos mensuales y seguimiento personalizado del progreso.</div>
+          <div class="prog-back-icon">📊</div>
+          <div class="prog-back-tipo">Mejora tu NEM</div>
+          <div class="prog-back-nombre">Sube tus notas, sube tu puntaje</div>
+          <div class="prog-back-desc">Refuerzo académico durante el año escolar para mejorar tu NEM y aumentar tu puntaje de postulación universitaria.</div>
+          <div class="prog-back-options">
+            <div class="prog-back-option">Por materia <span class="prog-back-price">desde $34.990/mes</span></div>
+            <div class="prog-back-option">Todas las materias <span class="prog-back-price">$54.990/mes</span></div>
+            <div class="prog-back-option">Diagnóstico inicial <span class="prog-back-price" style="color:#4ade80;">Gratis</span></div>
+          </div>
           <div class="prog-back-actions">
-            <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+            <a href="#inscripcion" class="prog-back-btn">Inscribirse</a>
             <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Por Materia -->
+    <!-- 3. Nivelación de Estudios -->
     <div class="prog-wrap from-left">
-      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Por Materia — clic para ver detalles">
+      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Nivelación de Estudios — clic para ver detalles">
         <div class="prog-front">
           <div class="prog-info prog-navy">
             <div class="prog-icon">📚</div>
-            <div class="prog-tipo">Por Materia</div>
-            <div class="prog-nombre">Refuerza donde más<br>lo necesitas</div>
-            <div class="prog-fecha">Incorporación inmediata</div>
-            <div class="prog-hint">Clic para ver detalles →</div>
+            <div class="prog-tipo">Nivelación</div>
+            <div class="prog-nombre">Nivelación<br>de Estudios</div>
+            <div class="prog-fecha">desde $44.990/mes</div>
+            <div class="prog-hint">Clic para ver opciones →</div>
           </div>
-          <div class="prog-photo prog-navy" style="background:linear-gradient(135deg,rgba(10,31,68,0.65),rgba(27,77,184,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🔍</div>
+          <div class="prog-photo" style="background:linear-gradient(135deg,rgba(10,31,68,0.7),rgba(27,77,184,0.9));display:flex;align-items:center;justify-content:center;font-size:5rem;">📚</div>
         </div>
         <div class="prog-back">
           <div class="prog-back-icon">📚</div>
-          <div class="prog-back-tipo">Por Materia</div>
-          <div class="prog-back-nombre">Refuerza exactamente donde más lo necesitas</div>
-          <div class="prog-back-desc">Elige solo las materias que necesitas trabajar. Perfecto para quienes tienen una base sólida en algunas áreas y solo requieren refuerzo puntual. Disponible para Matemática, Lenguaje, Historia y Ciencias.</div>
+          <div class="prog-back-tipo">Nivelación de Estudios</div>
+          <div class="prog-back-nombre">Recupera la base, avanza con confianza</div>
+          <div class="prog-back-desc">Refuerzo académico personalizado para estudiantes que necesitan nivelar sus conocimientos en enseñanza básica o media.</div>
+          <div class="prog-back-options">
+            <div class="prog-back-option">Enseñanza Básica <span class="prog-back-price">$44.990/mes</span></div>
+            <div class="prog-back-option">Enseñanza Media <span class="prog-back-price">$49.990/mes</span></div>
+          </div>
           <div class="prog-back-actions">
-            <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+            <a href="#inscripcion" class="prog-back-btn">Inscribirse</a>
             <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Pack Egresados -->
+    <!-- 4. Clases Especializadas -->
     <div class="prog-wrap from-right">
-      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Pack Egresados — clic para ver detalles">
+      <div class="prog-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Clases Especializadas — clic para ver detalles">
         <div class="prog-front">
           <div class="prog-info prog-teal">
-            <div class="prog-icon">🏆</div>
-            <div class="prog-tipo">Pack Egresados</div>
-            <div class="prog-nombre">Segunda oportunidad,<br>mejor resultado</div>
-            <div class="prog-fecha">Incorporación inmediata</div>
-            <div class="prog-hint">Clic para ver detalles →</div>
+            <div class="prog-icon">🧩</div>
+            <div class="prog-tipo">Especializado</div>
+            <div class="prog-nombre">Clases<br>Especializadas</div>
+            <div class="prog-fecha">Diagnóstico gratuito</div>
+            <div class="prog-hint">Clic para ver opciones →</div>
           </div>
-          <div class="prog-photo prog-teal" style="background:linear-gradient(135deg,rgba(6,95,70,0.65),rgba(13,144,101,0.85));display:flex;align-items:center;justify-content:center;font-size:5rem;">🚀</div>
+          <div class="prog-photo" style="background:linear-gradient(135deg,rgba(6,95,70,0.7),rgba(13,144,101,0.9));display:flex;align-items:center;justify-content:center;font-size:5rem;">🧩</div>
         </div>
         <div class="prog-back">
-          <div class="prog-back-icon">🏆</div>
-          <div class="prog-back-tipo">Pack Egresados</div>
-          <div class="prog-back-nombre">Segunda oportunidad, mejor resultado</div>
-          <div class="prog-back-desc">Diseñado para quienes ya rindieron la PAES y quieren mejorar su puntaje. Diagnóstico inicial, plan de estudio personalizado y foco en los puntos débiles identificados en la prueba anterior. Flexibilidad total de horario.</div>
+          <div class="prog-back-icon">🧩</div>
+          <div class="prog-back-tipo">Clases Especializadas</div>
+          <div class="prog-back-nombre">Apoyo diferenciado, sin etiquetas</div>
+          <div class="prog-back-desc">Atención especializada para estudiantes con necesidades de aprendizaje. Diagnóstico inicial, metodología adaptada y plan 100% personalizado.</div>
+          <div class="prog-back-options">
+            <div class="prog-back-option">Estudiantes con necesidades de aprendizaje <span class="prog-back-price">$74.990/mes</span></div>
+            <div class="prog-back-option">Diagnóstico inicial <span class="prog-back-price" style="color:#4ade80;">Gratis</span></div>
+          </div>
           <div class="prog-back-actions">
-            <a href="#inscripcion" class="prog-back-btn">Inscribirse ahora</a>
+            <a href="#inscripcion" class="prog-back-btn">Solicitar diagnóstico</a>
             <button class="prog-back-close" onclick="event.stopPropagation();this.closest('.prog-card').classList.remove('flipped')">← Volver</button>
           </div>
         </div>
       </div>
     </div>
 
-  </div>
-</section>
+  </div><!-- /programas-grid -->
+
+  <!-- ARANCELES SUMMARY -->
+  <div class="aranceles-wrap" id="aranceles">
+    <div class="section-header">
+      <div class="section-tag">Aranceles</div>
+      <h2 class="section-title" style="font-size:clamp(1.5rem,2.5vw,2.2rem);">Resumen de Valores</h2>
+      <p class="section-sub">Todos los valores en pesos chilenos (CLP) · IVA incluido</p>
+    </div>
+    <div class="aranceles-grid">
+
+      <div class="arancel-card">
+        <div class="arancel-plan"><span class="arancel-plan-icon">🎯</span> Preparación PAES</div>
+        <div class="arancel-items">
+          <div class="arancel-row"><span>Matemática M1 y M2</span><strong>$59.990/mes</strong></div>
+          <div class="arancel-row"><span>Lenguaje</span><strong>$54.990/mes</strong></div>
+          <div class="arancel-row"><span>Historia</span><strong>$54.990/mes</strong></div>
+          <div class="arancel-row"><span>Ciencias</span><strong>$54.990/mes</strong></div>
+          <div class="arancel-row"><span>Pack todas las materias</span><strong>$99.990/mes</strong></div>
+        </div>
+      </div>
+
+      <div class="arancel-card">
+        <div class="arancel-plan"><span class="arancel-plan-icon">📊</span> Mejora tu NEM</div>
+        <div class="arancel-items">
+          <div class="arancel-row"><span>Por materia</span><strong>desde $34.990/mes</strong></div>
+          <div class="arancel-row"><span>Todas las materias</span><strong>$54.990/mes</strong></div>
+          <div class="arancel-row"><span>Diagnóstico inicial</span><strong class="gratis">Gratis</strong></div>
+        </div>
+      </div>
+
+      <div class="arancel-card">
+        <div class="arancel-plan"><span class="arancel-plan-icon">📚</span> Nivelación de Estudios</div>
+        <div class="arancel-items">
+          <div class="arancel-row"><span>Enseñanza Básica</span><strong>$44.990/mes</strong></div>
+          <div class="arancel-row"><span>Enseñanza Media</span><strong>$49.990/mes</strong></div>
+        </div>
+      </div>
+
+      <div class="arancel-card">
+        <div class="arancel-plan"><span class="arancel-plan-icon">🧩</span> Clases Especializadas</div>
+        <div class="arancel-items">
+          <div class="arancel-row"><span>Clases adaptadas</span><strong>$74.990/mes</strong></div>
+          <div class="arancel-row"><span>Diagnóstico inicial</span><strong class="gratis">Gratis</strong></div>
+        </div>
+      </div>
+
+    </div>
+    <p class="aranceles-note">Consulta descuentos por pago semestral o anual · Becas disponibles · <a href="#inscripcion" style="color:var(--blue);font-weight:600;">Contáctanos para más información</a></p>
+  </div><!-- /aranceles-wrap -->
+
+</section><!-- /programas -->
 
 <!-- PROFESORES -->
 <section class="profesores" id="profesores">
@@ -1359,7 +1725,7 @@
   hcReset();
 
   // ── Flip cards keyboard support ──
-  document.querySelectorAll('.materia-card, .prog-card, .prof-card, .fund-card').forEach(function(card) {
+  document.querySelectorAll('.materia-card, .prog-card, .prof-card, .fund-card, .sphere-lg, .sphere-sm').forEach(function(card) {
     card.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.classList.toggle('flipped'); }
       if (e.key === 'Escape') { this.classList.remove('flipped'); }
@@ -1394,7 +1760,7 @@
       if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.feature, .paso, .form-wrapper, .section-header, .prof-card, .fund-card, .promo-item, .faq-item').forEach(function(el) {
+  document.querySelectorAll('.feature, .form-wrapper, .section-header, .prof-card, .promo-item, .faq-item, .sphere-wrap, .arancel-card, .miraza-origen').forEach(function(el) {
     if (!el.closest('.hero-carousel')) { el.classList.add('reveal'); revealObserver.observe(el); }
   });
 
