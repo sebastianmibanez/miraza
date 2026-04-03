@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_from_directory
 from flask_cors import CORS
 from contextlib import contextmanager
 from collections import defaultdict
@@ -159,7 +159,11 @@ def init_db():
 
 
 # Inicializar BD al importar (funciona con gunicorn)
-init_db()
+try:
+    init_db()
+except Exception as e:
+    logger.error("No se pudo inicializar la base de datos al arrancar: %s", e)
+    logger.error("La app arranca de todas formas; las rutas de BD fallarán hasta que la DB esté disponible.")
 
 
 # ── Security headers ──────────────────────────────────────────
@@ -360,6 +364,19 @@ def server_error(e):
 @app.route('/robots.txt')
 def robots():
     return app.send_static_file('robots.txt')
+
+
+# ── React SPA (catch-all) ──────────────────────────────────────
+REACT_BUILD = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend', 'dist')
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react(path):
+    if path:
+        file_path = os.path.join(REACT_BUILD, path)
+        if os.path.isfile(file_path):
+            return send_from_directory(REACT_BUILD, path)
+    return send_from_directory(REACT_BUILD, 'index.html')
 
 
 # ── Desarrollo local ───────────────────────────────────────────
