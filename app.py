@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask_cors import CORS
 from contextlib import contextmanager
 from collections import defaultdict
 from functools import wraps
@@ -11,6 +12,7 @@ from datetime import datetime, timezone
 
 # ── Configuración ──────────────────────────────────────────────
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://localhost:3000", "https://miraza.cl", "https://www.miraza.cl"]}}, supports_credentials=True)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1MB max request
 app.secret_key = os.getenv('SECRET_KEY', os.urandom(32))
 app.config['SESSION_COOKIE_HTTPONLY'] = True
@@ -181,41 +183,9 @@ def set_security_headers(response):
 
 
 # ── Rutas ──────────────────────────────────────────────────────
-@app.route('/')
-def index():
-    return render_template('index.html', active='index')
 
-@app.route('/quienes-somos')
-def quienes_somos():
-    return render_template('quienes-somos.html', active='quienes-somos')
-
-@app.route('/planes')
-def planes():
-    return render_template('planes.html', active='planes')
-
-@app.route('/aranceles')
-def aranceles():
-    return render_template('aranceles.html', active='aranceles')
-
-@app.route('/apoyo')
-def apoyo():
-    return render_template('apoyo.html', active='apoyo')
-
-@app.route('/testimonios')
-def testimonios():
-    return render_template('testimonios.html', active='testimonios')
-
-@app.route('/contacto')
-def contacto():
-    return render_template('contacto.html', active='contacto')
-
-
-@app.route('/robots.txt')
-def robots():
-    return app.send_static_file('robots.txt')
-
-
-@app.route('/health')
+# API Routes
+@app.route('/api/health')
 def health():
     """Health check para Render."""
     try:
@@ -226,7 +196,7 @@ def health():
         return jsonify({'status': 'error', 'db': 'disconnected'}), 500
 
 
-@app.route('/inscripcion', methods=['POST'])
+@app.route('/api/inscripcion', methods=['POST'])
 def inscripcion():
     # ── Rate limiting ──
     client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
@@ -378,7 +348,18 @@ def too_large(e):
 
 @app.errorhandler(404)
 def not_found(e):
-    return jsonify({'ok': False, 'error': 'Página no encontrada'}), 404
+    return jsonify({'ok': False, 'error': 'Endpoint no encontrado'}), 404
+
+
+@app.errorhandler(500)
+def server_error(e):
+    return jsonify({'ok': False, 'error': 'Error interno del servidor'}), 500
+
+
+# ── Rutas estáticas ───────────────────────────────────────────
+@app.route('/robots.txt')
+def robots():
+    return app.send_static_file('robots.txt')
 
 
 # ── Desarrollo local ───────────────────────────────────────────

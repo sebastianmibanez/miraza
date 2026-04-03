@@ -1,0 +1,243 @@
+/* ── RATING SUMMARY ── */
+.testim-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 48px 6vw 0;
+}
+
+.testim-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.testim-rating .stars {
+  font-size: 1.3rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+
+.testim-rating .score {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--navy);
+}
+
+.testim-rating .of {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.testim-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(10,31,68,0.15);
+}
+
+.testim-stat {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.testim-stat strong { color: var(--navy); }
+
+/* ── CAROUSEL ── */
+.testim-section {
+  padding: 60px 6vw 80px;
+}
+
+.carousel-wrapper {
+  position: relative;
+  overflow: hidden;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.testim-card {
+  min-width: 100%;
+  padding: 8px;
+}
+
+.testim-inner {
+  background: var(--white);
+  border: 1px solid rgba(10,31,68,0.08);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 4px 24px rgba(10,31,68,0.07);
+}
+
+.testim-stars {
+  color: var(--gold);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.testim-text {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text);
+  margin-bottom: 28px;
+  font-style: italic;
+}
+
+.testim-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.testim-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.testim-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--navy);
+}
+
+.testim-meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.testim-badge {
+  margin-left: auto;
+  background: var(--light);
+  color: var(--blue);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--white);
+  border: 1px solid rgba(10,31,68,0.12);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy);
+  transition: all 0.2s;
+  z-index: 10;
+  box-shadow: 0 2px 12px rgba(10,31,68,0.1);
+}
+
+.carousel-btn:hover {
+  background: var(--gold);
+  color: var(--navy);
+  border-color: var(--gold);
+}
+
+.carousel-prev { left: -8px; }
+.carousel-next { right: -8px; }
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(10,31,68,0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.dot.active {
+  background: var(--gold);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* ── GRID DE TESTIMONIOS ── */
+.testim-grid-section {
+  padding: 80px 6vw;
+  background: var(--light);
+}
+
+.testim-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.testim-grid-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid rgba(10,31,68,0.07);
+  box-shadow: 0 2px 12px rgba(10,31,68,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.testim-grid-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(10,31,68,0.1);
+}
+
+/* ── CTA ── */
+.testim-cta {
+  padding: 100px 6vw;
+  text-align: center;
+  background: linear-gradient(135deg, var(--navy) 0%, #1a3870 100%);
+  color: var(--white);
+}
+
+.testim-cta h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  margin-bottom: 16px;
+}
+
+.testim-cta p {
+  color: rgba(255,255,255,0.7);
+  font-size: 1rem;
+  max-width: 520px;
+  margin: 0 auto 36px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .testim-sep { display: none; }
+  .testim-summary { flex-direction: column; gap: 12px; }
+  .carousel-prev { left: 4px; }
+  .carousel-next { right: 4px; }
+  .testim-inner { padding: 28px 20px; }
+}
