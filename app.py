@@ -18,19 +18,9 @@ app.secret_key = os.getenv('SECRET_KEY', os.urandom(32))
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
-# Detectar motor de BD: PostgreSQL en producción, SQLite en desarrollo
-DATABASE_URL = os.getenv('DATABASE_URL')
-USE_POSTGRES = DATABASE_URL is not None
-
-if USE_POSTGRES:
-    # Render usa "postgres://" pero psycopg2 necesita "postgresql://"
-    if DATABASE_URL.startswith('postgres://'):
-        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
-    import psycopg2
-    import psycopg2.extras
-else:
-    import sqlite3
-    DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database', 'miraza.db')
+# Base de datos: SQLite
+import sqlite3
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database', 'miraza.db')
 
 # Logging
 logging.basicConfig(
@@ -73,16 +63,11 @@ def is_rate_limited(ip):
 
 
 # ── Base de datos ──────────────────────────────────────────────
-# Capa de abstracción que funciona con SQLite y PostgreSQL
 
 @contextmanager
 def get_db():
-    """Context manager que conecta a PostgreSQL o SQLite según el entorno."""
-    if USE_POSTGRES:
-        conn = psycopg2.connect(DATABASE_URL)
-    else:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
     try:
         yield conn
         conn.commit()
@@ -94,39 +79,16 @@ def get_db():
 
 
 def db_execute(conn, query, params=None):
-    """Ejecuta una query adaptando el placeholder al motor de BD.
-    Escribe queries con %s (estilo PostgreSQL).
-    En SQLite se reemplazan automáticamente a ?.
-    """
-    if not USE_POSTGRES:
-        query = query.replace('%s', '?')
+    query = query.replace('%s', '?')
     cur = conn.cursor()
     cur.execute(query, params or ())
     return cur
 
 
 def init_db():
-    """Crear tabla si no existe. Compatible con SQLite y PostgreSQL."""
-    if not USE_POSTGRES:
-        os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-
-    if USE_POSTGRES:
-        create_sql = '''
-            CREATE TABLE IF NOT EXISTS inscripciones (
-                id SERIAL PRIMARY KEY,
-                nombre TEXT NOT NULL,
-                apellido TEXT NOT NULL,
-                email TEXT NOT NULL,
-                telefono TEXT NOT NULL,
-                curso TEXT NOT NULL,
-                materias TEXT NOT NULL,
-                mensaje TEXT DEFAULT '',
-                fecha TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                ip TEXT DEFAULT ''
-            )
-        '''
-    else:
-        create_sql = '''
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    with get_db() as conn:
+        conn.cursor().execute('''
             CREATE TABLE IF NOT EXISTS inscripciones (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nombre TEXT NOT NULL,
@@ -139,31 +101,16 @@ def init_db():
                 fecha TEXT NOT NULL,
                 ip TEXT DEFAULT ''
             )
-        '''
-
-    with get_db() as conn:
-        conn.cursor().execute(create_sql)
-        if not USE_POSTGRES:
-            conn.cursor().execute('''
-                CREATE INDEX IF NOT EXISTS idx_inscripciones_email
-                ON inscripciones(email)
-            ''')
-        else:
-            conn.cursor().execute('''
-                CREATE INDEX IF NOT EXISTS idx_inscripciones_email
-                ON inscripciones(email)
-            ''')
-
-    motor = 'PostgreSQL' if USE_POSTGRES else f'SQLite ({DB_PATH})'
-    logger.info("Base de datos inicializada — motor: %s", motor)
+        ''')
+        conn.cursor().execute('''
+            CREATE INDEX IF NOT EXISTS idx_inscripciones_email
+            ON inscripciones(email)
+        ''')
+    logger.info("Base de datos inicializada — SQLite (%s)", DB_PATH)
 
 
 # Inicializar BD al importar (funciona con gunicorn)
-try:
-    init_db()
-except Exception as e:
-    logger.error("No se pudo inicializar la base de datos al arrancar: %s", e)
-    logger.error("La app arranca de todas formas; las rutas de BD fallarán hasta que la DB esté disponible.")
+init_db()
 
 
 # ── Security headers ──────────────────────────────────────────
