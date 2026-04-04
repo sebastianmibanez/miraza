@@ -1,0 +1,155 @@
+.widget-card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.widget-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.widget-empty {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.widget-note {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+/* ── Schedule ─────────────────────────────────────────────── */
+.schedule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.schedule-item:last-child { border-bottom: none; }
+
+.schedule-tipo {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.schedule-info { display: flex; flex-direction: column; gap: 0.1rem; }
+.schedule-materia { font-size: 0.875rem; font-weight: 600; color: #1e293b; }
+.schedule-time    { font-size: 0.78rem; color: #64748b; }
+
+/* ── Announcements ────────────────────────────────────────── */
+.announcements-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.announcement-item {
+  border: 1.5px solid;
+  border-radius: 0.6rem;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.announcement-item strong { font-size: 0.875rem; color: #1e293b; }
+.announcement-item p      { font-size: 0.8rem; color: #475569; margin: 0; }
+.announcement-date        { font-size: 0.72rem; color: #94a3b8; }
+
+/* ── Live class ───────────────────────────────────────────── */
+.live-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.live-pulse-ring {
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: var(--color, #2563eb);
+  opacity: 0.08;
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(1); opacity: 0.08; }
+  50%       { transform: scale(1.15); opacity: 0.04; }
+}
+
+.live-content { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.live-badge {
+  display: inline-block;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 0.15rem 0.55rem;
+  border-radius: 20px;
+  align-self: flex-start;
+}
+
+.live-content h3 { margin: 0; font-size: 1rem; color: #0f172a; }
+.live-content p  { margin: 0; font-size: 0.85rem; color: #64748b; }
+
+.live-btn {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.5rem;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  align-self: flex-start;
+  transition: opacity 0.2s;
+}
+.live-btn:hover { opacity: 0.85; }
+
+/* ── Progress ─────────────────────────────────────────────── */
+.progress-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.progress-item { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.progress-label { color: #334155; font-weight: 600; }
+.progress-pct   { font-weight: 700; }
+
+.progress-track {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
