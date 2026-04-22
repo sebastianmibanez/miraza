@@ -11,6 +11,17 @@
   width: 100%;
 }
 
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ── WHATSAPP FLOTANTE ── */
 @keyframes waPulse {
   0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.45); }

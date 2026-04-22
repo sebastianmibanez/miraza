@@ -50,7 +50,26 @@
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
+}
+
+.nav-access {
+  color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.22);
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Outfit', sans-serif;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.nav-access:hover {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 .nav-cta {
@@ -135,6 +154,16 @@
 }
 
 .mobile-menu a:hover { color: var(--gold); }
+
+.mobile-access-btn {
+  margin-top: 8px;
+  background: var(--gold) !important;
+  color: var(--navy) !important;
+  padding: 12px 32px;
+  border-radius: 10px;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+}
 
 /* ── FOOTER ── */
 .footer {

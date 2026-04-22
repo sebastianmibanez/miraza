@@ -836,6 +836,184 @@
   box-shadow: 0 8px 24px rgba(37,211,102,0.3);
 }
 
+/* ── HERO CAROUSEL EXTRAS ── */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-eyebrow-text {
+  display: inline-block;
+  animation: slideIn 0.5s ease forwards;
+}
+
+.hero-title,
+.hero-sub {
+  animation: slideIn 0.6s ease forwards;
+}
+
+.hero-slide-tag {
+  display: inline-block;
+  background: rgba(245, 166, 35, 0.15);
+  border: 1px solid rgba(245, 166, 35, 0.35);
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 28px;
+  animation: slideIn 0.7s ease forwards;
+  letter-spacing: 0.03em;
+}
+
+.hero-dots {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 3;
+}
+
+.hero-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s;
+}
+
+.hero-dot.active {
+  background: var(--gold);
+  width: 28px;
+  border-radius: 5px;
+}
+
+.hero-dot:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* ── PLANES SECTION ── */
+.planes-section {
+  padding: 100px 6vw;
+  background: var(--light);
+}
+
+.planes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto 40px;
+}
+
+.plan-card {
+  background: var(--white);
+  border: 1px solid rgba(10, 31, 68, 0.08);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(10, 31, 68, 0.05);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 36px rgba(10, 31, 68, 0.12);
+}
+
+.plan-card-top {
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plan-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.plan-nombre {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: white;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.plan-tagline {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+}
+
+.plan-precio {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  width: fit-content;
+  letter-spacing: 0.02em;
+}
+
+.plan-puntos {
+  list-style: none;
+  padding: 18px 20px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plan-puntos li {
+  font-size: 0.82rem;
+  color: var(--text);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.plan-puntos li::before {
+  content: '✓';
+  color: var(--blue);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.planes-cta {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.btn-planes-full {
+  display: inline-block;
+  background: var(--navy);
+  color: var(--white);
+  text-decoration: none;
+  padding: 15px 40px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.25s;
+  letter-spacing: 0.02em;
+}
+
+.btn-planes-full:hover {
+  background: var(--blue);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(27, 77, 184, 0.3);
+}
+
 /* ── HERO FORM ── */
 .hero-form-card {
   background: rgba(255, 255, 255, 0.07);
@@ -1231,6 +1409,10 @@
 }
 
 /* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .planes-grid { grid-template-columns: 1fr 1fr; }
+}
+
 @media (max-width: 768px) {
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
   .stats-bar-inner { flex-direction: column; gap: 24px; }
@@ -1240,9 +1422,6 @@
   .pasos-grid { grid-template-columns: 1fr 1fr; }
   .paso-arrow { display: none; }
   .metodo-grid { grid-template-columns: 1fr; }
-  .materias-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-  .programas-grid { grid-template-columns: 1fr; }
-  .prog-card { height: 320px; }
   .testim-sep { display: none; }
   .testim-inner { padding: 28px 20px; }
   .carousel-prev { left: 4px; }
@@ -1251,5 +1430,6 @@
 
 @media (max-width: 480px) {
   .pasos-grid { grid-template-columns: 1fr; }
+  .planes-grid { grid-template-columns: 1fr; }
   .hero-form-card { padding: 28px 22px 22px; }
 }

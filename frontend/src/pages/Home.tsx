@@ -10,14 +10,35 @@ const testimonios = [
   { texto: 'Mi hijo tiene dislexia y siempre había tenido malas experiencias. En Miraza encontramos un equipo que realmente entendió su forma de aprender. Los resultados al final del año fueron increíbles.', nombre: 'Claudia M.', meta: 'Apoderada · Apoyo Sicopedagógico', color: 'linear-gradient(135deg,#5B21B6,#7C3AED)', inicial: 'C', badge: '2024' },
 ]
 
-interface ProgOpcion { label: string; price: string; bold?: boolean; green?: boolean }
-interface Programa { id: string; tipo: string; nombre: string[]; desde: string; icon: string; colorClass: string; backTipo: string; backNombre: string; backDesc: string; opciones: ProgOpcion[]; btnLabel: string }
+const heroSlides = [
+  {
+    eyebrow: 'Preuniversitario PAES 2025',
+    title: 'Máxima preparación para la',
+    em: 'PAES 2025',
+    sub: 'Docentes especializados que rinden la PAES cada año. Ensayos semanales, grupos reducidos y seguimiento personalizado.',
+    tag: '🎯 Plan estrella · desde $54.990/mes',
+  },
+  {
+    eyebrow: 'Mejora tu NEM',
+    title: 'Sube tus notas,',
+    em: 'sube tu puntaje',
+    sub: 'Refuerzo académico por materia durante el año escolar. Diagnóstico inicial gratuito para identificar tus puntos de mejora.',
+    tag: '📊 Desde $34.990/mes · Diagnóstico gratis',
+  },
+  {
+    eyebrow: 'Apoyo especializado',
+    title: 'Cada estudiante',
+    em: 'aprende diferente',
+    sub: 'Atención sicopedagógica y metodología adaptada para estudiantes con necesidades de aprendizaje. 100% personalizado.',
+    tag: '🧩 Diagnóstico inicial gratuito',
+  },
+]
 
-const programas: Programa[] = [
-  { id: 'paes', tipo: 'Plan estrella', nombre: ['Preparación', 'PAES'], desde: 'desde $59.990/mes', icon: '🎯', colorClass: 'prog-azul', backTipo: 'Preparación PAES', backNombre: 'Todas las pruebas, un solo camino', backDesc: 'Preparación integral para la PAES con docentes especializados, ensayos semanales y seguimiento personalizado. Ideal para 4° Medio y egresados.', opciones: [{ label: 'Matemática M1 y M2', price: '$59.990/mes' }, { label: 'Lenguaje', price: '$54.990/mes' }, { label: 'Historia', price: '$54.990/mes' }, { label: 'Ciencias', price: '$54.990/mes' }, { label: 'Pack completo todas las materias', price: '$99.990/mes', bold: true }], btnLabel: 'Inscribirse' },
-  { id: 'nem', tipo: 'NEM', nombre: ['Mejora', 'tu NEM'], desde: 'desde $34.990/mes', icon: '📊', colorClass: 'prog-gold', backTipo: 'Mejora tu NEM', backNombre: 'Sube tus notas, sube tu puntaje', backDesc: 'Refuerzo académico durante el año escolar para mejorar tu NEM y aumentar tu puntaje de postulación universitaria.', opciones: [{ label: 'Por materia', price: 'desde $34.990/mes' }, { label: 'Todas las materias', price: '$54.990/mes' }, { label: 'Diagnóstico inicial', price: 'Gratis', green: true }], btnLabel: 'Inscribirse' },
-  { id: 'nivel', tipo: 'Nivelación', nombre: ['Nivelación', 'de Estudios'], desde: 'desde $44.990/mes', icon: '📚', colorClass: 'prog-navy', backTipo: 'Nivelación de Estudios', backNombre: 'Recupera la base, avanza con confianza', backDesc: 'Refuerzo académico personalizado para estudiantes que necesitan nivelar sus conocimientos en enseñanza básica o media.', opciones: [{ label: 'Enseñanza Básica', price: '$44.990/mes' }, { label: 'Enseñanza Media', price: '$49.990/mes' }], btnLabel: 'Inscribirse' },
-  { id: 'espec', tipo: 'Especializado', nombre: ['Clases', 'Especializadas'], desde: 'Diagnóstico gratuito', icon: '🧩', colorClass: 'prog-teal', backTipo: 'Clases Especializadas', backNombre: 'Apoyo diferenciado, sin etiquetas', backDesc: 'Atención especializada para estudiantes con necesidades de aprendizaje. Diagnóstico inicial, metodología adaptada y plan 100% personalizado.', opciones: [{ label: 'Estudiantes con necesidades de aprendizaje', price: '$74.990/mes' }, { label: 'Diagnóstico inicial', price: 'Gratis', green: true }], btnLabel: 'Solicitar diagnóstico' },
+const planes = [
+  { id: 'paes',  icon: '🎯', color: '#1B4DB8', nombre: 'Preparación PAES',      tagline: 'Para 4° Medio y egresados',  desde: 'desde $54.990/mes',     puntos: ['Todas las pruebas PAES 2025', 'Ensayos semanales corregidos', 'Grupos máx. 12 estudiantes'] },
+  { id: 'nem',   icon: '📊', color: '#B45309', nombre: 'Mejora tu NEM',          tagline: 'Refuerzo por materia',       desde: 'desde $34.990/mes',     puntos: ['Diagnóstico gratuito incluido', 'Por materia o pack completo', 'Seguimiento de notas'] },
+  { id: 'nivel', icon: '📚', color: '#0A1F44', nombre: 'Nivelación',             tagline: 'Básica y Media',             desde: 'desde $44.990/mes',     puntos: ['Enseñanza básica o media', 'Recupera la base académica', 'Avanza a tu ritmo'] },
+  { id: 'espec', icon: '🧩', color: '#065F46', nombre: 'Clases Especializadas',  tagline: 'Apoyo diferenciado',         desde: 'Diagnóstico gratuito',  puntos: ['Para necesidades de aprendizaje', 'Metodología 100% adaptada', 'Apoyo sicopedagógico'] },
 ]
 
 const faqs = [
@@ -29,10 +50,9 @@ const faqs = [
 ]
 
 function Home() {
-  const [activeSlide, setActiveSlide] = useState(0)
+  const [activeSlide, setActiveSlide]   = useState(0)
   const [currentTestim, setCurrentTestim] = useState(0)
-  const [flippedCard, setFlippedCard] = useState<string | null>(null)
-  const [openFaq, setOpenFaq]     = useState<number | null>(null)
+  const [openFaq, setOpenFaq]           = useState<number | null>(null)
   const [heroNombre, setHeroNombre] = useState('')
   const [heroPlan, setHeroPlan]     = useState('')
 
@@ -45,13 +65,6 @@ function Home() {
     const t = setInterval(() => setCurrentTestim(p => (p + 1) % testimonios.length), 5200)
     return () => clearInterval(t)
   }, [])
-
-  const progBg: Record<string, string> = {
-    'prog-azul': 'linear-gradient(135deg,rgba(27,77,184,0.6),rgba(43,96,212,0.9))',
-    'prog-gold': 'linear-gradient(135deg,rgba(184,112,10,0.6),rgba(212,137,26,0.9))',
-    'prog-navy': 'linear-gradient(135deg,rgba(10,31,68,0.7),rgba(27,77,184,0.9))',
-    'prog-teal': 'linear-gradient(135deg,rgba(6,95,70,0.7),rgba(13,144,101,0.9))',
-  }
 
   function handleHeroForm(e: FormEvent) {
     e.preventDefault()
@@ -74,9 +87,14 @@ function Home() {
         <div className="cloud cloud-3" /><div className="cloud cloud-4" /><div className="cloud cloud-5" />
         <div className="hero-grid">
           <div className="hero-content">
-            <div className="hero-eyebrow"><span>Preuniversitario PAES 2025</span></div>
-            <h1 className="hero-title">Preparación PAES <em>y Apoyo Educativo</em></h1>
-            <p className="hero-sub">Acompañamiento personalizado de docentes especializados. Mejora tu NEM, prepárate para la PAES o accede a apoyo sicopedagógico en todos tus cursos.</p>
+            <div className="hero-eyebrow">
+              <span key={activeSlide} className="hero-eyebrow-text">{heroSlides[activeSlide].eyebrow}</span>
+            </div>
+            <h1 className="hero-title" key={`title-${activeSlide}`}>
+              {heroSlides[activeSlide].title} <em>{heroSlides[activeSlide].em}</em>
+            </h1>
+            <p className="hero-sub" key={`sub-${activeSlide}`}>{heroSlides[activeSlide].sub}</p>
+            <div className="hero-slide-tag" key={`tag-${activeSlide}`}>{heroSlides[activeSlide].tag}</div>
             <div className="hero-btns">
               <Link to="/contacto" className="btn-gold">Inscribirse Ahora</Link>
               <Link to="/planes" className="btn-outline">Ver Planes</Link>
@@ -122,6 +140,16 @@ function Home() {
             </div>
           </div>
         </div>
+        <div className="hero-dots">
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              className={`hero-dot${activeSlide === i ? ' active' : ''}`}
+              onClick={() => setActiveSlide(i)}
+              aria-label={`Slide ${i + 1}`}
+            />
+          ))}
+        </div>
       </section>
 
       {/* STATS BAR */}
@@ -136,7 +164,7 @@ function Home() {
       </section>
 
       {/* LOGROS */}
-      <section className="logros-section">
+      <section className="logros-section reveal">
         <div className="logros-inner">
           <span className="logros-eyebrow">Resultados reales · PAES 2024</span>
           <div className="logros-track">
@@ -161,7 +189,7 @@ function Home() {
       </section>
 
       {/* COMO FUNCIONA */}
-      <section className="como-funciona">
+      <section className="como-funciona reveal">
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div className="section-header">
             <span className="section-tag">Simple y rápido</span>
@@ -187,42 +215,8 @@ function Home() {
         </div>
       </section>
 
-      {/* MATERIAS */}
-      <section className="materias">
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div className="section-header">
-            <span className="section-tag">Especialidades</span>
-            <h2 className="section-title">Materias & Disciplinas</h2>
-            <p className="section-sub">Preparación integral en las principales asignaturas</p>
-          </div>
-          <div className="materias-grid">
-            {[
-              { name: 'Matemática', icon: '📐', desc: 'Álgebra, geometría, probabilidad y estadística. Estrategias de resolución rápida.' },
-              { name: 'Lenguaje', icon: '📖', desc: 'Comprensión lectora, análisis textual y expresión escrita. Técnicas avanzadas.' },
-              { name: 'Historia', icon: '📜', desc: 'Historia de Chile y universal. Contextos y procesos históricos clave.' },
-              { name: 'Ciencias', icon: '🔬', desc: 'Biología, física y química. Conceptos, modelos y aplicaciones prácticas.' },
-            ].map((materia, idx) => (
-              <div key={idx} className="materia-card" onClick={e => (e.currentTarget as HTMLElement).classList.toggle('flipped')}>
-                <div className="materia-front">
-                  <div className="materia-icon-bg" style={{ background: 'linear-gradient(135deg, var(--blue), #2B60D4)' }}>
-                    <span className="materia-big-icon">{materia.icon}</span>
-                  </div>
-                  <h3 className="materia-name">{materia.name}</h3>
-                  <p className="materia-hint">Clic para más</p>
-                </div>
-                <div className="materia-back">
-                  <span className="materia-icon-sm">{materia.icon}</span>
-                  <h3 className="materia-name">{materia.name}</h3>
-                  <p className="materia-desc">{materia.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* METODOLOGIA */}
-      <section className="metodologia">
+      <section className="metodologia reveal">
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div className="section-header">
             <span className="section-tag" style={{ color: 'var(--gold)' }}>Nuestro método</span>
@@ -254,56 +248,32 @@ function Home() {
         </div>
       </section>
 
-      {/* PROGRAMAS */}
-      <section className="programas">
+      {/* PLANES */}
+      <section className="planes-section reveal">
         <div className="section-header reveal">
           <span className="section-tag">Nuestros Planes 2025</span>
-          <h2 className="section-title">Elige el camino que te impulsa</h2>
-          <p className="section-sub">Haz clic en cada plan para ver opciones y valores</p>
+          <h2 className="section-title">Un programa para cada objetivo</h2>
+          <p className="section-sub">Elige el que más se adapta a ti — todos incluyen diagnóstico inicial gratuito</p>
         </div>
-        <div className="programas-grid">
-          {programas.map(prog => (
-            <div key={prog.id} className="prog-wrap reveal">
-              <div
-                className={`prog-card${flippedCard === prog.id ? ' flipped' : ''}`}
-                onClick={() => setFlippedCard(flippedCard === prog.id ? null : prog.id)}
-                role="button" tabIndex={0}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFlippedCard(flippedCard === prog.id ? null : prog.id) } }}
-                aria-label={`${prog.backTipo} — clic para ver detalles`}
-              >
-                <div className="prog-front">
-                  <div className={`prog-info ${prog.colorClass}`}>
-                    <div className="prog-icon">{prog.icon}</div>
-                    <div className="prog-tipo">{prog.tipo}</div>
-                    <div className="prog-nombre">{prog.nombre[0]}<br />{prog.nombre[1]}</div>
-                    <div className="prog-fecha">{prog.desde}</div>
-                    <div className="prog-hint">Clic para ver opciones →</div>
-                  </div>
-                  <div className="prog-photo" style={{ background: progBg[prog.colorClass] }}>
-                    <span style={{ fontSize: '5rem' }}>{prog.icon}</span>
-                  </div>
+        <div className="planes-grid">
+          {planes.map((plan, i) => (
+            <div key={plan.id} className="plan-card reveal" style={{ animationDelay: `${i * 0.1}s` }}>
+              <div className="plan-card-top" style={{ background: plan.color }}>
+                <span className="plan-icon">{plan.icon}</span>
+                <div>
+                  <div className="plan-nombre">{plan.nombre}</div>
+                  <div className="plan-tagline">{plan.tagline}</div>
                 </div>
-                <div className="prog-back">
-                  <div className="prog-back-icon">{prog.icon}</div>
-                  <div className="prog-back-tipo">{prog.backTipo}</div>
-                  <div className="prog-back-nombre">{prog.backNombre}</div>
-                  <div className="prog-back-desc">{prog.backDesc}</div>
-                  <div className="prog-back-options">
-                    {prog.opciones.map((op, i) => (
-                      <div key={i} className="prog-back-option">
-                        {op.bold ? <strong>{op.label}</strong> : op.label}
-                        <span className="prog-back-price" style={op.green ? { color: '#4ade80' } : {}}>{op.price}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="prog-back-actions">
-                    <Link to="/contacto" className="prog-back-btn" onClick={e => e.stopPropagation()}>{prog.btnLabel}</Link>
-                    <button className="prog-back-close" onClick={e => { e.stopPropagation(); setFlippedCard(null) }}>← Volver</button>
-                  </div>
-                </div>
+                <div className="plan-precio">{plan.desde}</div>
               </div>
+              <ul className="plan-puntos">
+                {plan.puntos.map((p, j) => <li key={j}>{p}</li>)}
+              </ul>
             </div>
           ))}
+        </div>
+        <div className="planes-cta reveal">
+          <Link to="/planes" className="btn-planes-full">Ver todos los planes y precios →</Link>
         </div>
       </section>
 
@@ -367,23 +337,6 @@ function Home() {
               <div className="faq-answer">{faq.a}</div>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* CTA FINAL */}
-      <section className="home-cta reveal">
-        <div className="home-cta-inner">
-          <div className="promo-badge">Cupos limitados</div>
-          <h2>¿Por qué inscribirte hoy?</h2>
-          <div className="promo-list">
-            {['Docentes especializados que rinden la PAES anualmente', 'Clases grabadas disponibles 24/7 para repasar cuando quieras', 'Ensayos tipo PAES con corrección detallada', 'Seguimiento personalizado del progreso de tu hijo', '100% online — sin importar dónde estés en Chile'].map((item, i) => (
-              <div key={i} className="promo-item">{item}</div>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '32px' }}>
-            <Link to="/contacto" className="btn-gold">Inscribirme ahora</Link>
-            <a href="https://wa.me/56933325788?text=Hola,%20me%20interesa%20el%20preuniversitario%20Miraza" className="btn-wa" target="_blank" rel="noopener noreferrer">💬 Escribir por WhatsApp</a>
-          </div>
         </div>
       </section>
 

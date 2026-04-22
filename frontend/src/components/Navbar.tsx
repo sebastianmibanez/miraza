@@ -32,6 +32,7 @@ function Navbar() {
           <img src={logoImg} alt="Miraza" height={88} />
         </Link>
         <ul className="nav-links">
+          <li><Link to="/" className={isActive('/') ? 'active' : ''}>Inicio</Link></li>
           <li><Link to="/quienes-somos" className={isActive('/quienes-somos') ? 'active' : ''}>Quiénes Somos</Link></li>
           <li><Link to="/planes" className={isActive('/planes') ? 'active' : ''}>Planes</Link></li>
           <li><Link to="/aranceles" className={isActive('/aranceles') ? 'active' : ''}>Aranceles</Link></li>
@@ -40,6 +41,7 @@ function Navbar() {
           <li><Link to="/contacto" className={isActive('/contacto') ? 'active' : ''}>Contáctanos</Link></li>
         </ul>
         <div className="nav-right">
+          <Link to="/login" className="nav-access">Acceder</Link>
           <Link to="/contacto" className="nav-cta">Inscríbete</Link>
           <button
             className={`hamburger${menuOpen ? ' active' : ''}`}
@@ -53,12 +55,14 @@ function Navbar() {
       </nav>
 
       <div className={`mobile-menu${menuOpen ? ' open' : ''}`} role="navigation" aria-label="Menú móvil">
+        <Link to="/" onClick={closeMenu}>Inicio</Link>
         <Link to="/quienes-somos" onClick={closeMenu}>Quiénes Somos</Link>
         <Link to="/planes" onClick={closeMenu}>Planes</Link>
         <Link to="/aranceles" onClick={closeMenu}>Aranceles</Link>
         <Link to="/apoyo" onClick={closeMenu}>Apoyo Sicopedagógico</Link>
         <Link to="/testimonios" onClick={closeMenu}>Testimonios</Link>
         <Link to="/contacto" onClick={closeMenu}>Contáctanos</Link>
+        <Link to="/login" onClick={closeMenu} className="mobile-access-btn">Acceder →</Link>
       </div>
     </>
   )
