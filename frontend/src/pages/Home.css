@@ -836,13 +836,410 @@
   box-shadow: 0 8px 24px rgba(37,211,102,0.3);
 }
 
+/* ── HERO FORM ── */
+.hero-form-card {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  padding: 36px 32px 28px;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.hero-form-eyebrow {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.hero-form-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.45rem;
+  color: var(--white);
+  line-height: 1.25;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.hero-form-sub {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+}
+
+.hero-quick-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hero-input,
+.hero-select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 13px 16px;
+  color: var(--white);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.92rem;
+  transition: border-color 0.2s, background 0.2s;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.hero-input::placeholder { color: rgba(255, 255, 255, 0.4); }
+
+.hero-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='rgba(255,255,255,0.5)' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
+}
+
+.hero-select option { background: #0A1F44; color: var(--white); }
+
+.hero-input:focus,
+.hero-select:focus {
+  border-color: var(--gold);
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.hero-form-btn {
+  width: 100%;
+  background: var(--gold);
+  color: var(--navy);
+  border: none;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  margin-top: 4px;
+}
+
+.hero-form-btn:hover {
+  background: var(--gold-l);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245, 166, 35, 0.35);
+}
+
+.hero-form-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hfs-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.hfs-item strong {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--gold);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.hfs-item span {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+}
+
+.hfs-div {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+/* ── LOGROS ── */
+.logros-section {
+  background: var(--navy);
+  padding: 36px 6vw;
+  border-top: 1px solid rgba(245, 166, 35, 0.12);
+  border-bottom: 1px solid rgba(245, 166, 35, 0.12);
+  overflow: hidden;
+}
+
+.logros-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logros-eyebrow {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.logros-track {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.logro-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px 18px;
+  transition: background 0.2s, transform 0.2s;
+  min-width: 220px;
+  flex: 1;
+  max-width: 320px;
+}
+
+.logro-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.logro-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.logro-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.logro-nombre {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.2;
+}
+
+.logro-texto {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.logro-badge {
+  background: rgba(245, 166, 35, 0.18);
+  color: var(--gold);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── COMO FUNCIONA ── */
+.como-funciona {
+  padding: 100px 6vw;
+  background: var(--white);
+}
+
+.pasos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+.paso-card {
+  position: relative;
+  background: var(--white);
+  border: 1px solid rgba(10, 31, 68, 0.1);
+  border-radius: 20px;
+  padding: 36px 28px 32px;
+  text-align: center;
+  transition: box-shadow 0.25s, transform 0.25s;
+  margin: 0 8px;
+}
+
+.paso-card:hover {
+  box-shadow: 0 12px 40px rgba(10, 31, 68, 0.1);
+  transform: translateY(-4px);
+}
+
+.paso-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 900;
+  color: rgba(27, 77, 184, 0.08);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.paso-icon {
+  font-size: 2.2rem;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.paso-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: var(--navy);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.paso-desc {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.paso-arrow {
+  position: absolute;
+  top: 50%;
+  right: -24px;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  color: var(--gold);
+  font-weight: 700;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── METODOLOGIA ── */
+.metodologia {
+  padding: 100px 6vw;
+  background: var(--navy);
+  position: relative;
+  overflow: hidden;
+}
+
+.metodologia::before {
+  content: '360°';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Playfair Display', serif;
+  font-size: 18rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.025);
+  pointer-events: none;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.metodo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.metodo-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 32px 28px;
+  transition: background 0.25s, transform 0.25s;
+  position: relative;
+}
+
+.metodo-card:hover {
+  background: rgba(255, 255, 255, 0.09);
+  transform: translateY(-4px);
+}
+
+.metodo-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.metodo-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.metodo-num {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.06);
+  line-height: 1;
+}
+
+.metodo-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--white);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.metodo-desc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.75;
+}
+
+.metodo-center-badge {
+  display: none;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
-  .hero-stats { grid-template-columns: 1fr; }
-  .hero-stats .stat-card:first-child { grid-column: auto; }
   .stats-bar-inner { flex-direction: column; gap: 24px; }
   .sbar-divider { display: none; }
+  .logros-track { flex-direction: column; }
+  .logro-card { max-width: 100%; }
+  .pasos-grid { grid-template-columns: 1fr 1fr; }
+  .paso-arrow { display: none; }
+  .metodo-grid { grid-template-columns: 1fr; }
   .materias-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
   .programas-grid { grid-template-columns: 1fr; }
   .prog-card { height: 320px; }
@@ -850,4 +1247,9 @@
   .testim-inner { padding: 28px 20px; }
   .carousel-prev { left: 4px; }
   .carousel-next { right: 4px; }
+}
+
+@media (max-width: 480px) {
+  .pasos-grid { grid-template-columns: 1fr; }
+  .hero-form-card { padding: 28px 22px 22px; }
 }

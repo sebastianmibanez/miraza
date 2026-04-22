@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import './Home.css'
 
@@ -32,7 +32,9 @@ function Home() {
   const [activeSlide, setActiveSlide] = useState(0)
   const [currentTestim, setCurrentTestim] = useState(0)
   const [flippedCard, setFlippedCard] = useState<string | null>(null)
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [openFaq, setOpenFaq]     = useState<number | null>(null)
+  const [heroNombre, setHeroNombre] = useState('')
+  const [heroPlan, setHeroPlan]     = useState('')
 
   useEffect(() => {
     const t = setInterval(() => setActiveSlide(p => (p + 1) % 3), 8000)
@@ -49,6 +51,15 @@ function Home() {
     'prog-gold': 'linear-gradient(135deg,rgba(184,112,10,0.6),rgba(212,137,26,0.9))',
     'prog-navy': 'linear-gradient(135deg,rgba(10,31,68,0.7),rgba(27,77,184,0.9))',
     'prog-teal': 'linear-gradient(135deg,rgba(6,95,70,0.7),rgba(13,144,101,0.9))',
+  }
+
+  function handleHeroForm(e: FormEvent) {
+    e.preventDefault()
+    const plan = heroPlan || 'uno de los programas'
+    const msg  = `Hola, soy ${heroNombre.trim() || 'un estudiante'} y me interesa ${plan}. ¿Me pueden dar más información?`
+    window.open(`https://wa.me/56933325788?text=${encodeURIComponent(msg)}`, '_blank')
+    setHeroNombre('')
+    setHeroPlan('')
   }
 
   return (
@@ -71,10 +82,44 @@ function Home() {
               <Link to="/planes" className="btn-outline">Ver Planes</Link>
             </div>
           </div>
-          <div className="hero-stats">
-            <div className="stat-card"><div><span className="stat-number">500+</span><p className="stat-label">Estudiantes capacitados</p></div></div>
-            <div className="stat-card"><div><span className="stat-number">95%</span><p className="stat-label">Satisfacción estudiantil</p></div></div>
-            <div className="stat-card"><div><span className="stat-number">4.8★</span><p className="stat-label">Calificación promedio</p></div></div>
+          <div className="hero-form-card">
+            <div className="hero-form-header">
+              <div className="hero-form-eyebrow">Cupos 2025 disponibles</div>
+              <h3 className="hero-form-title">Consulta sin compromiso</h3>
+              <p className="hero-form-sub">Te respondemos en menos de 1 hora por WhatsApp</p>
+            </div>
+            <form className="hero-quick-form" onSubmit={handleHeroForm} noValidate>
+              <input
+                type="text"
+                className="hero-input"
+                placeholder="Tu nombre"
+                value={heroNombre}
+                onChange={e => setHeroNombre(e.target.value)}
+                required
+              />
+              <select
+                className="hero-select"
+                value={heroPlan}
+                onChange={e => setHeroPlan(e.target.value)}
+                required
+              >
+                <option value="">¿Qué plan te interesa?</option>
+                <option value="Preparación PAES">Preparación PAES</option>
+                <option value="Mejora tu NEM">Mejora tu NEM</option>
+                <option value="Nivelación de Estudios">Nivelación de Estudios</option>
+                <option value="Clases Especializadas">Clases Especializadas</option>
+              </select>
+              <button type="submit" className="hero-form-btn">
+                Consultar ahora →
+              </button>
+            </form>
+            <div className="hero-form-stats">
+              <div className="hfs-item"><strong>500+</strong><span>estudiantes</span></div>
+              <div className="hfs-div" />
+              <div className="hfs-item"><strong>4.9★</strong><span>calificación</span></div>
+              <div className="hfs-div" />
+              <div className="hfs-item"><strong>24/7</strong><span>soporte</span></div>
+            </div>
           </div>
         </div>
       </section>
@@ -87,6 +132,58 @@ function Home() {
           <div className="sbar-item"><div className="sbar-num">12<span className="sbar-suffix">+</span></div><span className="sbar-label">Años de experiencia</span></div>
           <div className="sbar-divider" />
           <div className="sbar-item"><div className="sbar-num">24/7</div><span className="sbar-label">Soporte disponible</span></div>
+        </div>
+      </section>
+
+      {/* LOGROS */}
+      <section className="logros-section">
+        <div className="logros-inner">
+          <span className="logros-eyebrow">Resultados reales · PAES 2024</span>
+          <div className="logros-track">
+            {[
+              { inicial: 'S', color: '#1B4DB8', nombre: 'Sofía M.',     logro: '+70 puntos en Matemática',          plan: 'PAES' },
+              { inicial: 'D', color: '#5B21B6', nombre: 'Diego R.',     logro: 'Ingresó a Ingeniería Civil',         plan: 'PAES' },
+              { inicial: 'V', color: '#065F46', nombre: 'Valentina P.', logro: 'Alcanzó 850+ puntos PAES',          plan: 'PAES' },
+              { inicial: 'M', color: '#B45309', nombre: 'Matías C.',    logro: 'Puntaje sobre 820 en todas las pruebas', plan: 'PAES' },
+              { inicial: 'C', color: '#5B21B6', nombre: 'Claudia M.',   logro: 'Plan especializado para su hijo',   plan: 'Apoyo' },
+            ].map((l, i) => (
+              <div key={i} className="logro-card">
+                <div className="logro-avatar" style={{ background: l.color }}>{l.inicial}</div>
+                <div className="logro-info">
+                  <div className="logro-nombre">{l.nombre}</div>
+                  <div className="logro-texto">{l.logro}</div>
+                </div>
+                <span className="logro-badge">{l.plan}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* COMO FUNCIONA */}
+      <section className="como-funciona">
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div className="section-header">
+            <span className="section-tag">Simple y rápido</span>
+            <h2 className="section-title">¿Cómo funciona Miraza?</h2>
+            <p className="section-sub">Cuatro pasos para empezar a mejorar</p>
+          </div>
+          <div className="pasos-grid">
+            {[
+              { num: '01', icon: '🔍', titulo: 'Diagnóstico gratuito',  desc: 'Evaluamos tu nivel actual en cada materia para conocer tus fortalezas y puntos de mejora.' },
+              { num: '02', icon: '📋', titulo: 'Plan personalizado',    desc: 'Diseñamos el programa exacto que necesitas según tu nivel, metas y disponibilidad horaria.' },
+              { num: '03', icon: '🎓', titulo: 'Clases en vivo',        desc: 'Grupos reducidos con docentes especializados. Las clases quedan grabadas para repasar cuando quieras.' },
+              { num: '04', icon: '📈', titulo: 'Seguimiento continuo',  desc: 'Ensayos semanales tipo PAES, corrección detallada y monitoreo permanente de tu progreso.' },
+            ].map((p, i) => (
+              <div key={i} className="paso-card">
+                <div className="paso-num">{p.num}</div>
+                <div className="paso-icon">{p.icon}</div>
+                <h3 className="paso-titulo">{p.titulo}</h3>
+                <p className="paso-desc">{p.desc}</p>
+                {i < 3 && <div className="paso-arrow">→</div>}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -120,6 +217,39 @@ function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* METODOLOGIA */}
+      <section className="metodologia">
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div className="section-header">
+            <span className="section-tag" style={{ color: 'var(--gold)' }}>Nuestro método</span>
+            <h2 className="section-title" style={{ color: 'var(--white)' }}>El Método Miraza 360°</h2>
+            <p className="section-sub" style={{ color: 'rgba(255,255,255,0.5)' }}>Cuatro pilares que garantizan resultados reales</p>
+          </div>
+          <div className="metodo-grid">
+            {[
+              { icon: '📚', color: '#1B4DB8', titulo: 'Contenidos actualizados',  desc: 'Material alineado 100% al currículo PAES 2025, actualizado anualmente por docentes que rinden la prueba cada año.' },
+              { icon: '✏️', color: '#B45309', titulo: 'Ejercitación permanente',  desc: 'Banco de más de 2.000 preguntas tipo PAES. Práctica diaria con corrección inmediata y análisis de errores.' },
+              { icon: '📊', color: '#065F46', titulo: 'Evaluación y ensayos',     desc: 'Ensayos mensuales que simulan las condiciones reales de la PAES. Ranking y análisis de desempeño por materia.' },
+              { icon: '🤝', color: '#5B21B6', titulo: 'Orientación y apoyo',      desc: 'Seguimiento personalizado de cada docente. Cada alumno tiene un plan de mejora y atención individual entre clases.' },
+            ].map((m, i) => (
+              <div key={i} className="metodo-card">
+                <div className="metodo-icon-wrap" style={{ background: m.color }}>
+                  <span className="metodo-icon">{m.icon}</span>
+                </div>
+                <div className="metodo-num">0{i + 1}</div>
+                <h3 className="metodo-titulo">{m.titulo}</h3>
+                <p className="metodo-desc">{m.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="metodo-center-badge">
+            <span>Método</span>
+            <strong>Miraza</strong>
+            <span>360°</span>
           </div>
         </div>
       </section>

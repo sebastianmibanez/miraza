@@ -10,3 +10,71 @@
   margin-top: 80px;
   width: 100%;
 }
+
+/* ── WHATSAPP FLOTANTE ── */
+@keyframes waPulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.45); }
+  50%       { box-shadow: 0 4px 32px rgba(37,211,102,0.7), 0 0 0 10px rgba(37,211,102,0.12); }
+}
+
+.whatsapp-float {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 58px;
+  height: 58px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  text-decoration: none;
+  animation: waPulse 2.8s ease-in-out infinite;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.whatsapp-float:hover {
+  background: #1fba5a;
+  transform: scale(1.1);
+  animation: none;
+  box-shadow: 0 6px 28px rgba(37,211,102,0.6);
+}
+
+.whatsapp-float svg {
+  width: 30px;
+  height: 30px;
+  fill: white;
+}
+
+.whatsapp-float::after {
+  content: 'Escríbenos';
+  position: absolute;
+  right: calc(100% + 12px);
+  background: #0A1F44;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 0.03em;
+}
+
+.whatsapp-float:hover::after {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .whatsapp-float {
+    bottom: 20px;
+    right: 16px;
+    width: 52px;
+    height: 52px;
+  }
+  .whatsapp-float::after { display: none; }
+}
