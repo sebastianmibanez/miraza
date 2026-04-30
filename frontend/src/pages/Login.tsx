@@ -8,7 +8,7 @@ const ROLE_ROUTES: Record<string, string> = {
   nem:        '/dashboard/nem',
   nivelacion: '/dashboard/nivelacion',
   especial:   '/dashboard/especial',
-  teacher:    '/dashboard/paes',
+  teacher:    '/dashboard/docente',
 }
 
 export default function Login() {

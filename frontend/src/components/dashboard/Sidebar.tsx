@@ -23,7 +23,7 @@ export default function Sidebar() {
   const navigate = useNavigate()
   const user = state.user
   const rol = user?.rol ?? 'paes'
-  const dashPath = rol === 'teacher' ? '/dashboard/paes' : `/dashboard/${rol}`
+  const dashPath = rol === 'teacher' ? '/dashboard/docente' : `/dashboard/${rol}`
   const initials = user ? `${user.nombre[0]}${user.apellido[0]}`.toUpperCase() : '??'
 
   function handleLogout() {
@@ -64,15 +64,32 @@ export default function Sidebar() {
         <NavLink to={dashPath} end className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
           <span className="sidebar-icon">🏠</span> Inicio
         </NavLink>
-        <NavLink to={`${dashPath}?tab=clases`} className="sidebar-link">
-          <span className="sidebar-icon">🎥</span> Clases grabadas
-        </NavLink>
-        <NavLink to={`${dashPath}?tab=materiales`} className="sidebar-link">
-          <span className="sidebar-icon">📄</span> Materiales
-        </NavLink>
-        <NavLink to={`${dashPath}?tab=progreso`} className="sidebar-link">
-          <span className="sidebar-icon">📊</span> Mi progreso
-        </NavLink>
+
+        {rol === 'teacher' ? (
+          <>
+            <NavLink to={`${dashPath}?tab=horario`} className="sidebar-link">
+              <span className="sidebar-icon">📅</span> Mi Horario
+            </NavLink>
+            <NavLink to={`${dashPath}?tab=ramos`} className="sidebar-link">
+              <span className="sidebar-icon">📚</span> Mis Ramos
+            </NavLink>
+            <NavLink to={`${dashPath}?tab=alumnos`} className="sidebar-link">
+              <span className="sidebar-icon">👥</span> Mis Alumnos
+            </NavLink>
+          </>
+        ) : (
+          <>
+            <NavLink to={`${dashPath}?tab=clases`} className="sidebar-link">
+              <span className="sidebar-icon">🎥</span> Clases grabadas
+            </NavLink>
+            <NavLink to={`${dashPath}?tab=materiales`} className="sidebar-link">
+              <span className="sidebar-icon">📄</span> Materiales
+            </NavLink>
+            <NavLink to={`${dashPath}?tab=progreso`} className="sidebar-link">
+              <span className="sidebar-icon">📊</span> Mi progreso
+            </NavLink>
+          </>
+        )}
       </nav>
 
       <div className="sidebar-bottom">

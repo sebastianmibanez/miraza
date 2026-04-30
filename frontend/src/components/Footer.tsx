@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import logoImg from '../assets/miraza.png'
+import logoImg from '../assets/miraza-kintsugi.png'
 
 function Footer() {
   const year = new Date().getFullYear()
@@ -10,7 +10,7 @@ function Footer() {
         {/* Columna 1: Branding */}
         <div>
           <div className="footer-logo">
-            <img src={logoImg} alt="Miraza" height={56} />
+            <img src={logoImg} alt="Miraza" height={40} style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))' }} />
           </div>
           <p className="footer-brand-desc">
             Preuniversitario PAES, nivelación de estudios y apoyo sicopedagógico 100% online.

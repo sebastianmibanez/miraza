@@ -155,7 +155,7 @@
 
 /* ── RIGHT FORM ── */
 .contacto-form-wrap {
-  background: #f5f7fb;
+  background: linear-gradient(160deg, #0a1630 0%, #0e2154 100%);
   padding: 60px 6vw;
   display: flex;
   align-items: flex-start;
@@ -163,10 +163,11 @@
 }
 
 .contacto-form-card {
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 24px;
   padding: 48px 44px;
-  box-shadow: 0 4px 32px rgba(10, 31, 68, 0.07);
+  backdrop-filter: blur(12px);
   width: 100%;
   max-width: 620px;
 }
@@ -178,16 +179,16 @@
 .cfc-header h2 {
   font-family: 'Playfair Display', serif;
   font-size: 1.6rem;
-  color: var(--navy);
+  color: var(--white);
   margin-bottom: 6px;
 }
 
 .cfc-header p {
   font-size: 0.85rem;
-  color: var(--muted);
+  color: rgba(255,255,255,0.5);
 }
 
-.req { color: #e53e3e; }
+.req { color: var(--gold); }
 
 .cfc-form {
   display: flex;
@@ -210,7 +211,7 @@
 .cfc-field label {
   font-size: 0.83rem;
   font-weight: 600;
-  color: var(--navy);
+  color: rgba(255,255,255,0.75);
   letter-spacing: 0.01em;
 }
 
@@ -218,33 +219,35 @@
 .cfc-field select,
 .cfc-field textarea {
   padding: 13px 16px;
-  border: 1.5px solid rgba(10, 31, 68, 0.12);
+  border: 1px solid rgba(255,255,255,0.18);
   border-radius: 10px;
   font-family: 'Outfit', sans-serif;
   font-size: 0.92rem;
-  color: var(--text);
-  background: var(--white);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  color: var(--white);
+  background: rgba(255,255,255,0.09);
+  transition: border-color 0.2s, background 0.2s;
   outline: none;
 }
 
 .cfc-field input::placeholder,
-.cfc-field textarea::placeholder { color: rgba(10, 31, 68, 0.3); }
+.cfc-field textarea::placeholder { color: rgba(255,255,255,0.35); }
 
 .cfc-field input:focus,
 .cfc-field select:focus,
 .cfc-field textarea:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(27, 77, 184, 0.1);
+  border-color: var(--gold);
+  background: rgba(255,255,255,0.13);
 }
 
 .cfc-field select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%230A1F44' opacity='.4' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='rgba(255,255,255,0.5)' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   cursor: pointer;
 }
+
+.cfc-field select option { background: #0A1F44; color: var(--white); }
 
 .cfc-field textarea { resize: vertical; min-height: 100px; }
 
@@ -260,28 +263,29 @@
   align-items: center;
   gap: 7px;
   padding: 8px 16px;
-  border: 1.5px solid rgba(10, 31, 68, 0.15);
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: 24px;
   font-size: 0.84rem;
   font-weight: 500;
-  color: var(--navy);
+  color: rgba(255,255,255,0.75);
   cursor: pointer;
   transition: all 0.18s;
   user-select: none;
-  background: var(--white);
+  background: rgba(255,255,255,0.06);
 }
 
 .cfc-chip input[type="checkbox"] { display: none; }
 
 .cfc-chip:hover {
-  border-color: var(--blue);
-  color: var(--blue);
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 .cfc-chip.selected {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: white;
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
+  font-weight: 700;
 }
 
 /* Message */
@@ -294,15 +298,15 @@
 }
 
 .cfc-message.success {
-  background: #f0fdf4;
-  color: #15803d;
-  border: 1px solid #bbf7d0;
+  background: rgba(21, 128, 61, 0.2);
+  color: #6ee7a0;
+  border: 1px solid rgba(110, 231, 160, 0.3);
 }
 
 .cfc-message.error {
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+  background: rgba(220, 38, 38, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(252, 165, 165, 0.3);
 }
 
 /* Submit */

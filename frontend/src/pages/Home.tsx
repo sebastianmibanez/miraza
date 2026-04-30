@@ -1,6 +1,38 @@
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, useCallback, FormEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { useVisibleInterval } from '../hooks/useVisibleInterval'
 import './Home.css'
+
+const DEADLINE_CV = new Date('2026-05-03T23:59:00')
+
+function getTimeLeft(target: Date) {
+  const diff = target.getTime() - Date.now()
+  if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  return {
+    days:    Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours:   Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+  }
+}
+
+function useCountdown(target: Date) {
+  const [timeLeft, setTimeLeft] = useState(getTimeLeft(target))
+  useEffect(() => {
+    const t = setInterval(() => setTimeLeft(getTimeLeft(target)), 1000)
+    return () => clearInterval(t)
+  }, [target])
+  return timeLeft
+}
+
+function CountBox({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="cbox">
+      <span className="cbox-num">{String(value).padStart(2, '0')}</span>
+      <span className="cbox-label">{label}</span>
+    </div>
+  )
+}
 
 const testimonios = [
   { texto: 'Entré con muchísimo miedo a la Matemática y salí con estrategias claras para cada tipo de pregunta. Subí más de 70 puntos en mis ensayos durante el año. Los profes explican diferente, te hacen entender de verdad.', nombre: 'Sofía M.', meta: '4° Medio · Matemática M1 y M2', color: 'linear-gradient(135deg,#1B4DB8,#3A6FD8)', inicial: 'S', badge: 'PAES 2024' },
@@ -35,10 +67,10 @@ const heroSlides = [
 ]
 
 const planes = [
-  { id: 'paes',  icon: '🎯', color: '#1B4DB8', nombre: 'Preparación PAES',      tagline: 'Para 4° Medio y egresados',  desde: 'desde $54.990/mes',     puntos: ['Todas las pruebas PAES 2025', 'Ensayos semanales corregidos', 'Grupos máx. 12 estudiantes'] },
-  { id: 'nem',   icon: '📊', color: '#B45309', nombre: 'Mejora tu NEM',          tagline: 'Refuerzo por materia',       desde: 'desde $34.990/mes',     puntos: ['Diagnóstico gratuito incluido', 'Por materia o pack completo', 'Seguimiento de notas'] },
-  { id: 'nivel', icon: '📚', color: '#0A1F44', nombre: 'Nivelación',             tagline: 'Básica y Media',             desde: 'desde $44.990/mes',     puntos: ['Enseñanza básica o media', 'Recupera la base académica', 'Avanza a tu ritmo'] },
-  { id: 'espec', icon: '🧩', color: '#065F46', nombre: 'Clases Especializadas',  tagline: 'Apoyo diferenciado',         desde: 'Diagnóstico gratuito',  puntos: ['Para necesidades de aprendizaje', 'Metodología 100% adaptada', 'Apoyo sicopedagógico'] },
+  { id: 'paes',  icon: '🎯', color: '#1B4DB8', nombre: 'Preparación PAES',     tagline: 'Para 4° Medio y egresados',  desde: 'desde $54.990/mes',    puntos: ['Todas las pruebas PAES 2025', 'Ensayos semanales corregidos', 'Grupos máx. 12 estudiantes'] },
+  { id: 'nem',   icon: '📊', color: '#B45309', nombre: 'Mejora tu NEM',         tagline: 'Refuerzo por materia',       desde: 'desde $34.990/mes',    puntos: ['Diagnóstico gratuito incluido', 'Por materia o pack completo', 'Seguimiento de notas'] },
+  { id: 'nivel', icon: '📚', color: '#0A1F44', nombre: 'Nivelación',            tagline: 'Básica y Media',             desde: 'desde $44.990/mes',    puntos: ['Enseñanza básica o media', 'Recupera la base académica', 'Avanza a tu ritmo'] },
+  { id: 'espec', icon: '🧩', color: '#065F46', nombre: 'Clases Especializadas', tagline: 'Apoyo diferenciado',         desde: 'Diagnóstico gratuito', puntos: ['Para necesidades de aprendizaje', 'Metodología 100% adaptada', 'Apoyo sicopedagógico'] },
 ]
 
 const faqs = [
@@ -49,22 +81,20 @@ const faqs = [
   { q: '¿Cuántos alumnos hay por clase?', a: 'Trabajamos en grupos reducidos para garantizar atención personalizada. Siempre priorizamos que el docente pueda hacer seguimiento individual a cada estudiante. No somos una clase masiva sin retroalimentación.' },
 ]
 
+const docentes = [
+  { nombre: 'Prof. A. Ramírez', materia: 'Matemática M1 y M2', exp: '8 años preparando para la PAES', inicial: 'A', color: 'linear-gradient(135deg,#1B4DB8,#3A6FD8)', logro: 'Rinde la PAES cada año junto a sus alumnos. Sus grupos promediaron +78 puntos en M2 en 2024.' },
+  { nombre: 'Prof. C. Soto', materia: 'Lenguaje y Comprensión Lectora', exp: '6 años preparando para la PAES', inicial: 'C', color: 'linear-gradient(135deg,#065F46,#059669)', logro: 'Método propio de lectura eficiente. Puntaje promedio de sus alumnos: 720+ puntos en Lenguaje.' },
+  { nombre: 'Prof. R. Vargas', materia: 'Historia y Ciencias Sociales', exp: '10 años de docencia especializada', inicial: 'R', color: 'linear-gradient(135deg,#B45309,#D97706)', logro: 'Magíster en Educación. Sus alumnos mejoran consistentemente +60 puntos en Historia.' },
+]
+
 function Home() {
-  const [activeSlide, setActiveSlide]   = useState(0)
-  const [currentTestim, setCurrentTestim] = useState(0)
-  const [openFaq, setOpenFaq]           = useState<number | null>(null)
-  const [heroNombre, setHeroNombre] = useState('')
-  const [heroPlan, setHeroPlan]     = useState('')
-
-  useEffect(() => {
-    const t = setInterval(() => setActiveSlide(p => (p + 1) % 3), 8000)
-    return () => clearInterval(t)
-  }, [])
-
-  useEffect(() => {
-    const t = setInterval(() => setCurrentTestim(p => (p + 1) % testimonios.length), 5200)
-    return () => clearInterval(t)
-  }, [])
+  const [activeSlide, setActiveSlide]     = useState(0)
+  const [openFaq, setOpenFaq]             = useState<number | null>(null)
+  const [heroNombre, setHeroNombre]       = useState('')
+  const [heroPlan, setHeroPlan]           = useState('')
+  const countdown = useCountdown(DEADLINE_CV)
+  const advanceSlide = useCallback(() => setActiveSlide(p => (p + 1) % 3), [])
+  useVisibleInterval(advanceSlide, 8000)
 
   function handleHeroForm(e: FormEvent) {
     e.preventDefault()
@@ -99,12 +129,38 @@ function Home() {
               <Link to="/contacto" className="btn-gold">Inscribirse Ahora</Link>
               <Link to="/planes" className="btn-outline">Ver Planes</Link>
             </div>
+            <div className="hero-social-proof">
+              <div className="hero-sp-avatars">
+                {['S','D','V','M'].map((l, i) => (
+                  <div key={i} className="hero-sp-avatar" style={{ background: ['#1B4DB8','#5B21B6','#065F46','#B45309'][i], zIndex: 4 - i }}>{l}</div>
+                ))}
+              </div>
+              <span className="hero-sp-text"><strong>+500 alumnos</strong> ya confían en Miraza</span>
+            </div>
+
+            <div className="hero-countdown">
+              <div className="hero-cd-label">🎓 Convocatoria docentes · cierra el 3 de Mayo</div>
+              <div className="hero-cd-boxes">
+                <CountBox value={countdown.days}    label="Días" />
+                <div className="dc-sep">:</div>
+                <CountBox value={countdown.hours}   label="Horas" />
+                <div className="dc-sep">:</div>
+                <CountBox value={countdown.minutes} label="Min" />
+                <div className="dc-sep">:</div>
+                <CountBox value={countdown.seconds} label="Seg" />
+              </div>
+            </div>
           </div>
+
           <div className="hero-form-card">
             <div className="hero-form-header">
               <div className="hero-form-eyebrow">Cupos 2025 disponibles</div>
               <h3 className="hero-form-title">Consulta sin compromiso</h3>
               <p className="hero-form-sub">Te respondemos en menos de 1 hora por WhatsApp</p>
+            </div>
+            <div className="hero-cupos-wrap">
+              <div className="hero-cupos-bar"><div className="hero-cupos-fill" /></div>
+              <p className="hero-cupos-text"><strong>8 de 12 cupos</strong> ocupados para el grupo de Mayo</p>
             </div>
             <form className="hero-quick-form" onSubmit={handleHeroForm} noValidate>
               <input
@@ -142,12 +198,7 @@ function Home() {
         </div>
         <div className="hero-dots">
           {heroSlides.map((_, i) => (
-            <button
-              key={i}
-              className={`hero-dot${activeSlide === i ? ' active' : ''}`}
-              onClick={() => setActiveSlide(i)}
-              aria-label={`Slide ${i + 1}`}
-            />
+            <button key={i} className={`hero-dot${activeSlide === i ? ' active' : ''}`} onClick={() => setActiveSlide(i)} aria-label={`Slide ${i + 1}`} />
           ))}
         </div>
       </section>
@@ -159,32 +210,9 @@ function Home() {
           <div className="sbar-divider" />
           <div className="sbar-item"><div className="sbar-num">12<span className="sbar-suffix">+</span></div><span className="sbar-label">Años de experiencia</span></div>
           <div className="sbar-divider" />
+          <div className="sbar-item"><div className="sbar-num">500<span className="sbar-suffix">+</span></div><span className="sbar-label">Estudiantes formados</span></div>
+          <div className="sbar-divider" />
           <div className="sbar-item"><div className="sbar-num">24/7</div><span className="sbar-label">Soporte disponible</span></div>
-        </div>
-      </section>
-
-      {/* LOGROS */}
-      <section className="logros-section reveal">
-        <div className="logros-inner">
-          <span className="logros-eyebrow">Resultados reales · PAES 2024</span>
-          <div className="logros-track">
-            {[
-              { inicial: 'S', color: '#1B4DB8', nombre: 'Sofía M.',     logro: '+70 puntos en Matemática',          plan: 'PAES' },
-              { inicial: 'D', color: '#5B21B6', nombre: 'Diego R.',     logro: 'Ingresó a Ingeniería Civil',         plan: 'PAES' },
-              { inicial: 'V', color: '#065F46', nombre: 'Valentina P.', logro: 'Alcanzó 850+ puntos PAES',          plan: 'PAES' },
-              { inicial: 'M', color: '#B45309', nombre: 'Matías C.',    logro: 'Puntaje sobre 820 en todas las pruebas', plan: 'PAES' },
-              { inicial: 'C', color: '#5B21B6', nombre: 'Claudia M.',   logro: 'Plan especializado para su hijo',   plan: 'Apoyo' },
-            ].map((l, i) => (
-              <div key={i} className="logro-card">
-                <div className="logro-avatar" style={{ background: l.color }}>{l.inicial}</div>
-                <div className="logro-info">
-                  <div className="logro-nombre">{l.nombre}</div>
-                  <div className="logro-texto">{l.logro}</div>
-                </div>
-                <span className="logro-badge">{l.plan}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -194,20 +222,21 @@ function Home() {
           <div className="section-header">
             <span className="section-tag">Simple y rápido</span>
             <h2 className="section-title">¿Cómo funciona Miraza?</h2>
-            <p className="section-sub">Cuatro pasos para empezar a mejorar</p>
+            <p className="section-sub">Cuatro pasos — y en cada uno hacemos las cosas diferente</p>
           </div>
           <div className="pasos-grid">
             {[
-              { num: '01', icon: '🔍', titulo: 'Diagnóstico gratuito',  desc: 'Evaluamos tu nivel actual en cada materia para conocer tus fortalezas y puntos de mejora.' },
-              { num: '02', icon: '📋', titulo: 'Plan personalizado',    desc: 'Diseñamos el programa exacto que necesitas según tu nivel, metas y disponibilidad horaria.' },
-              { num: '03', icon: '🎓', titulo: 'Clases en vivo',        desc: 'Grupos reducidos con docentes especializados. Las clases quedan grabadas para repasar cuando quieras.' },
-              { num: '04', icon: '📈', titulo: 'Seguimiento continuo',  desc: 'Ensayos semanales tipo PAES, corrección detallada y monitoreo permanente de tu progreso.' },
+              { num: '01', icon: '🔍', titulo: 'Diagnóstico gratuito',  desc: 'Evaluamos tu nivel real en cada materia antes de empezar. Sin costo, sin compromiso.', tag: 'Gratis · Sin compromiso' },
+              { num: '02', icon: '📋', titulo: 'Plan personalizado',    desc: 'Diseñamos el programa exacto para ti: materias, horario y ritmo. No hay dos planes iguales.', tag: 'No usamos planes genéricos' },
+              { num: '03', icon: '🎓', titulo: 'Clases en vivo',        desc: 'Grupos de máx. 12 alumnos con docentes que rinden la PAES cada año. Quedan grabadas 24/7.', tag: 'Máx. 12 alumnos · Grabadas 24/7' },
+              { num: '04', icon: '📈', titulo: 'Seguimiento continuo',  desc: 'Ensayos semanales tipo PAES con corrección individual. Tu profesor ajusta el plan si es necesario.', tag: 'Ensayos semanales · Corrección individual' },
             ].map((p, i) => (
               <div key={i} className="paso-card">
                 <div className="paso-num">{p.num}</div>
                 <div className="paso-icon">{p.icon}</div>
                 <h3 className="paso-titulo">{p.titulo}</h3>
                 <p className="paso-desc">{p.desc}</p>
+                <div className="paso-tag">{p.tag}</div>
                 {i < 3 && <div className="paso-arrow">→</div>}
               </div>
             ))}
@@ -215,35 +244,29 @@ function Home() {
         </div>
       </section>
 
-      {/* METODOLOGIA */}
-      <section className="metodologia reveal">
+      {/* DOCENTES */}
+      <section className="docentes-section reveal">
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div className="section-header">
-            <span className="section-tag" style={{ color: 'var(--gold)' }}>Nuestro método</span>
-            <h2 className="section-title" style={{ color: 'var(--white)' }}>El Método Miraza 360°</h2>
-            <p className="section-sub" style={{ color: 'rgba(255,255,255,0.5)' }}>Cuatro pilares que garantizan resultados reales</p>
+            <span className="section-tag">Nuestro equipo</span>
+            <h2 className="section-title">Conoce a tus profesores</h2>
+            <p className="section-sub">Especialistas con años de experiencia preparando a los mejores puntajes PAES</p>
           </div>
-          <div className="metodo-grid">
-            {[
-              { icon: '📚', color: '#1B4DB8', titulo: 'Contenidos actualizados',  desc: 'Material alineado 100% al currículo PAES 2025, actualizado anualmente por docentes que rinden la prueba cada año.' },
-              { icon: '✏️', color: '#B45309', titulo: 'Ejercitación permanente',  desc: 'Banco de más de 2.000 preguntas tipo PAES. Práctica diaria con corrección inmediata y análisis de errores.' },
-              { icon: '📊', color: '#065F46', titulo: 'Evaluación y ensayos',     desc: 'Ensayos mensuales que simulan las condiciones reales de la PAES. Ranking y análisis de desempeño por materia.' },
-              { icon: '🤝', color: '#5B21B6', titulo: 'Orientación y apoyo',      desc: 'Seguimiento personalizado de cada docente. Cada alumno tiene un plan de mejora y atención individual entre clases.' },
-            ].map((m, i) => (
-              <div key={i} className="metodo-card">
-                <div className="metodo-icon-wrap" style={{ background: m.color }}>
-                  <span className="metodo-icon">{m.icon}</span>
+          <div className="docentes-grid">
+            {docentes.map((d, i) => (
+              <div key={i} className="docente-card">
+                <div className="docente-top">
+                  <div className="docente-avatar" style={{ background: d.color }}>{d.inicial}</div>
+                  <div className="docente-header-info">
+                    <div className="docente-nombre">{d.nombre}</div>
+                    <div className="docente-materia">{d.materia}</div>
+                    <div className="docente-exp">{d.exp}</div>
+                  </div>
                 </div>
-                <div className="metodo-num">0{i + 1}</div>
-                <h3 className="metodo-titulo">{m.titulo}</h3>
-                <p className="metodo-desc">{m.desc}</p>
+                <p className="docente-logro">"{d.logro}"</p>
+                <div className="docente-stars">★★★★★</div>
               </div>
             ))}
-          </div>
-          <div className="metodo-center-badge">
-            <span>Método</span>
-            <strong>Miraza</strong>
-            <span>360°</span>
           </div>
         </div>
       </section>
@@ -269,6 +292,9 @@ function Home() {
               <ul className="plan-puntos">
                 {plan.puntos.map((p, j) => <li key={j}>{p}</li>)}
               </ul>
+              <div className="plan-cta-wrap">
+                <Link to="/contacto" className="plan-cta-btn">Empezar diagnóstico gratis</Link>
+              </div>
             </div>
           ))}
         </div>
@@ -293,32 +319,44 @@ function Home() {
             <span style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>Más de <strong style={{ color: 'var(--navy)' }}>120 alumnos</strong> satisfechos</span>
           </div>
         </div>
-        <div className="carousel-wrapper">
-          <div className="carousel-track" style={{ transform: `translateX(-${currentTestim * 100}%)` }}>
-            {testimonios.map((t, i) => (
-              <div key={i} className="testim-card">
-                <div className="testim-inner">
-                  <span className="testim-stars">★★★★★</span>
-                  <p className="testim-text">{t.texto}</p>
-                  <div className="testim-author">
-                    <div className="testim-avatar" style={{ background: t.color }}>{t.inicial}</div>
-                    <div><div className="testim-name">{t.nombre}</div><div className="testim-meta">{t.meta}</div></div>
-                    <div className="testim-badge">{t.badge}</div>
-                  </div>
-                </div>
+        <div className="testim-grid reveal">
+          {testimonios.map((t, i) => (
+            <div key={i} className="testim-grid-card">
+              <span className="testim-stars">★★★★★</span>
+              <p className="testim-text">"{t.texto}"</p>
+              <div className="testim-author">
+                <div className="testim-avatar" style={{ background: t.color }}>{t.inicial}</div>
+                <div><div className="testim-name">{t.nombre}</div><div className="testim-meta">{t.meta}</div></div>
+                <div className="testim-badge">{t.badge}</div>
               </div>
-            ))}
-          </div>
-          <button className="carousel-btn carousel-prev" onClick={() => setCurrentTestim(p => (p - 1 + testimonios.length) % testimonios.length)} aria-label="Anterior">&#8592;</button>
-          <button className="carousel-btn carousel-next" onClick={() => setCurrentTestim(p => (p + 1) % testimonios.length)} aria-label="Siguiente">&#8594;</button>
-          <div className="carousel-dots">
-            {testimonios.map((_, i) => (
-              <button key={i} className={`dot${i === currentTestim ? ' active' : ''}`} onClick={() => setCurrentTestim(i)} aria-label={`Testimonio ${i + 1}`} />
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
         <div style={{ textAlign: 'center', marginTop: '40px' }}>
           <Link to="/testimonios" className="btn-navy">Ver todos los testimonios →</Link>
+        </div>
+      </section>
+
+      {/* CLOSING CTA */}
+      <section className="cta-final reveal">
+        <div className="cta-final-inner">
+          <div className="cta-final-badge">Cupos limitados · Mayo 2025</div>
+          <h2 className="cta-final-title">¿Listo para cambiar tu puntaje?</h2>
+          <p className="cta-final-sub">Comienza con un diagnóstico gratuito. Sin compromiso, sin tarjeta de crédito.</p>
+          <div className="cta-final-features">
+            {['Diagnóstico inicial gratuito', 'Plan personalizado en 24 hrs', 'Primera clase sin costo', 'Grupos reducidos garantizados'].map((f, i) => (
+              <div key={i} className="cta-feat-item"><span className="cta-feat-check">✓</span>{f}</div>
+            ))}
+          </div>
+          <a
+            href="https://wa.me/56933325788?text=Hola%2C%20quiero%20comenzar%20mi%20diagnóstico%20gratuito%20con%20Miraza"
+            target="_blank"
+            rel="noreferrer"
+            className="btn-wa-big"
+          >
+            Quiero mi diagnóstico gratuito →
+          </a>
+          <p className="cta-final-trust">Te respondemos en menos de 1 hora · Lunes a Sábado de 9:00 a 20:00 hrs</p>
         </div>
       </section>
 

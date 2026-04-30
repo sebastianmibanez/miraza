@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { inscribir } from '../services/api'
 import './Contacto.css'
 
@@ -11,6 +11,8 @@ function Contacto() {
   })
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [honeypot, setHoneypot] = useState('')
+  const loadTime = useRef(Date.now())
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -26,6 +28,8 @@ function Contacto() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    // Anti-bot: honeypot debe estar vacío y debe haber pasado > 3s
+    if (honeypot !== '' || Date.now() - loadTime.current < 3000) return
     setLoading(true)
     setMessage(null)
     try {
@@ -104,6 +108,17 @@ function Contacto() {
           </div>
 
           <form onSubmit={handleSubmit} className="cfc-form" noValidate>
+            {/* Honeypot anti-bot — no mostrar a usuarios reales */}
+            <input
+              type="text"
+              name="_hp"
+              value={honeypot}
+              onChange={e => setHoneypot(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0 }}
+              aria-hidden="true"
+            />
             <div className="cfc-row">
               <div className="cfc-field">
                 <label htmlFor="nombre">Nombre <span className="req">*</span></label>

@@ -65,6 +65,8 @@ export interface ScheduleItem {
   hora: string
   materia: string
   tipo: string
+  plan?: string
+  alumnos?: number
 }
 
 export interface Announcement {
@@ -79,6 +81,26 @@ export interface ChatResponse {
   ok: boolean
   respuesta?: string
   error?: string
+}
+
+export interface TeacherRamo {
+  id: number
+  nombre: string
+  plan: string
+  color: string
+  alumnos: number
+  clases_semana: number
+  proxima: string
+}
+
+export interface TeacherAlumno {
+  id: number
+  nombre: string
+  apellido: string
+  ramo: string
+  plan: string
+  nivel: string
+  estado: 'activo' | 'inactivo'
 }
 
 // ── Auth ──────────────────────────────────────────────────────
@@ -99,6 +121,15 @@ export const getDashboardSchedule = () =>
 
 export const getDashboardAnnouncements = () =>
   api.get<{ ok: boolean; announcements: Announcement[] }>('/api/dashboard/announcements')
+
+// ── Teacher ───────────────────────────────────────────────────
+export const getTeacherRamos = () =>
+  api.get<{ ok: boolean; ramos: TeacherRamo[] }>('/api/dashboard/teacher/ramos')
+
+export const getTeacherAlumnos = (ramo?: string) =>
+  api.get<{ ok: boolean; alumnos: TeacherAlumno[] }>('/api/dashboard/teacher/alumnos', {
+    params: ramo ? { ramo } : undefined,
+  })
 
 // ── Chat ──────────────────────────────────────────────────────
 export const sendChatMessage = (message: string) =>

@@ -8,7 +8,7 @@
 }
 
 .login-card {
-  background: #fff;
+  background: var(--white);
   border-radius: 1.25rem;
   padding: 2.5rem 2rem;
   width: 100%;
@@ -69,7 +69,7 @@
 
 .login-field input:focus {
   border-color: #2563eb;
-  background: #fff;
+  background: var(--white);
 }
 
 .login-field input:disabled {

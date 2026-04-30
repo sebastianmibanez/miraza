@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import ErrorBoundary from './ErrorBoundary'
 import './Layout.css'
 
 function Layout() {
@@ -29,7 +30,9 @@ function Layout() {
     <div className="layout">
       <Navbar />
       <main className="main-content">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
       <Footer />
 
