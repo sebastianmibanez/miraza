@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import logoImg from '../assets/miraza-kintsugi.png'
+import logoImg from '../assets/miraza2.0.png'
 import './Navbar.css'
 
 function Navbar() {

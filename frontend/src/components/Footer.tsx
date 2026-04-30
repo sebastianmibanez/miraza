@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import logoImg from '../assets/miraza-kintsugi.png'
+import logoImg from '../assets/miraza2.0.png'
 
 function Footer() {
   const year = new Date().getFullYear()
