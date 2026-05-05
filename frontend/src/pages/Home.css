@@ -1516,6 +1516,16 @@
   .pasos-grid { grid-template-columns: 1fr; }
   .planes-grid { grid-template-columns: 1fr; }
   .hero-form-card { padding: 28px 22px 22px; }
+
+  .hero-cd-boxes { gap: 4px; }
+  .cbox { min-width: 0; padding: 10px 8px; flex: 1; }
+  .cbox-num { font-size: 1.6rem; }
+  .cbox-label { font-size: 0.55rem; }
+  .dc-sep { font-size: 1rem; margin-bottom: 14px; }
+
+  .hero-form-stats { gap: 8px; }
+  .hfs-item span { font-size: 0.65rem; }
+  .hfs-item strong { font-size: 1rem; }
 }
 
 /* ── FLOATING NOTIFICATION ── */
@@ -1813,3 +1823,115 @@
   .cta-final-features { flex-direction: column; align-items: center; }
   .hero-notif { left: 12px; right: 12px; max-width: none; bottom: 80px; }
 }
+
+/* ── ALTERNATING SECTIONS + COMPACT PADDING ── */
+.como-funciona,
+.docentes-section,
+.planes-section,
+.home-testimonios,
+.cta-final,
+.home-faq {
+  padding-top: 52px;
+  padding-bottom: 52px;
+}
+
+.section-header {
+  margin-bottom: 32px;
+}
+
+/* SI sections — fondo azul oscuro estilo hero (3 variantes) */
+.docentes-section {
+  background:
+    radial-gradient(ellipse at 70% 50%, rgba(27, 77, 184, 0.42) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(245, 166, 35, 0.14) 0%, transparent 50%),
+    #0A1F44;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-testimonios {
+  background:
+    radial-gradient(ellipse at 25% 35%, rgba(245, 166, 35, 0.20) 0%, transparent 55%),
+    radial-gradient(ellipse at 78% 68%, rgba(27, 77, 184, 0.45) 0%, transparent 60%),
+    #0B1E40;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-faq {
+  background:
+    radial-gradient(ellipse at 58% 75%, rgba(27, 77, 184, 0.55) 0%, transparent 65%),
+    radial-gradient(ellipse at 30% 20%, rgba(100, 170, 255, 0.18) 0%, transparent 50%),
+    #091830;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Headers en secciones oscuras */
+.docentes-section .section-tag,
+.home-testimonios .section-tag,
+.home-faq .section-tag { color: var(--gold); }
+
+.docentes-section .section-title,
+.home-testimonios .section-title,
+.home-faq .section-title { color: var(--white); }
+
+.docentes-section .section-sub,
+.home-testimonios .section-sub,
+.home-faq .section-sub { color: rgba(255, 255, 255, 0.55); }
+
+/* Testimonios rating bar — overrides para inline styles */
+.home-testimonios .testim-rating-bar [style*="--navy"] { color: var(--white) !important; }
+.home-testimonios .testim-rating-bar [style*="--muted"] { color: rgba(255, 255, 255, 0.55) !important; }
+.home-testimonios .testim-sep { background: rgba(255, 255, 255, 0.18); }
+
+/* Botón "Ver todos los testimonios" sobre fondo oscuro */
+.home-testimonios .btn-navy {
+  background: var(--gold);
+  color: var(--navy);
+}
+.home-testimonios .btn-navy:hover {
+  background: var(--gold-l);
+  box-shadow: 0 8px 24px rgba(245, 166, 35, 0.25);
+}
+
+/* FAQ items sobre fondo oscuro */
+.home-faq .faq-item {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+.home-faq .faq-question {
+  background: transparent;
+  color: var(--white);
+}
+.home-faq .faq-question:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.home-faq .faq-arrow { color: var(--gold); }
+.home-faq .faq-answer {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+}
+.home-faq .faq-item.open {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* CTA final — cambio a fondo claro */
+.cta-final {
+  background: linear-gradient(148deg, #E8E8E6 0%, #F0F0EE 60%, #EAEAEA 100%);
+}
+.cta-final::before { display: none; }
+.cta-final-badge {
+  background: rgba(245, 166, 35, 0.18);
+  border-color: rgba(245, 166, 35, 0.5);
+  color: #B45309;
+}
+.cta-final-title { color: var(--navy); }
+.cta-final-sub { color: var(--muted); }
+.cta-feat-item {
+  color: var(--text);
+  background: rgba(10, 31, 68, 0.05);
+  border-color: rgba(10, 31, 68, 0.1);
+}
+.cta-feat-check { color: #B45309; }
+.cta-final-trust { color: var(--muted); }
