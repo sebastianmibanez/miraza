@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import {
@@ -6,20 +6,24 @@ import {
   getTeacherRamos,
   getTeacherAlumnos,
   getDashboardAnnouncements,
+  getInscripciones,
   type TeacherRamo,
   type TeacherAlumno,
   type Announcement,
   type ScheduleItem,
+  type ResumenInscripciones,
 } from '../../services/api'
+import InscripcionesTab from './InscripcionesTab'
 import './DashboardDocente.css'
 
 const COLOR = '#b45309'
 
 const TABS = [
-  { key: 'inicio',   label: '🏠 Inicio' },
-  { key: 'horario',  label: '📅 Mi Horario' },
-  { key: 'ramos',    label: '📚 Mis Ramos' },
-  { key: 'alumnos',  label: '👥 Mis Alumnos' },
+  { key: 'inicio',        label: '🏠 Inicio' },
+  { key: 'inscripciones', label: '📥 Inscripciones' },
+  { key: 'horario',       label: '📅 Mi Horario' },
+  { key: 'ramos',         label: '📚 Mis Ramos' },
+  { key: 'alumnos',       label: '👥 Mis Alumnos' },
 ]
 
 const TIPO_COLORS: Record<string, string> = {
@@ -44,12 +48,19 @@ export default function DashboardDocente() {
   const [ramoFiltro, setRamoFiltro]     = useState('')
   const [estadoFiltro, setEstadoFiltro] = useState<'todos' | 'activo' | 'inactivo'>('todos')
   const [loadingAlumnos, setLoadingAlumnos] = useState(false)
+  const [pendientes, setPendientes]     = useState(0)
 
   useEffect(() => {
     getDashboardSchedule().then(r => setSchedule(r.data.schedule || []))
     getTeacherRamos().then(r => setRamos(r.data.ramos || []))
     getDashboardAnnouncements().then(r => setAnnouncements(r.data.announcements || []))
+    getInscripciones().then(r => setPendientes(r.data.resumen?.pendiente ?? 0)).catch(() => {})
   }, [])
+
+  const onResumen = useCallback(
+    (r: ResumenInscripciones) => setPendientes(r.pendiente),
+    []
+  )
 
   useEffect(() => {
     setLoadingAlumnos(true)
@@ -100,6 +111,10 @@ export default function DashboardDocente() {
             <span className="docente-stat-num">{clasesHoy}</span>
             <span className="docente-stat-label">Clases hoy</span>
           </div>
+          <div className={`docente-stat-pill${pendientes > 0 ? ' destacada' : ''}`}>
+            <span className="docente-stat-num">{pendientes}</span>
+            <span className="docente-stat-label">Inscripciones nuevas</span>
+          </div>
         </div>
       </div>
 
@@ -112,9 +127,15 @@ export default function DashboardDocente() {
             onClick={() => setTab(t.key)}
           >
             {t.label}
+            {t.key === 'inscripciones' && pendientes > 0 && (
+              <span className="docente-tab-badge">{pendientes}</span>
+            )}
           </button>
         ))}
       </div>
+
+      {/* ── INSCRIPCIONES ── */}
+      {tab === 'inscripciones' && <InscripcionesTab onResumen={onResumen} />}
 
       {/* ── INICIO ── */}
       {tab === 'inicio' && (

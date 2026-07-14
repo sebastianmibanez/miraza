@@ -59,6 +59,25 @@ def db_execute(conn, query, params=None):
     return cur
 
 
+def _columna_existe(conn, tabla, columna):
+    """PostgreSQL soporta ADD COLUMN IF NOT EXISTS; SQLite no. Preguntamos antes."""
+    if USE_POSTGRES:
+        fila = db_execute(conn, '''
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = %s AND column_name = %s
+        ''', (tabla, columna)).fetchone()
+        return fila is not None
+
+    cur = conn.cursor()
+    cur.execute(f'PRAGMA table_info({tabla})')
+    return any(fila[1] == columna for fila in cur.fetchall())
+
+
+def _agregar_columna(conn, tabla, columna, definicion):
+    if not _columna_existe(conn, tabla, columna):
+        db_execute(conn, f'ALTER TABLE {tabla} ADD COLUMN {columna} {definicion}')
+
+
 def init_db():
     # Único punto donde el DDL difiere entre motores.
     pk = 'SERIAL PRIMARY KEY' if USE_POSTGRES else 'INTEGER PRIMARY KEY AUTOINCREMENT'
@@ -106,4 +125,15 @@ def init_db():
         ''')
         db_execute(conn, '''
             CREATE INDEX IF NOT EXISTS idx_sesiones_usuario ON sesiones_log(usuario_id)
+        ''')
+
+        # Une las dos mitades de la app: hasta ahora una inscripción moría en su
+        # tabla y la cuenta del alumno había que tipearla a mano en otro lado.
+        #   estado     -> pendiente | aprobada | descartada
+        #   usuario_id -> la cuenta creada a partir de esta inscripción
+        _agregar_columna(conn, 'inscripciones', 'estado', "TEXT NOT NULL DEFAULT 'pendiente'")
+        _agregar_columna(conn, 'inscripciones', 'usuario_id', 'INTEGER')
+
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_inscripciones_estado ON inscripciones(estado)
         ''')

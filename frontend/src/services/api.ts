@@ -131,6 +131,52 @@ export const getTeacherAlumnos = (ramo?: string) =>
     params: ramo ? { ramo } : undefined,
   })
 
+// ── Inscripciones (panel docente) ─────────────────────────────
+export type EstadoInscripcion = 'pendiente' | 'aprobada' | 'descartada'
+export type RolAlumno = 'paes' | 'nem' | 'nivelacion' | 'especial'
+
+export interface Inscripcion {
+  id: number
+  nombre: string
+  apellido: string
+  email: string
+  telefono: string
+  curso: string
+  materias: string
+  mensaje: string
+  fecha: string
+  estado: EstadoInscripcion
+  usuario_id: number | null
+}
+
+export interface ResumenInscripciones {
+  pendiente: number
+  aprobada: number
+  descartada: number
+}
+
+export interface CuentaCreada {
+  ok: boolean
+  password?: string
+  user?: { id: number; nombre: string; apellido: string; email: string; rol: RolAlumno }
+  error?: string
+}
+
+export const getInscripciones = (estado?: EstadoInscripcion) =>
+  api.get<{ ok: boolean; inscripciones: Inscripcion[]; resumen: ResumenInscripciones }>(
+    '/api/admin/inscripciones',
+    { params: estado ? { estado } : undefined }
+  )
+
+export const crearCuentaDesdeInscripcion = (id: number, rol: RolAlumno) =>
+  api.post<CuentaCreada>(`/api/admin/inscripciones/${id}/crear-cuenta`, { rol })
+
+export const descartarInscripcion = (id: number) =>
+  api.post<{ ok: boolean; error?: string }>(`/api/admin/inscripciones/${id}/descartar`)
+
+export const reabrirInscripcion = (id: number) =>
+  api.post<{ ok: boolean; error?: string }>(`/api/admin/inscripciones/${id}/reabrir`)
+
 // ── Chat ──────────────────────────────────────────────────────
 export const sendChatMessage = (message: string) =>
   api.post<ChatResponse>('/api/chat', { message })
