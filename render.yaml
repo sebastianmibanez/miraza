@@ -17,8 +17,14 @@ services:
         value: 3.12.0
       - key: FLASK_DEBUG
         value: false
+      # Firma los JWT y las sesiones del panel admin. Render lo genera solo.
       - key: SECRET_KEY
         generateValue: true
+      # Connection string de Neon. Se pega a mano en el dashboard de Render
+      # (Environment → Add Environment Variable). Sin esto la app usaría SQLite
+      # sobre el disco efímero de Render y se perderían todos los datos.
+      - key: DATABASE_URL
+        sync: false
       - key: ADMIN_USER
         sync: false
       - key: ADMIN_PASSWORD

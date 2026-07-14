@@ -16,7 +16,6 @@ CORS(app, resources={r"/api/*": {"origins": [
     "https://miraza.cl", "https://www.miraza.cl"
 ]}}, supports_credentials=True)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
-app.secret_key = os.getenv('SECRET_KEY', os.urandom(32))
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
@@ -32,9 +31,13 @@ logger = logging.getLogger(__name__)
 from app_db import get_db, db_execute, init_db
 
 # ── Blueprints ─────────────────────────────────────────────────
-from blueprints.auth import auth_bp, seed_users
+from blueprints.auth import auth_bp, seed_users, SECRET_KEY
 from blueprints.dashboard import dashboard_bp
 from blueprints.chat import chat_bp
+
+# Mismo secreto que firma los JWT. Debe ser estable entre los workers de
+# gunicorn, o las sesiones del panel admin se romperían al azar.
+app.secret_key = SECRET_KEY
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
@@ -215,8 +218,7 @@ def admin():
             SELECT id, nombre, apellido, email, telefono, curso, materias, mensaje, fecha
             FROM inscripciones ORDER BY fecha DESC
         ''')
-        cols = [d[0] for d in cur.description]
-        rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+        rows = [dict(r) for r in cur.fetchall()]
     return render_template('admin.html', inscripciones=rows)
 
 

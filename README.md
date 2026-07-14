@@ -4,10 +4,10 @@ Landing page + backend para inscripciones PAES.
 
 ## Stack
 - **Backend:** Python + Flask
-- **Base de datos:** SQLite (local) / PostgreSQL (producción en Render)
-- **Frontend:** HTML/CSS/JS vanilla
-- **Plataforma de clases:** Google Classroom
-- **Deploy:** Render (gratis)
+- **Base de datos:** PostgreSQL en [Neon](https://neon.tech) (producción) / SQLite (local)
+- **Frontend:** React + TypeScript + Vite
+- **Auth:** JWT (alumnos y profesoras) + sesión Flask (panel admin)
+- **Deploy:** Render (plan gratis)
 
 ## Seguridad incluida
 - Queries parametrizadas (sin SQL injection)
@@ -40,67 +40,98 @@ miraza/
 
 ## Deploy en Render (producción)
 
-### Opción A: Blueprint automático (recomendado)
+> ⚠️ **`DATABASE_URL` es obligatorio en producción.**
+> El disco de Render (plan gratis) es **efímero**: se borra en cada deploy, cada
+> reinicio y cada vez que el servicio despierta tras dormirse. Si la app corre sin
+> `DATABASE_URL`, escribe en un SQLite local y **todos los datos se pierden** —
+> inscripciones, cuentas de alumnos y contraseñas incluidas.
+> La base va en Neon, fuera de Render.
 
-1. Sube el proyecto a GitHub:
-   ```bash
-   cd miraza
-   git init
-   git add .
-   git commit -m "Initial commit"
-   # Crear repo en github.com, luego:
-   git remote add origin https://github.com/TU_USUARIO/miraza.git
-   git branch -M main
-   git push -u origin main
+### 1. Crear la base de datos en Neon (gratis, no expira)
+
+1. Entra a [neon.tech](https://neon.tech) y crea un proyecto (ej. `miraza`).
+2. Copia el **connection string**. Se ve así:
+   ```
+   postgresql://usuario:password@ep-xxx.us-east-2.aws.neon.tech/miraza?sslmode=require
    ```
 
-2. Ve a [dashboard.render.com](https://dashboard.render.com)
+### 2. Crear el web service en Render
 
-3. Click **New** → **Blueprint** → conecta tu repo de GitHub
+1. Sube el repo a GitHub.
+2. [dashboard.render.com](https://dashboard.render.com) → **New** → **Blueprint** → conecta el repo.
+   Render lee `render.yaml` y arma el servicio solo.
+3. En **Environment**, define las variables marcadas como `sync: false`:
+   - `DATABASE_URL` → el connection string de Neon del paso anterior
+   - `ADMIN_USER` y `ADMIN_PASSWORD` → para entrar al panel `/admin`
 
-4. Render detecta el `render.yaml` y crea automáticamente:
-   - Un **Web Service** (Flask app)
-   - Una **base de datos PostgreSQL** (gratis 90 días)
-   - La variable `DATABASE_URL` conectada automáticamente
+   (`SECRET_KEY` la genera Render automáticamente. **No la borres**: sin ella la app
+   se niega a arrancar en producción, a propósito — firma los JWT.)
+4. **Apply**. Las tablas se crean solas en el primer arranque.
 
-5. Click **Apply** y espera ~2 minutos. Listo 🚀
+### 3. Crear las cuentas reales
 
-### Opción B: Configuración manual
+Render → tu servicio → pestaña **Shell**:
 
-1. Sube a GitHub (mismo paso 1 de arriba)
+```bash
+python manage.py crear-usuario
+```
 
-2. En Render, crea la base de datos:
-   - **New** → **PostgreSQL** → Name: `miraza-db` → Plan: **Free** → **Create**
-   - Espera a que se cree. Copia la **Internal Database URL**
-
-3. En Render, crea el web service:
-   - **New** → **Web Service** → conecta tu repo
-   - **Runtime:** Python
-   - **Build command:** `pip install -r requirements.txt`
-   - **Start command:** `gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app:app`
-   - En **Environment Variables**, agrega:
-     - `DATABASE_URL` = (pega la Internal Database URL del paso anterior)
-     - `PYTHON_VERSION` = `3.12.0`
-   - Plan: **Free** → **Create Web Service**
-
-4. Espera ~2 minutos. Listo 🚀
+Ver [Gestión de cuentas](#gestión-de-cuentas) más abajo.
 
 ### Verificar que funciona
 
 ```bash
-# Health check (reemplazar con tu URL de Render)
-curl https://miraza.onrender.com/health
-
-# Debería responder:
+curl https://miraza.cl/api/health
 # {"db":"connected","status":"ok"}
 ```
 
+Si responde `"db":"disconnected"`, `DATABASE_URL` está mal o falta.
+
 ### Después del deploy
 
-- Cada `git push` a `main` hace deploy automático
-- El cold start de ~30s es normal en el plan gratis (el servicio se duerme tras 15 min sin tráfico)
-- Para eliminarlo: usa [UptimeRobot](https://uptimerobot.com/) (gratis) para hacer ping cada 14 min, o upgrade a $7/mes en Render
-- La BD PostgreSQL gratis dura 90 días. Antes de que expire, evalúa si conviene pagar $7/mes o migrar a [Neon](https://neon.tech/) (PostgreSQL gratis sin límite de tiempo)
+- Cada `git push` a `main` hace deploy automático.
+- El cold start de ~30s es normal en el plan gratis (el servicio duerme tras 15 min
+  sin tráfico). Los datos ya **no** se pierden al dormirse, porque viven en Neon.
+- Para evitar el cold start: [UptimeRobot](https://uptimerobot.com/) haciendo ping
+  cada 14 min, o subir a $7/mes en Render.
+
+---
+
+## Gestión de cuentas
+
+No hay registro público: las cuentas las crea Miraza. `manage.py` corre contra la
+misma base que la app (Neon en producción, SQLite en local).
+
+```bash
+# Crear una cuenta (pregunta lo que falte)
+python manage.py crear-usuario
+
+# O todo de una, con contraseña generada automáticamente
+python manage.py crear-usuario --nombre Ana --apellido Soto \
+    --email ana@ejemplo.cl --rol paes --generar-password
+
+python manage.py listar-usuarios
+python manage.py cambiar-password ana@ejemplo.cl
+python manage.py desactivar ana@ejemplo.cl   # bloquea el acceso sin borrar nada
+python manage.py activar ana@ejemplo.cl
+```
+
+**Roles:** `paes`, `nem`, `nivelacion`, `especial` (alumnos) y `teacher` (profesoras).
+El rol decide a qué panel entra la persona al iniciar sesión.
+
+La contraseña generada **se muestra una sola vez**. Entrégala por un canal privado.
+
+### Usuarios de prueba
+
+Las cuentas demo (`profevale@miraza.cl`, etc.) tienen contraseñas escritas en el
+repo, así que **solo existen en desarrollo local** y hay que pedirlas explícitamente:
+
+```bash
+SEED_TEST_USERS=true python app.py
+```
+
+En producción el seed está bloqueado por código, aunque alguien active la variable
+por error. Si alguna quedó viva en la base: `python manage.py purgar-usuarios-demo`.
 
 ---
 
@@ -171,8 +202,22 @@ En `templates/index.html`, editar las variables CSS:
 ```
 
 ## TODO
-- [ ] Registrar dominio `miraza.cl`
-- [ ] Reemplazar número de WhatsApp en el botón flotante (`569XXXXXXXXX`)
+
+### Antes de abrir a alumnos reales
+- [x] Base de datos persistente (Neon) — sin esto se perdía todo
+- [x] Sacar los usuarios de prueba de producción
+- [x] Herramienta para crear cuentas (`manage.py`)
+- [ ] Definir `DATABASE_URL` en Render y crear las cuentas reales
+- [ ] Avisar por correo cada inscripción nueva (hoy los leads no notifican a nadie)
+- [ ] Reemplazar el WhatsApp de ejemplo en `Login.tsx` (`56912345678`)
+
+### Para que el panel sirva de verdad
+- [ ] El dashboard docente usa datos falsos (`blueprints/dashboard.py`): horarios,
+      anuncios y alumnos están hardcodeados. Falta que la profesora pueda gestionar
+      sus ramos, alumnos y horarios desde la app.
+- [ ] Recuperación de contraseña ("olvidé mi clave")
+- [ ] Chat IA: falta `anthropic` en `requirements.txt` y `ANTHROPIC_API_KEY` en Render
+
+### Otros
 - [ ] Agregar imagen para Open Graph (`og:image`)
-- [ ] Panel admin para ver inscripciones desde el navegador
-- [ ] Configurar UptimeRobot para evitar cold start
+- [ ] Configurar UptimeRobot para evitar el cold start

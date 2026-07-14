@@ -13,11 +13,26 @@ logger = logging.getLogger(__name__)
 
 auth_bp = Blueprint('auth', __name__)
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-change-in-prod')
+IS_PRODUCTION = bool(os.getenv('DATABASE_URL', '').strip())
+
+# En producción SECRET_KEY es obligatorio: sin esto los JWT se firmarían con un
+# secreto conocido y cualquiera podría forjarse un token de profesora.
+SECRET_KEY = os.getenv('SECRET_KEY', '').strip()
+if not SECRET_KEY:
+    if IS_PRODUCTION:
+        raise RuntimeError(
+            'SECRET_KEY no está definido. Es obligatorio en producción — '
+            'configúralo en las variables de entorno de Render.'
+        )
+    SECRET_KEY = 'dev-only-insecure-secret'
+
 JWT_EXPIRY_HOURS = 8
 BLOQUEAR_EXTRANJERO = os.getenv('BLOQUEAR_LOGIN_EXTRANJERO', 'false').lower() == 'true'
 
-# ── Test users seeded on every cold start ─────────────────────
+# Usuarios de demo. Solo se crean si SEED_TEST_USERS=true, que jamás debe
+# activarse en producción: las contraseñas están en el repo.
+SEED_TEST_USERS = os.getenv('SEED_TEST_USERS', 'false').lower() == 'true'
+
 TEST_USERS = [
     ('Florencia', 'Pérez',   'florencia.paes@miraza.cl',  'Test1234!',  'paes'),
     ('Wilson',    'Mora',    'wilson.nem@miraza.cl',       'Test1234!',  'nem'),
@@ -28,6 +43,12 @@ TEST_USERS = [
 
 
 def seed_users():
+    if not SEED_TEST_USERS:
+        return
+    if IS_PRODUCTION:
+        logger.error("SEED_TEST_USERS está activo en producción. Ignorado por seguridad.")
+        return
+
     now = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     with get_db() as conn:
         for nombre, apellido, email, password, rol in TEST_USERS:
@@ -38,7 +59,7 @@ def seed_users():
                     INSERT INTO usuarios (nombre, apellido, email, password_hash, rol, activo, creado_en)
                     VALUES (%s, %s, %s, %s, %s, 1, %s)
                 ''', (nombre, apellido, email, hashed, rol, now))
-    logger.info("Usuarios de prueba verificados/creados.")
+    logger.info("Usuarios de prueba (dev) verificados/creados.")
 
 
 # ── JWT helpers ───────────────────────────────────────────────
