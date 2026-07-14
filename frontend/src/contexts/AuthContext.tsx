@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useReducer, ReactNode } from 'react'
-import { User, login as apiLogin, getMe } from '../services/api'
+import { User, login as apiLogin, loginConGoogle as apiLoginGoogle, getMe } from '../services/api'
 
 // ── Types ─────────────────────────────────────────────────────
 interface AuthState {
@@ -13,9 +13,18 @@ type AuthAction =
   | { type: 'LOGOUT' }
   | { type: 'SET_LOADING'; loading: boolean }
 
+interface Resultado {
+  ok: boolean
+  error?: string
+  /** Se devuelve para poder navegar según el rol sin releer el estado, que
+   *  justo después del await todavía es el viejo. */
+  user?: User
+}
+
 interface AuthContextValue {
   state: AuthState
-  login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>
+  login: (email: string, password: string) => Promise<Resultado>
+  loginConGoogle: (credential: string) => Promise<Resultado>
   logout: () => void
 }
 
@@ -65,18 +74,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
   }, [])
 
-  async function login(email: string, password: string) {
+  /** Guarda el token y publica el usuario. Común a los dos caminos de login. */
+  function aceptar(token: string, user: User): Resultado {
+    localStorage.setItem('miraza_token', token)
+    dispatch({ type: 'SET_USER', token, user })
+    return { ok: true, user }
+  }
+
+  function fallo(err: unknown, porDefecto: string): Resultado {
+    const axiosErr = err as { response?: { data?: { error?: string } } }
+    return { ok: false, error: axiosErr.response?.data?.error || porDefecto }
+  }
+
+  async function login(email: string, password: string): Promise<Resultado> {
     try {
       const res = await apiLogin(email, password)
       if (res.data.ok && res.data.token && res.data.user) {
-        localStorage.setItem('miraza_token', res.data.token)
-        dispatch({ type: 'SET_USER', token: res.data.token, user: res.data.user })
-        return { ok: true }
+        return aceptar(res.data.token, res.data.user)
       }
       return { ok: false, error: res.data.error || 'Error al iniciar sesión' }
     } catch (err: unknown) {
-      const axiosErr = err as { response?: { data?: { error?: string } } }
-      return { ok: false, error: axiosErr.response?.data?.error || 'Error de conexión' }
+      return fallo(err, 'Error de conexión')
+    }
+  }
+
+  async function loginConGoogle(credential: string): Promise<Resultado> {
+    try {
+      const res = await apiLoginGoogle(credential)
+      if (res.data.ok && res.data.token && res.data.user) {
+        return aceptar(res.data.token, res.data.user)
+      }
+      return { ok: false, error: res.data.error || 'No pudimos iniciar sesión con Google' }
+    } catch (err: unknown) {
+      return fallo(err, 'Error de conexión')
     }
   }
 
@@ -86,7 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ state, login, logout }}>
+    <AuthContext.Provider value={{ state, login, loginConGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   )

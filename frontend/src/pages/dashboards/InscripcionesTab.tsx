@@ -176,7 +176,16 @@ export default function InscripcionesTab({ onResumen }: Props) {
                       {i.mensaje && <span className="insc-mensaje" title={i.mensaje}>💬</span>}
                     </td>
                     <td className="insc-contacto">
-                      <span>{i.email}</span>
+                      <span>
+                        {i.email}
+                        {/* Verificado por Google: el correo existe de verdad.
+                            Sin esta marca, pudo ser tipeado con un error. */}
+                        {i.email_verificado === 1 && (
+                          <span className="insc-verificado" title="Correo verificado con Google">
+                            ✓
+                          </span>
+                        )}
+                      </span>
                       <span className="insc-tel">{i.telefono}</span>
                     </td>
                     <td>

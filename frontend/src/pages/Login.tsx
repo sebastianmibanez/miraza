@@ -1,6 +1,8 @@
 import { useState, FormEvent } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import GoogleButton from '../components/GoogleButton'
+import type { User } from '../services/api'
 import './Login.css'
 
 const ROLE_ROUTES: Record<string, string> = {
@@ -12,7 +14,7 @@ const ROLE_ROUTES: Record<string, string> = {
 }
 
 export default function Login() {
-  const { login } = useAuth()
+  const { login, loginConGoogle } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const from = (location.state as { from?: string })?.from
@@ -22,6 +24,10 @@ export default function Login() {
   const [error, setError]       = useState('')
   const [loading, setLoading]   = useState(false)
 
+  function entrar(user: User) {
+    navigate(from || ROLE_ROUTES[user.rol] || '/dashboard/paes', { replace: true })
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
@@ -30,25 +36,19 @@ export default function Login() {
     const result = await login(email.trim().toLowerCase(), password)
     setLoading(false)
 
-    if (result.ok) {
-      // Need to read the user rol from auth state — re-read from localStorage via a small trick
-      // The context has already set the user; we need to get the rol
-      // We'll navigate after a tick to let state settle
-      setTimeout(() => {
-        const token = localStorage.getItem('miraza_token')
-        if (token) {
-          try {
-            const payload = JSON.parse(atob(token.split('.')[1]))
-            const dest = from || ROLE_ROUTES[payload.rol as string] || '/dashboard/paes'
-            navigate(dest, { replace: true })
-          } catch {
-            navigate('/dashboard/paes', { replace: true })
-          }
-        }
-      }, 50)
-    } else {
-      setError(result.error || 'Error al iniciar sesión')
-    }
+    if (result.ok && result.user) entrar(result.user)
+    else setError(result.error || 'Error al iniciar sesión')
+  }
+
+  async function handleGoogle(credential: string) {
+    setError('')
+    setLoading(true)
+
+    const result = await loginConGoogle(credential)
+    setLoading(false)
+
+    if (result.ok && result.user) entrar(result.user)
+    else setError(result.error || 'No pudimos iniciar sesión con Google')
   }
 
   return (
@@ -59,6 +59,14 @@ export default function Login() {
           <span className="login-logo-dot">.</span>
         </div>
         <p className="login-subtitle">Accede a tu panel de estudiante</p>
+
+        {/* Si Google no está configurado, este bloque no renderiza nada. */}
+        <GoogleButton
+          onCredential={handleGoogle}
+          texto="signin_with"
+          disabled={loading}
+          separador
+        />
 
         <form className="login-form" onSubmit={handleSubmit} noValidate>
           <div className="login-field">

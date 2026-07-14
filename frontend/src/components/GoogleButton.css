@@ -1,0 +1,41 @@
+.google-btn-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0;
+}
+
+/* Google dibuja el botón dentro de un iframe: no podemos deshabilitarlo por
+   dentro, así que lo bloqueamos desde fuera mientras hay algo en curso. */
+.google-btn-wrap.disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.google-btn-fallo {
+  margin: 4px 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--muted, #64748b);
+  text-align: center;
+}
+
+/* Separador "o" entre el botón de Google y el formulario clásico. */
+.google-separador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: var(--muted, #94a3b8);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.google-separador::before,
+.google-separador::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.25;
+}

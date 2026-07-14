@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 from app_db import get_db, db_execute, init_db
 
 # ── Blueprints ─────────────────────────────────────────────────
-from blueprints.auth import auth_bp, seed_users, SECRET_KEY
+from blueprints.auth import auth_bp, seed_users, SECRET_KEY, verificar_token_google
 from blueprints.dashboard import dashboard_bp
 from blueprints.chat import chat_bp
 from blueprints.admin import admin_bp
@@ -47,7 +47,11 @@ app.register_blueprint(admin_bp)
 
 # ── Constantes de validación ───────────────────────────────────
 MATERIAS_VALIDAS = {'Matemática', 'Lenguaje', 'Historia', 'Ciencias'}
-CURSOS_VALIDOS = {'3ro Medio', '4to Medio', 'Egresado'}
+
+# Tienen que calzar EXACTO con el <select> de Contacto.tsx. Faltaban 1ro y 2do
+# medio, que el formulario sí ofrece: esos alumnos elegían su curso y el backend
+# les respondía "Curso inválido". Son justamente el público de Nivelación y NEM.
+CURSOS_VALIDOS = {'1ro Medio', '2do Medio', '3ro Medio', '4to Medio', 'Egresado'}
 
 MAX_LENGTHS = {
     'nombre': 100, 'apellido': 100, 'email': 254,
@@ -85,14 +89,17 @@ def set_security_headers(response):
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=()'
+    # El botón de Google carga su script desde accounts.google.com, se dibuja
+    # dentro de un iframe de ese mismo origen y habla con gstatic. Sin estos
+    # permisos la CSP lo bloquea entero y en silencio.
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; "
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; "
         "font-src 'self' https://fonts.gstatic.com; "
-        "script-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data: https://i.ytimg.com; "
-        "connect-src 'self'; "
-        "frame-src https://www.youtube.com https://drive.google.com; "
+        "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com; "
+        "img-src 'self' data: https://i.ytimg.com https://lh3.googleusercontent.com; "
+        "connect-src 'self' https://accounts.google.com; "
+        "frame-src https://www.youtube.com https://drive.google.com https://accounts.google.com; "
         "frame-ancestors 'none'"
     )
     return response
@@ -138,6 +145,20 @@ def inscripcion():
     curso    = data['curso'].strip()
     mensaje  = data.get('mensaje', '').strip() if isinstance(data.get('mensaje'), str) else ''
 
+    # Si vino con "Continuar con Google", el correo lo dicta Google y no lo que
+    # se haya escrito en el formulario. Así el lead trae un correo probado y no
+    # un asdf@asdf.cl que nadie va a poder contactar.
+    email_verificado = 0
+    credential = data.get('google_credential')
+    if credential and isinstance(credential, str):
+        try:
+            claims = verificar_token_google(credential)
+            email = claims['email'].strip().lower()
+            email_verificado = 1
+        except Exception as e:
+            logger.warning("Inscripción con token de Google inválido: %s", e)
+            return jsonify({'ok': False, 'error': 'No pudimos validar tu cuenta de Google.'}), 401
+
     campos = {'nombre': nombre, 'apellido': apellido, 'email': email,
               'telefono': telefono, 'curso': curso, 'mensaje': mensaje}
     for field, value in campos.items():
@@ -167,10 +188,12 @@ def inscripcion():
         with get_db() as conn:
             db_execute(conn, '''
                 INSERT INTO inscripciones
-                (nombre, apellido, email, telefono, curso, materias, mensaje, fecha, ip)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ''', (nombre, apellido, email, telefono, curso, materias, mensaje, fecha, client_ip))
-        logger.info("Nueva inscripción: %s %s <%s>", nombre, apellido, email)
+                (nombre, apellido, email, telefono, curso, materias, mensaje, fecha, ip, email_verificado)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ''', (nombre, apellido, email, telefono, curso, materias, mensaje, fecha, client_ip,
+                  email_verificado))
+        logger.info("Nueva inscripción: %s %s <%s>%s", nombre, apellido, email,
+                    ' [correo verificado con Google]' if email_verificado else '')
         return jsonify({'ok': True, 'mensaje': '¡Inscripción recibida! Te contactaremos pronto.'})
     except Exception:
         logger.exception("Error guardando inscripción para %s", email)

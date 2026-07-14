@@ -134,6 +134,15 @@ def init_db():
         _agregar_columna(conn, 'inscripciones', 'estado', "TEXT NOT NULL DEFAULT 'pendiente'")
         _agregar_columna(conn, 'inscripciones', 'usuario_id', 'INTEGER')
 
+        # Se pone en 1 cuando la persona se inscribió con Google: entonces el
+        # correo está probado, no es lo que alguien tipeó en un formulario.
+        _agregar_columna(conn, 'inscripciones', 'email_verificado', 'INTEGER NOT NULL DEFAULT 0')
+
+        # El identificador estable de la cuenta de Google (claim 'sub'). Queda
+        # registrado al primer login con Google. El match se hace por correo,
+        # porque la cuenta ya existe antes de que la persona entre.
+        _agregar_columna(conn, 'usuarios', 'google_sub', 'TEXT')
+
         db_execute(conn, '''
             CREATE INDEX IF NOT EXISTS idx_inscripciones_estado ON inscripciones(estado)
         ''')

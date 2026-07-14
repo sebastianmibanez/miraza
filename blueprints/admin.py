@@ -42,7 +42,7 @@ def listar_inscripciones():
 
     sql = '''
         SELECT id, nombre, apellido, email, telefono, curso, materias,
-               mensaje, fecha, estado, usuario_id
+               mensaje, fecha, estado, usuario_id, email_verificado
         FROM inscripciones
     '''
     params = ()

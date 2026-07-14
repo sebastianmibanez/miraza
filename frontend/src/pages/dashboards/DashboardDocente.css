@@ -639,6 +639,21 @@
 .insc-materias { display: block; margin-top: 4px; }
 .insc-mensaje  { margin-left: 6px; cursor: help; }
 
+.insc-verificado {
+  display: inline-block;
+  margin-left: 6px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  cursor: help;
+}
+
 .insc-acciones {
   display: flex;
   align-items: center;

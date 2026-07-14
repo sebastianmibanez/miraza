@@ -353,6 +353,17 @@
   }
 }
 
+.cfc-google-ok {
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.25);
+  color: #15803d;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
 @media (max-width: 600px) {
   .cfc-row { grid-template-columns: 1fr; }
   .contacto-form-card { padding: 32px 24px; }

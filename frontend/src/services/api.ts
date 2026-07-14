@@ -45,6 +45,9 @@ export interface InscripcionData {
   curso: string
   materias: string[]
   mensaje?: string
+  /** ID token de Google, si usó "Continuar con Google". El backend lo valida y
+   *  toma el correo de ahí, ignorando lo que venga en el campo email. */
+  google_credential?: string
 }
 
 export interface InscripcionResponse {
@@ -103,10 +106,26 @@ export interface TeacherAlumno {
   estado: 'activo' | 'inactivo'
 }
 
+// ── Config pública ────────────────────────────────────────────
+export interface ConfigPublica {
+  ok: boolean
+  google_habilitado: boolean
+  google_client_id: string
+}
+
+// Se pide al backend en vez de compilarlo en el bundle: así activar Google es
+// solo una variable de entorno en Render, sin recompilar el frontend.
+export const getConfig = () => api.get<ConfigPublica>('/api/config')
+
 // ── Auth ──────────────────────────────────────────────────────
 export const login = (email: string, password: string) =>
   api.post<{ ok: boolean; token?: string; user?: User; error?: string }>(
     '/api/auth/login', { email, password }
+  )
+
+export const loginConGoogle = (credential: string) =>
+  api.post<{ ok: boolean; token?: string; user?: User; error?: string; sin_cuenta?: boolean }>(
+    '/api/auth/google', { credential }
   )
 
 export const getMe = () =>
@@ -147,6 +166,8 @@ export interface Inscripcion {
   fecha: string
   estado: EstadoInscripcion
   usuario_id: number | null
+  /** 1 si se inscribió con Google: el correo está probado, no solo tipeado. */
+  email_verificado: number
 }
 
 export interface ResumenInscripciones {

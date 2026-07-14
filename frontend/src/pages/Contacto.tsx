@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { inscribir } from '../services/api'
+import GoogleButton from '../components/GoogleButton'
 import './Contacto.css'
 
 const MATERIAS = ['Matemática', 'Lenguaje', 'Historia', 'Ciencias']
@@ -13,6 +14,30 @@ function Contacto() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [honeypot, setHoneypot] = useState('')
   const loadTime = useRef(Date.now())
+
+  // Token de Google, si la persona usó "Continuar con Google". Viaja junto a la
+  // inscripción: el backend lo valida y toma de ahí el correo, así el lead llega
+  // con un correo probado en vez de lo que se haya tipeado.
+  const [googleCredential, setGoogleCredential] = useState('')
+
+  function handleGoogle(credential: string) {
+    try {
+      // Solo para rellenar el formulario a la vista. La verdad la establece el
+      // backend al validar la firma; acá no confiamos en nada de esto.
+      const claims = JSON.parse(atob(credential.split('.')[1]))
+      const partes = (claims.name || '').trim().split(' ')
+      setFormData(prev => ({
+        ...prev,
+        email: claims.email || prev.email,
+        nombre: claims.given_name || partes[0] || prev.nombre,
+        apellido: claims.family_name || partes.slice(1).join(' ') || prev.apellido,
+      }))
+    } catch {
+      /* si no se puede leer, igual mandamos el token: el backend decide */
+    }
+    setGoogleCredential(credential)
+    setMessage(null)
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -33,10 +58,14 @@ function Contacto() {
     setLoading(true)
     setMessage(null)
     try {
-      const res = await inscribir(formData)
+      const res = await inscribir({
+        ...formData,
+        ...(googleCredential ? { google_credential: googleCredential } : {}),
+      })
       if (res.ok) {
         setMessage({ type: 'success', text: res.mensaje || '¡Inscripción recibida! Te contactamos pronto.' })
         setFormData({ nombre: '', apellido: '', email: '', telefono: '', curso: '', materias: [], mensaje: '' })
+        setGoogleCredential('')
       } else {
         setMessage({ type: 'error', text: res.error || 'Hubo un error. Intenta nuevamente.' })
       }
@@ -106,6 +135,15 @@ function Contacto() {
             <h2>Formulario de inscripción</h2>
             <p>Todos los campos con <span className="req">*</span> son obligatorios</p>
           </div>
+
+          {/* No renderiza nada si Google no está configurado. */}
+          <GoogleButton onCredential={handleGoogle} texto="continue_with" disabled={loading} separador />
+
+          {googleCredential && (
+            <div className="cfc-google-ok">
+              ✅ Correo verificado con Google. Completa el resto y envía.
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="cfc-form" noValidate>
             {/* Honeypot anti-bot — no mostrar a usuarios reales */}
