@@ -51,11 +51,18 @@ def get_db():
 
 
 def db_execute(conn, query, params=None):
-    """Ejecuta una query. Acepta placeholders %s en ambos motores."""
+    """Ejecuta una query. Acepta placeholders %s en ambos motores.
+
+    Cuando no hay parámetros se pasa None, NO una tupla vacía: psycopg2 solo
+    interpola si recibe algo distinto de None, y con una tupla vacía trataría
+    cualquier % literal de la query (un LIKE '%algo%', por ejemplo) como un
+    placeholder y reventaría. En SQLite eso no pasa, así que el error solo
+    aparecería en producción.
+    """
     if not USE_POSTGRES:
         query = query.replace('%s', '?')
     cur = conn.cursor()
-    cur.execute(query, params or ())
+    cur.execute(query, params if params else None)
     return cur
 
 
