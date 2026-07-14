@@ -249,6 +249,12 @@ REACT_BUILD = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_react(path):
+    # Un /api/* que llega hasta acá es una ruta que no existe. Sin este corte,
+    # la SPA se devolvía con HTTP 200 y el frontend recibía HTML donde esperaba
+    # JSON: un endpoint mal escrito parecía "funcionar".
+    if path.startswith('api/'):
+        return jsonify({'ok': False, 'error': 'Endpoint no encontrado'}), 404
+
     if path:
         file_path = os.path.join(REACT_BUILD, path)
         if os.path.isfile(file_path):
