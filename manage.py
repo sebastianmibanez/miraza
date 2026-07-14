@@ -10,6 +10,7 @@ Comandos:
     python manage.py cambiar-password <email> [--password P]
     python manage.py activar <email>
     python manage.py desactivar <email>
+    python manage.py cambiar-rol <email> <rol>
     python manage.py purgar-usuarios-demo
 
 Lo que no pases por flag se pregunta de forma interactiva.
@@ -30,11 +31,12 @@ from werkzeug.security import generate_password_hash
 from app_db import get_db, db_execute, init_db, USE_POSTGRES, normalizar_email
 
 ROLES = {
-    'paes':       'Preparación PAES',
-    'nem':        'Mejora tu NEM',
-    'nivelacion': 'Nivelación de Estudios',
-    'especial':   'Clases Especializadas',
-    'teacher':    'Profesora / Docente',
+    'paes':       'Alumno — Preparación PAES',
+    'nem':        'Alumno — Mejora tu NEM',
+    'nivelacion': 'Alumno — Nivelación de Estudios',
+    'especial':   'Alumno — Clases Especializadas',
+    'teacher':    'Profesora — dicta sus ramos y publica avisos en ellos',
+    'admin':      'Dirección — aprueba inscripciones, crea ramos y asigna alumnos y horarios',
 }
 
 EMAIL_REGEX = re.compile(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
@@ -227,6 +229,18 @@ def cambiar_estado(args):
     print(f'\n✓ Cuenta {email} {"activada" if activo else "desactivada"}.\n')
 
 
+def cambiar_rol(args):
+    email = args.email.strip().lower()
+    rol = args.rol
+    if rol not in ROLES:
+        raise Error(f'Rol inválido. Elige uno de: {", ".join(ROLES)}')
+    with get_db() as conn:
+        fila = _buscar_por_email(conn, email)
+        db_execute(conn, 'UPDATE usuarios SET rol = %s WHERE email = %s', (rol, email))
+
+    print(f'\n✓ {fila["nombre"]} {fila["apellido"]} <{email}> ahora es: {rol} ({ROLES[rol]}).\n')
+
+
 def purgar_usuarios_demo(args):
     """Borra las cuentas de demo con contraseña conocida, por si alguna quedó viva."""
     borradas = []
@@ -281,6 +295,11 @@ def build_parser():
         p = sub.add_parser(nombre_cmd, help=ayuda)
         p.add_argument('email')
         p.set_defaults(func=cambiar_estado)
+
+    rol = sub.add_parser('cambiar-rol', help='Cambiar el rol de una cuenta (ej: pasar a admin).')
+    rol.add_argument('email')
+    rol.add_argument('rol', choices=list(ROLES))
+    rol.set_defaults(func=cambiar_rol)
 
     purgar = sub.add_parser('purgar-usuarios-demo', help='Borrar las cuentas de demo del repo.')
     purgar.set_defaults(func=purgar_usuarios_demo)

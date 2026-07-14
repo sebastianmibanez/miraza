@@ -29,12 +29,14 @@ api.interceptors.response.use(
 )
 
 // ── Types ─────────────────────────────────────────────────────
+export type Rol = 'paes' | 'nem' | 'nivelacion' | 'especial' | 'teacher' | 'admin'
+
 export interface User {
   id: number
   nombre: string
   apellido: string
   email: string
-  rol: 'paes' | 'nem' | 'nivelacion' | 'especial' | 'teacher'
+  rol: Rol
 }
 
 export interface InscripcionData {
@@ -60,7 +62,8 @@ export interface PlanMeta {
   label: string
   color: string
   icon: string
-  materias: string[]
+  rol: string
+  es_admin: boolean
 }
 
 export interface ScheduleItem {
@@ -69,6 +72,7 @@ export interface ScheduleItem {
   materia: string
   tipo: string
   plan?: string
+  color?: string
   alumnos?: number
 }
 
@@ -78,6 +82,9 @@ export interface Announcement {
   texto: string
   fecha: string
   tipo: string
+  ramo_id: number | null
+  /** null = aviso general, lo ve todo Miraza */
+  ramo: string | null
 }
 
 export interface ChatResponse {
@@ -91,20 +98,68 @@ export interface TeacherRamo {
   nombre: string
   plan: string
   color: string
+  meet_url: string
+  profesor_id: number | null
+  profesor_nombre: string | null
+  profesor_apellido: string | null
   alumnos: number
   clases_semana: number
-  proxima: string
+  /** null cuando el ramo todavía no tiene horario cargado */
+  proxima: string | null
 }
 
 export interface TeacherAlumno {
   id: number
   nombre: string
   apellido: string
+  email: string
   ramo: string
+  ramo_id: number
   plan: string
-  nivel: string
   estado: 'activo' | 'inactivo'
 }
+
+/** Un ramo visto por el alumno que lo cursa. */
+export interface MiRamo {
+  id: number
+  nombre: string
+  plan: string
+  color: string
+  meet_url: string
+  profesor_nombre: string | null
+  profesor_apellido: string | null
+  clases_semana: number
+}
+
+export interface Profesor {
+  id: number
+  nombre: string
+  apellido: string
+  email: string
+  rol: 'teacher' | 'admin'
+  activo: number
+}
+
+export interface AlumnoGestion {
+  id: number
+  nombre: string
+  apellido: string
+  email: string
+  plan: RolAlumno
+  estado: 'activo' | 'inactivo'
+  ramos: { id: number; nombre: string }[]
+}
+
+export interface Clase {
+  id: number
+  dia: string
+  hora: string
+  tipo: string
+}
+
+export const DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as const
+export const TIPOS_CLASE = ['clase', 'ensayo', 'tutoría', 'apoyo'] as const
+export const TIPOS_AVISO = ['info', 'aviso', 'urgente'] as const
 
 // ── Config pública ────────────────────────────────────────────
 export interface ConfigPublica {
@@ -150,6 +205,58 @@ export const getTeacherAlumnos = (ramo?: string) =>
     params: ramo ? { ramo } : undefined,
   })
 
+// ── Alumno ────────────────────────────────────────────────────
+export const getMisRamos = () =>
+  api.get<{ ok: boolean; ramos: MiRamo[] }>('/api/dashboard/mis-ramos')
+
+// ── Gestión (solo admin) ──────────────────────────────────────
+export interface RamoInput {
+  nombre?: string
+  plan?: string
+  color?: string
+  meet_url?: string
+  profesor_id?: number | null
+}
+
+type Ok = { ok: boolean; error?: string }
+
+export const getProfesores = () =>
+  api.get<{ ok: boolean; profesores: Profesor[] }>('/api/admin/profesores')
+
+export const getAlumnosGestion = () =>
+  api.get<{ ok: boolean; alumnos: AlumnoGestion[] }>('/api/admin/alumnos')
+
+export const crearRamo = (datos: RamoInput) =>
+  api.post<Ok>('/api/admin/ramos', datos)
+
+export const editarRamo = (id: number, datos: RamoInput) =>
+  api.patch<Ok>(`/api/admin/ramos/${id}`, datos)
+
+export const borrarRamo = (id: number) =>
+  api.delete<Ok>(`/api/admin/ramos/${id}`)
+
+export const getClases = (ramoId: number) =>
+  api.get<{ ok: boolean; clases: Clase[] }>(`/api/admin/ramos/${ramoId}/clases`)
+
+export const crearClase = (ramoId: number, dia: string, hora: string, tipo: string) =>
+  api.post<Ok>(`/api/admin/ramos/${ramoId}/clases`, { dia, hora, tipo })
+
+export const borrarClase = (claseId: number) =>
+  api.delete<Ok>(`/api/admin/clases/${claseId}`)
+
+export const matricular = (ramoId: number, alumnoId: number) =>
+  api.post<Ok>(`/api/admin/ramos/${ramoId}/alumnos`, { alumno_id: alumnoId })
+
+export const desmatricular = (ramoId: number, alumnoId: number) =>
+  api.delete<Ok>(`/api/admin/ramos/${ramoId}/alumnos/${alumnoId}`)
+
+// ── Avisos ────────────────────────────────────────────────────
+export const crearAviso = (titulo: string, texto: string, tipo: string, ramoId: number | null) =>
+  api.post<Ok>('/api/avisos', { titulo, texto, tipo, ramo_id: ramoId })
+
+export const borrarAviso = (id: number) =>
+  api.delete<Ok>(`/api/avisos/${id}`)
+
 // ── Inscripciones (panel docente) ─────────────────────────────
 export type EstadoInscripcion = 'pendiente' | 'aprobada' | 'descartada'
 export type RolAlumno = 'paes' | 'nem' | 'nivelacion' | 'especial'
@@ -189,8 +296,8 @@ export const getInscripciones = (estado?: EstadoInscripcion) =>
     { params: estado ? { estado } : undefined }
   )
 
-export const crearCuentaDesdeInscripcion = (id: number, rol: RolAlumno) =>
-  api.post<CuentaCreada>(`/api/admin/inscripciones/${id}/crear-cuenta`, { rol })
+export const crearCuentaDesdeInscripcion = (id: number, rol: RolAlumno, ramos: number[] = []) =>
+  api.post<CuentaCreada>(`/api/admin/inscripciones/${id}/crear-cuenta`, { rol, ramos })
 
 export const descartarInscripcion = (id: number) =>
   api.post<{ ok: boolean; error?: string }>(`/api/admin/inscripciones/${id}/descartar`)

@@ -11,6 +11,7 @@ const ROLE_ROUTES: Record<string, string> = {
   nivelacion: '/dashboard/nivelacion',
   especial:   '/dashboard/especial',
   teacher:    '/dashboard/docente',
+  admin:      '/dashboard/docente',
 }
 
 export default function Login() {

@@ -40,6 +40,12 @@ SYSTEM_PROMPTS = {
         'Ayudas con planificación de clases, creación de material didáctico, evaluaciones y estrategias pedagógicas. '
         'Responde en español chileno.'
     ),
+    'admin': (
+        'Eres un asistente para la dirección del preuniversitario Miraza. '
+        'Ayudas con planificación académica, coordinación de profesoras y ramos, '
+        'comunicación con apoderados y organización del preuniversitario. '
+        'Responde en español chileno.'
+    ),
 }
 
 

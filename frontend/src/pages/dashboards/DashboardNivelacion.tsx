@@ -2,16 +2,11 @@ import WelcomeCard from '../../components/dashboard/WelcomeCard'
 import ScheduleWidget from '../../components/dashboard/ScheduleWidget'
 import LiveClassButton from '../../components/dashboard/LiveClassButton'
 import AnnouncementsWidget from '../../components/dashboard/AnnouncementsWidget'
-import ProgressWidget from '../../components/dashboard/ProgressWidget'
+import MisRamosWidget from '../../components/dashboard/MisRamosWidget'
 import ChatWidget from '../../components/dashboard/ChatWidget'
 import './Dashboard.css'
 
 const COLOR = '#9333ea'
-
-const PROGRESS = [
-  { materia: 'Matemática', porcentaje: 55, color: COLOR },
-  { materia: 'Lenguaje', porcentaje: 62, color: '#0891b2' },
-]
 
 export default function DashboardNivelacion() {
   return (
@@ -24,7 +19,7 @@ export default function DashboardNivelacion() {
       </div>
 
       <div className="dash-grid-2">
-        <ProgressWidget subjects={PROGRESS} />
+        <MisRamosWidget />
         <AnnouncementsWidget />
       </div>
 

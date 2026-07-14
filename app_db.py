@@ -53,20 +53,39 @@ def get_db():
 def db_execute(conn, query, params=None):
     """Ejecuta una query. Acepta placeholders %s en ambos motores.
 
-    Cuando no hay parámetros se pasa None, NO una tupla vacía: psycopg2 solo
-    interpola si recibe algo distinto de None, y con una tupla vacía trataría
-    cualquier % literal de la query (un LIKE '%algo%', por ejemplo) como un
-    placeholder y reventaría. En SQLite eso no pasa, así que el error solo
-    aparecería en producción.
+    Los dos motores quieren cosas distintas cuando no hay parámetros:
+
+    - psycopg2 interpola siempre que reciba algo distinto de None. Con una tupla
+      vacía trataría cualquier % literal de la query (un LIKE '%algo%') como un
+      placeholder y reventaría. Necesita None.
+    - sqlite3 no acepta None: exige una secuencia. Necesita ().
     """
-    if not USE_POSTGRES:
-        query = query.replace('%s', '?')
     cur = conn.cursor()
-    cur.execute(query, params if params else None)
+
+    if USE_POSTGRES:
+        cur.execute(query, params if params else None)
+    else:
+        cur.execute(query.replace('%s', '?'), params or ())
+
     return cur
 
 
 GMAIL_DOMINIOS = ('gmail.com', 'googlemail.com')
+
+# ── Roles ─────────────────────────────────────────────────────
+# admin   → fundadoras. Aprueban inscripciones, crean cuentas y ramos, asignan
+#           profesoras y meten alumnos a los ramos. Definen el horario, que es
+#           lo que determina cuánto se le paga a cada profesora.
+# teacher → dictan. Ven sus ramos y sus alumnos, publican avisos en sus ramos.
+#           NO deciden quién entra a su ramo ni cuántas horas dictan: eso sería
+#           dejarlas fijar su propio sueldo.
+ROLES_ALUMNO = ('paes', 'nem', 'nivelacion', 'especial')
+ROLES_STAFF = ('teacher', 'admin')
+ROLES = ROLES_ALUMNO + ROLES_STAFF
+
+DIAS = ('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo')
+TIPOS_CLASE = ('clase', 'ensayo', 'tutoría', 'apoyo')
+TIPOS_AVISO = ('info', 'aviso', 'urgente')
 
 
 def normalizar_email(email: str) -> str:
@@ -111,6 +130,46 @@ def _agregar_columna(conn, tabla, columna, definicion):
         db_execute(conn, f'ALTER TABLE {tabla} ADD COLUMN {columna} {definicion}')
 
 
+def _soltar_check_de_rol(conn):
+    """Quita el CHECK viejo de usuarios.rol, que no conocía el rol 'admin'.
+
+    Los roles se validan en Python (ROLES), que es donde ya se validaban de
+    todas formas. Mantener además un CHECK en la tabla obliga a una migración
+    de esquema cada vez que se agrega un rol, y en SQLite eso significa
+    reconstruir la tabla entera.
+    """
+    if USE_POSTGRES:
+        db_execute(conn, 'ALTER TABLE usuarios DROP CONSTRAINT IF EXISTS usuarios_rol_check')
+        return
+
+    # SQLite no permite soltar un CHECK: hay que rehacer la tabla.
+    cur = conn.cursor()
+    cur.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='usuarios'")
+    fila = cur.fetchone()
+    if not fila or 'CHECK' not in (fila[0] or ''):
+        return
+
+    db_execute(conn, '''
+        CREATE TABLE usuarios_nueva (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL, apellido TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            rol TEXT NOT NULL,
+            activo INTEGER NOT NULL DEFAULT 1,
+            creado_en TEXT NOT NULL,
+            google_sub TEXT,
+            email_norm TEXT
+        )
+    ''')
+    db_execute(conn, '''
+        INSERT INTO usuarios_nueva (id, nombre, apellido, email, password_hash, rol, activo, creado_en)
+        SELECT id, nombre, apellido, email, password_hash, rol, activo, creado_en FROM usuarios
+    ''')
+    db_execute(conn, 'DROP TABLE usuarios')
+    db_execute(conn, 'ALTER TABLE usuarios_nueva RENAME TO usuarios')
+
+
 def init_db():
     # Único punto donde el DDL difiere entre motores.
     pk = 'SERIAL PRIMARY KEY' if USE_POSTGRES else 'INTEGER PRIMARY KEY AUTOINCREMENT'
@@ -129,13 +188,15 @@ def init_db():
             CREATE INDEX IF NOT EXISTS idx_inscripciones_email ON inscripciones(email)
         ''')
 
+        # Sin CHECK sobre rol: los roles se validan en Python (ROLES). Un CHECK
+        # aquí obligaría a migrar el esquema cada vez que se agregue un rol.
         db_execute(conn, f'''
             CREATE TABLE IF NOT EXISTS usuarios (
                 id {pk},
                 nombre TEXT NOT NULL, apellido TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE,
                 password_hash TEXT NOT NULL,
-                rol TEXT NOT NULL CHECK(rol IN ('paes','nem','nivelacion','especial','teacher')),
+                rol TEXT NOT NULL,
                 activo INTEGER NOT NULL DEFAULT 1,
                 creado_en TEXT NOT NULL
             )
@@ -143,6 +204,8 @@ def init_db():
         db_execute(conn, '''
             CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email)
         ''')
+
+        _soltar_check_de_rol(conn)
 
         db_execute(conn, f'''
             CREATE TABLE IF NOT EXISTS sesiones_log (
@@ -194,4 +257,77 @@ def init_db():
         ''')
         db_execute(conn, '''
             CREATE INDEX IF NOT EXISTS idx_inscripciones_estado ON inscripciones(estado)
+        ''')
+
+        # ── Lo que antes eran constantes inventadas en dashboard.py ──────────
+
+        # Un ramo tiene UNA profesora. profesor_id puede quedar NULL mientras
+        # todavía no se le asigna a nadie.
+        db_execute(conn, f'''
+            CREATE TABLE IF NOT EXISTS ramos (
+                id {pk},
+                nombre TEXT NOT NULL,
+                plan TEXT NOT NULL,
+                color TEXT NOT NULL DEFAULT '#1B4DB8',
+                profesor_id INTEGER,
+                activo INTEGER NOT NULL DEFAULT 1,
+                creado_en TEXT NOT NULL
+            )
+        ''')
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_ramos_profesor ON ramos(profesor_id)
+        ''')
+
+        # Sala de Google Meet del ramo. Sin esto el botón "Entrar a la clase"
+        # del panel del alumno apuntaba a '#' y no llevaba a ninguna parte.
+        _agregar_columna(conn, 'ramos', 'meet_url', "TEXT DEFAULT ''")
+
+        # Quién está en qué ramo. Lo decide SIEMPRE un admin: es una decisión de
+        # negocio (define las horas de la profesora, y por tanto su sueldo).
+        db_execute(conn, f'''
+            CREATE TABLE IF NOT EXISTS ramo_alumnos (
+                id {pk},
+                ramo_id INTEGER NOT NULL,
+                alumno_id INTEGER NOT NULL,
+                creado_en TEXT NOT NULL,
+                UNIQUE (ramo_id, alumno_id)
+            )
+        ''')
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_ramo_alumnos_ramo ON ramo_alumnos(ramo_id)
+        ''')
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_ramo_alumnos_alumno ON ramo_alumnos(alumno_id)
+        ''')
+
+        # El horario. De acá salen tanto el horario de la profesora como el del
+        # alumno: son la misma tabla vista desde dos lados.
+        db_execute(conn, f'''
+            CREATE TABLE IF NOT EXISTS clases (
+                id {pk},
+                ramo_id INTEGER NOT NULL,
+                dia TEXT NOT NULL,
+                hora TEXT NOT NULL,
+                tipo TEXT NOT NULL DEFAULT 'clase',
+                creado_en TEXT NOT NULL
+            )
+        ''')
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_clases_ramo ON clases(ramo_id)
+        ''')
+
+        # ramo_id NULL = aviso general, lo ve todo Miraza.
+        db_execute(conn, f'''
+            CREATE TABLE IF NOT EXISTS avisos (
+                id {pk},
+                titulo TEXT NOT NULL,
+                texto TEXT NOT NULL,
+                tipo TEXT NOT NULL DEFAULT 'info',
+                ramo_id INTEGER,
+                autor_id INTEGER NOT NULL,
+                fecha TEXT NOT NULL
+            )
+        ''')
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_avisos_ramo ON avisos(ramo_id)
         ''')
