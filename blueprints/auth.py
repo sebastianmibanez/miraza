@@ -32,6 +32,19 @@ BLOQUEAR_EXTRANJERO = os.getenv('BLOQUEAR_LOGIN_EXTRANJERO', 'false').lower() ==
 # Client ID de Google (público, va en el navegador). Si no está definido, todo
 # lo de Google queda apagado y la app sigue funcionando con contraseña.
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '').strip()
+
+# Guardia contra un error fácil y caro: pegar el CLIENT SECRET donde va el
+# CLIENT ID. /api/config es público (el client ID lo es por diseño), así que un
+# secreto puesto acá se serviría abierto en internet. Un client ID legítimo
+# siempre termina en .apps.googleusercontent.com; un secreto empieza con GOCSPX-.
+if GOOGLE_CLIENT_ID and not GOOGLE_CLIENT_ID.endswith('.apps.googleusercontent.com'):
+    logger.error(
+        "GOOGLE_CLIENT_ID no parece un client ID de Google (debe terminar en "
+        ".apps.googleusercontent.com). Si pegaste el client secret, BÓRRALO y "
+        "rótalo: se habría publicado. El acceso con Google queda desactivado."
+    )
+    GOOGLE_CLIENT_ID = ''
+
 GOOGLE_HABILITADO = bool(GOOGLE_CLIENT_ID)
 
 # Usuarios de demo. Solo se crean si SEED_TEST_USERS=true, que jamás debe
