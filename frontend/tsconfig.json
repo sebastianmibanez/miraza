@@ -8,6 +8,12 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
+    // Vite transpila con esbuild; a tsc solo le pedimos que revise los tipos.
+    // Sin esto, "npm run build" escribía un .js al lado de cada .ts dentro de
+    // src/, ensuciando el repo (así se coló services/api.js, un duplicado
+    // obsoleto de api.ts).
+    "noEmit": true,
+
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
