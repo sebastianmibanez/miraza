@@ -101,10 +101,6 @@ export default function GoogleButton({
     return () => { vivo = false }
   }, [texto])
 
-  // Si Google está apagado no renderizamos nada: la app funciona igual con
-  // contraseña, y no queremos mostrar un botón muerto.
-  if (!habilitado && !fallo) return null
-
   if (fallo) {
     return (
       <p className="google-btn-fallo">
@@ -113,12 +109,18 @@ export default function GoogleButton({
     )
   }
 
+  // El contenedor tiene que estar SIEMPRE montado: Google necesita un nodo real
+  // donde dibujar su botón. Si lo montáramos solo cuando 'habilitado' es true,
+  // el ref estaría vacío justo en el momento de usarlo y nunca se habilitaría
+  // — se esperarían mutuamente y el botón no aparecería nunca.
+  //
+  // Con Google apagado esto queda como dos divs vacíos: alto cero, invisibles.
   return (
     <>
-      <div className={`google-btn-wrap${disabled ? ' disabled' : ''}`}>
+      <div className={habilitado ? `google-btn-wrap${disabled ? ' disabled' : ''}` : undefined}>
         <div ref={contenedor} />
       </div>
-      {separador && <div className="google-separador">o</div>}
+      {habilitado && separador && <div className="google-separador">o</div>}
     </>
   )
 }
