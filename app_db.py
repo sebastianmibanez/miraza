@@ -59,6 +59,32 @@ def db_execute(conn, query, params=None):
     return cur
 
 
+GMAIL_DOMINIOS = ('gmail.com', 'googlemail.com')
+
+
+def normalizar_email(email: str) -> str:
+    """Forma canónica de un correo, para comparar cuentas.
+
+    Gmail ignora los puntos del nombre y todo lo que venga después de un '+':
+    juan.perez+preu@gmail.com y juanperez@gmail.com son el MISMO buzón, y el
+    token de Google trae solo una de esas formas. Sin esto, alguien que se
+    inscribe escribiendo su correo con puntos y luego entra con Google no
+    calzaría con su propia cuenta, y quedaría encerrado afuera.
+
+    Solo se aplica a Gmail: en otros dominios los puntos sí distinguen buzones,
+    y normalizarlos haría que dos personas distintas colisionaran.
+    """
+    email = (email or '').strip().lower()
+    if '@' not in email:
+        return email
+
+    usuario, dominio = email.rsplit('@', 1)
+    if dominio in GMAIL_DOMINIOS:
+        usuario = usuario.split('+', 1)[0].replace('.', '')
+        dominio = 'gmail.com'
+    return f'{usuario}@{dominio}'
+
+
 def _columna_existe(conn, tabla, columna):
     """PostgreSQL soporta ADD COLUMN IF NOT EXISTS; SQLite no. Preguntamos antes."""
     if USE_POSTGRES:
@@ -143,6 +169,22 @@ def init_db():
         # porque la cuenta ya existe antes de que la persona entre.
         _agregar_columna(conn, 'usuarios', 'google_sub', 'TEXT')
 
+        # Forma canónica del correo. Es la que se usa para buscar la cuenta al
+        # iniciar sesión, para que juan.perez@gmail.com y juanperez@gmail.com
+        # lleguen a la misma cuenta en vez de dejar al alumno afuera.
+        _agregar_columna(conn, 'usuarios', 'email_norm', 'TEXT')
+
+        # Rellena las cuentas que ya existían antes de esta columna.
+        pendientes = db_execute(conn, '''
+            SELECT id, email FROM usuarios WHERE email_norm IS NULL OR email_norm = ''
+        ''').fetchall()
+        for fila in pendientes:
+            db_execute(conn, 'UPDATE usuarios SET email_norm = %s WHERE id = %s',
+                       (normalizar_email(fila['email']), fila['id']))
+
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_usuarios_email_norm ON usuarios(email_norm)
+        ''')
         db_execute(conn, '''
             CREATE INDEX IF NOT EXISTS idx_inscripciones_estado ON inscripciones(estado)
         ''')

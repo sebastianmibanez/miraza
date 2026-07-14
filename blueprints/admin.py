@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from flask import Blueprint, jsonify, request
 from werkzeug.security import generate_password_hash
 
-from app_db import get_db, db_execute
+from app_db import get_db, db_execute, normalizar_email
 from blueprints.auth import roles_required
 
 admin_bp = Blueprint('admin_api', __name__)
@@ -88,20 +88,23 @@ def crear_cuenta(insc_id):
             }), 409
 
         email = insc['email'].strip().lower()
+        email_norm = normalizar_email(email)
 
-        if db_execute(conn, 'SELECT id FROM usuarios WHERE email = %s', (email,)).fetchone():
+        # Se compara por la forma canónica: si ya hay una cuenta con el mismo
+        # Gmail escrito con puntos, es la misma persona y no debe duplicarse.
+        if db_execute(conn, 'SELECT id FROM usuarios WHERE email_norm = %s', (email_norm,)).fetchone():
             return jsonify({
                 'ok': False,
                 'error': f'Ya existe una cuenta con {email}.'
             }), 409
 
         db_execute(conn, '''
-            INSERT INTO usuarios (nombre, apellido, email, password_hash, rol, activo, creado_en)
-            VALUES (%s, %s, %s, %s, %s, 1, %s)
-        ''', (insc['nombre'], insc['apellido'], email,
+            INSERT INTO usuarios (nombre, apellido, email, email_norm, password_hash, rol, activo, creado_en)
+            VALUES (%s, %s, %s, %s, %s, %s, 1, %s)
+        ''', (insc['nombre'], insc['apellido'], email, email_norm,
               generate_password_hash(password), rol, ahora))
 
-        nuevo = db_execute(conn, 'SELECT id FROM usuarios WHERE email = %s', (email,)).fetchone()
+        nuevo = db_execute(conn, 'SELECT id FROM usuarios WHERE email_norm = %s', (email_norm,)).fetchone()
 
         db_execute(conn, '''
             UPDATE inscripciones SET estado = 'aprobada', usuario_id = %s WHERE id = %s

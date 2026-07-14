@@ -7,7 +7,7 @@ import jwt
 import requests as http
 import logging
 
-from app_db import get_db, db_execute
+from app_db import get_db, db_execute, normalizar_email
 
 logger = logging.getLogger(__name__)
 
@@ -74,9 +74,9 @@ def seed_users():
             if not existing:
                 hashed = generate_password_hash(password)
                 db_execute(conn, '''
-                    INSERT INTO usuarios (nombre, apellido, email, password_hash, rol, activo, creado_en)
-                    VALUES (%s, %s, %s, %s, %s, 1, %s)
-                ''', (nombre, apellido, email, hashed, rol, now))
+                    INSERT INTO usuarios (nombre, apellido, email, email_norm, password_hash, rol, activo, creado_en)
+                    VALUES (%s, %s, %s, %s, %s, %s, 1, %s)
+                ''', (nombre, apellido, email, normalizar_email(email), hashed, rol, now))
     logger.info("Usuarios de prueba (dev) verificados/creados.")
 
 
@@ -244,9 +244,11 @@ def login_google():
     google_sub = claims.get('sub', '')
 
     with get_db() as conn:
+        # Se busca por la forma canónica: Google entrega el correo sin los puntos
+        # que la persona quizá sí escribió al inscribirse.
         row = db_execute(conn, '''
-            SELECT id, nombre, apellido, email, rol, activo FROM usuarios WHERE email = %s
-        ''', (email,)).fetchone()
+            SELECT id, nombre, apellido, email, rol, activo FROM usuarios WHERE email_norm = %s
+        ''', (normalizar_email(email),)).fetchone()
 
         if not row:
             # Identificarse con Google no es lo mismo que estar inscrito. La
@@ -292,9 +294,11 @@ def login():
         return jsonify({'ok': False, 'error': 'Email y contraseña requeridos'}), 400
 
     with get_db() as conn:
+        # Misma normalización que en Google: quien escriba su Gmail con o sin
+        # puntos llega igual a su cuenta.
         row = db_execute(conn,
-            'SELECT id, nombre, apellido, email, password_hash, rol, activo FROM usuarios WHERE email = %s',
-            (email,)
+            'SELECT id, nombre, apellido, email, password_hash, rol, activo FROM usuarios WHERE email_norm = %s',
+            (normalizar_email(email),)
         ).fetchone()
 
     if not row or not check_password_hash(row['password_hash'], password):

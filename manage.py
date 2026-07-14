@@ -27,7 +27,7 @@ from datetime import datetime, timezone
 
 from werkzeug.security import generate_password_hash
 
-from app_db import get_db, db_execute, init_db, USE_POSTGRES
+from app_db import get_db, db_execute, init_db, USE_POSTGRES, normalizar_email
 
 ROLES = {
     'paes':       'Preparación PAES',
@@ -165,16 +165,19 @@ def crear_usuario(args):
         rol = _preguntar('\nRol: ', _validar_rol)
 
     password, generada = _resolver_password(args)
+    email_norm = normalizar_email(email)
 
     with get_db() as conn:
-        existe = db_execute(conn, 'SELECT id FROM usuarios WHERE email = %s', (email,)).fetchone()
+        # Por la forma canónica: un Gmail con y sin puntos es la misma cuenta.
+        existe = db_execute(conn, 'SELECT email FROM usuarios WHERE email_norm = %s',
+                            (email_norm,)).fetchone()
         if existe:
-            raise Error(f'Ya existe una cuenta con {email}.')
+            raise Error(f'Ya existe una cuenta con ese correo ({existe["email"]}).')
 
         db_execute(conn, '''
-            INSERT INTO usuarios (nombre, apellido, email, password_hash, rol, activo, creado_en)
-            VALUES (%s, %s, %s, %s, %s, 1, %s)
-        ''', (nombre, apellido, email, generate_password_hash(password), rol, _now()))
+            INSERT INTO usuarios (nombre, apellido, email, email_norm, password_hash, rol, activo, creado_en)
+            VALUES (%s, %s, %s, %s, %s, %s, 1, %s)
+        ''', (nombre, apellido, email, email_norm, generate_password_hash(password), rol, _now()))
 
     print(f'\n✓ Cuenta creada: {nombre} {apellido} <{email}> — rol {rol}')
     if generada:
