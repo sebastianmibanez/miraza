@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import DashboardLayout from './components/dashboard/DashboardLayout'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // Home eager — es lo primero que ve el usuario
 import Home from './pages/Home'
@@ -37,36 +38,42 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            {/* Public site */}
-            <Route element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="quienes-somos" element={<QuienesSomos />} />
-              <Route path="planes"        element={<Planes />} />
-              <Route path="aranceles"     element={<Aranceles />} />
-              <Route path="apoyo"         element={<Apoyo />} />
-              <Route path="contacto"      element={<Contacto />} />
-              <Route path="testimonios"   element={<Testimonios />} />
-              <Route path="vitrina"       element={<Vitrina />} />
-              <Route path="profes/:id"    element={<PerfilProfe />} />
-            </Route>
-
-            {/* Login (sin Layout) */}
-            <Route path="/login" element={<Login />} />
-
-            {/* Protected dashboards */}
-            <Route element={<ProtectedRoute />}>
-              <Route element={<DashboardLayout />}>
-                <Route path="/dashboard/paes"       element={<DashboardPaes />} />
-                <Route path="/dashboard/nem"        element={<DashboardNem />} />
-                <Route path="/dashboard/nivelacion" element={<DashboardNivelacion />} />
-                <Route path="/dashboard/especial"   element={<DashboardEspecial />} />
-                <Route path="/dashboard/docente"    element={<DashboardDocente />} />
+        {/* Cubre /login y /dashboard/*, que no pasan por Layout (el único que
+            antes traía su propio ErrorBoundary, y solo para el sitio público).
+            Sin esto, un chunk que falla en cualquiera de esas rutas apagaba
+            React entero: pantalla en blanco, sin mensaje ni recuperación. */}
+        <ErrorBoundary>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Public site */}
+              <Route element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="quienes-somos" element={<QuienesSomos />} />
+                <Route path="planes"        element={<Planes />} />
+                <Route path="aranceles"     element={<Aranceles />} />
+                <Route path="apoyo"         element={<Apoyo />} />
+                <Route path="contacto"      element={<Contacto />} />
+                <Route path="testimonios"   element={<Testimonios />} />
+                <Route path="vitrina"       element={<Vitrina />} />
+                <Route path="profes/:id"    element={<PerfilProfe />} />
               </Route>
-            </Route>
-          </Routes>
-        </Suspense>
+
+              {/* Login (sin Layout) */}
+              <Route path="/login" element={<Login />} />
+
+              {/* Protected dashboards */}
+              <Route element={<ProtectedRoute />}>
+                <Route element={<DashboardLayout />}>
+                  <Route path="/dashboard/paes"       element={<DashboardPaes />} />
+                  <Route path="/dashboard/nem"        element={<DashboardNem />} />
+                  <Route path="/dashboard/nivelacion" element={<DashboardNivelacion />} />
+                  <Route path="/dashboard/especial"   element={<DashboardEspecial />} />
+                  <Route path="/dashboard/docente"    element={<DashboardDocente />} />
+                </Route>
+              </Route>
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </BrowserRouter>
     </AuthProvider>
   )
