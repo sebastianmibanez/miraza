@@ -86,6 +86,7 @@ ROLES = ROLES_ALUMNO + ROLES_STAFF
 DIAS = ('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo')
 TIPOS_CLASE = ('clase', 'ensayo', 'tutoría', 'apoyo')
 TIPOS_AVISO = ('info', 'aviso', 'urgente')
+TIPOS_MATERIAL = ('video', 'documento')
 
 
 def normalizar_email(email: str) -> str:
@@ -330,4 +331,23 @@ def init_db():
         ''')
         db_execute(conn, '''
             CREATE INDEX IF NOT EXISTS idx_avisos_ramo ON avisos(ramo_id)
+        ''')
+
+        # Vitrina: cada profesora sube su propio material (videos demo, cursos,
+        # shorts) para mostrarse. El video NO se hostea acá: url apunta a YouTube
+        # / Vimeo / Drive y solo guardamos el link.
+        #   tipo -> video | documento
+        db_execute(conn, f'''
+            CREATE TABLE IF NOT EXISTS materiales (
+                id {pk},
+                autor_id INTEGER NOT NULL,
+                titulo TEXT NOT NULL,
+                descripcion TEXT DEFAULT '',
+                tipo TEXT NOT NULL DEFAULT 'video',
+                url TEXT NOT NULL,
+                creado_en TEXT NOT NULL
+            )
+        ''')
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_materiales_autor ON materiales(autor_id)
         ''')

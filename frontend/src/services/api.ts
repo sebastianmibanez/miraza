@@ -160,6 +160,7 @@ export interface Clase {
 export const DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as const
 export const TIPOS_CLASE = ['clase', 'ensayo', 'tutoría', 'apoyo'] as const
 export const TIPOS_AVISO = ['info', 'aviso', 'urgente'] as const
+export const TIPOS_MATERIAL = ['video', 'documento'] as const
 
 // ── Config pública ────────────────────────────────────────────
 export interface ConfigPublica {
@@ -304,6 +305,27 @@ export const descartarInscripcion = (id: number) =>
 
 export const reabrirInscripcion = (id: number) =>
   api.post<{ ok: boolean; error?: string }>(`/api/admin/inscripciones/${id}/reabrir`)
+
+// ── Material / Vitrina ────────────────────────────────────────
+export type TipoMaterial = 'video' | 'documento'
+
+export interface Material {
+  id: number
+  titulo: string
+  descripcion: string
+  tipo: TipoMaterial
+  url: string
+  creado_en: string
+}
+
+export const getMisMateriales = () =>
+  api.get<{ ok: boolean; materiales: Material[] }>('/api/materiales/mios')
+
+export const crearMaterial = (titulo: string, descripcion: string, tipo: TipoMaterial, url: string) =>
+  api.post<Ok>('/api/materiales', { titulo, descripcion, tipo, url })
+
+export const borrarMaterial = (id: number) =>
+  api.delete<Ok>(`/api/materiales/${id}`)
 
 // ── Chat ──────────────────────────────────────────────────────
 export const sendChatMessage = (message: string) =>

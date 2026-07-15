@@ -35,6 +35,7 @@ from blueprints.auth import auth_bp, seed_users, SECRET_KEY, verificar_token_goo
 from blueprints.dashboard import dashboard_bp
 from blueprints.chat import chat_bp
 from blueprints.admin import admin_bp
+from blueprints.materiales import materiales_bp
 
 # Mismo secreto que firma los JWT. Debe ser estable entre los workers de
 # gunicorn, o las sesiones del panel admin se romperían al azar.
@@ -44,6 +45,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(chat_bp)
 app.register_blueprint(admin_bp)
+app.register_blueprint(materiales_bp)
 
 # ── Constantes de validación ───────────────────────────────────
 MATERIAS_VALIDAS = {'Matemática', 'Lenguaje', 'Historia', 'Ciencias'}
