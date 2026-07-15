@@ -37,6 +37,7 @@ function Navbar() {
           <li><Link to="/planes" className={isActive('/planes') ? 'active' : ''}>Planes</Link></li>
           <li><Link to="/aranceles" className={isActive('/aranceles') ? 'active' : ''}>Aranceles</Link></li>
           <li><Link to="/apoyo" className={isActive('/apoyo') ? 'active' : ''}>Apoyo Sicoped.</Link></li>
+          <li><Link to="/vitrina" className={isActive('/vitrina') ? 'active' : ''}>Vitrina</Link></li>
           <li><Link to="/testimonios" className={isActive('/testimonios') ? 'active' : ''}>Testimonios</Link></li>
           <li><Link to="/contacto" className={isActive('/contacto') ? 'active' : ''}>Contáctanos</Link></li>
         </ul>
@@ -60,6 +61,7 @@ function Navbar() {
         <Link to="/planes" onClick={closeMenu}>Planes</Link>
         <Link to="/aranceles" onClick={closeMenu}>Aranceles</Link>
         <Link to="/apoyo" onClick={closeMenu}>Apoyo Sicopedagógico</Link>
+        <Link to="/vitrina" onClick={closeMenu}>Vitrina</Link>
         <Link to="/testimonios" onClick={closeMenu}>Testimonios</Link>
         <Link to="/contacto" onClick={closeMenu}>Contáctanos</Link>
         <Link to="/login" onClick={closeMenu} className="mobile-access-btn">Acceder →</Link>

@@ -27,6 +27,24 @@ def _ahora():
     return datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
 
 
+@materiales_bp.route('/api/materiales', methods=['GET'])
+def vitrina():
+    """Grilla pública: todo el material, con el nombre de quien lo subió.
+
+    Sin auth — es la vitrina que ve cualquier visitante. No se expone el correo.
+    ponytail: cuando haya autores externos, filtrar por estado='aprobada'.
+    """
+    with get_db() as conn:
+        filas = db_execute(conn, '''
+            SELECT m.id, m.titulo, m.descripcion, m.tipo, m.url, m.creado_en,
+                   u.nombre AS autor_nombre, u.apellido AS autor_apellido
+            FROM materiales m
+            JOIN usuarios u ON u.id = m.autor_id
+            ORDER BY m.id DESC
+        ''').fetchall()
+    return jsonify({'ok': True, 'materiales': [dict(f) for f in filas]})
+
+
 @materiales_bp.route('/api/materiales/mios', methods=['GET'])
 @roles_required('teacher', 'admin')
 def mis_materiales():

@@ -15,6 +15,7 @@ const Aranceles      = lazy(() => import('./pages/Aranceles'))
 const Apoyo          = lazy(() => import('./pages/Apoyo'))
 const Contacto       = lazy(() => import('./pages/Contacto'))
 const Testimonios    = lazy(() => import('./pages/Testimonios'))
+const Vitrina        = lazy(() => import('./pages/Vitrina'))
 const Login          = lazy(() => import('./pages/Login'))
 
 const DashboardPaes      = lazy(() => import('./pages/dashboards/DashboardPaes'))
@@ -46,6 +47,7 @@ function App() {
               <Route path="apoyo"         element={<Apoyo />} />
               <Route path="contacto"      element={<Contacto />} />
               <Route path="testimonios"   element={<Testimonios />} />
+              <Route path="vitrina"       element={<Vitrina />} />
             </Route>
 
             {/* Login (sin Layout) */}

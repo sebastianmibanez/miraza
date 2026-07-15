@@ -318,6 +318,15 @@ export interface Material {
   creado_en: string
 }
 
+export interface MaterialPublico extends Material {
+  autor_nombre: string
+  autor_apellido: string
+}
+
+/** Grilla pública — no requiere sesión. */
+export const getVitrina = () =>
+  api.get<{ ok: boolean; materiales: MaterialPublico[] }>('/api/materiales')
+
 export const getMisMateriales = () =>
   api.get<{ ok: boolean; materiales: Material[] }>('/api/materiales/mios')
 
