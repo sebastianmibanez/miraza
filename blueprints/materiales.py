@@ -95,14 +95,28 @@ def crear_material():
     if not (url.startswith('https://') or url.startswith('http://')):
         return jsonify({'ok': False, 'error': 'El enlace debe empezar con http:// o https://'}), 400
 
-    # Admin publica directo; teacher queda pendiente de aprobación.
-    estado = 'aprobado' if rol == 'admin' else 'pendiente'
-
     with get_db() as conn:
+        # Admin puede subir a nombre de otra profesora: muchas van a preferir
+        # mandar el link por WhatsApp antes que loguearse a subirlo ellas mismas.
+        autor_id = uid
+        if rol == 'admin' and data.get('autor_id') not in (None, ''):
+            try:
+                autor_id = int(data['autor_id'])
+            except (TypeError, ValueError):
+                return jsonify({'ok': False, 'error': 'Autor inválido'}), 400
+            existe = db_execute(conn, "SELECT id FROM usuarios WHERE id = %s AND rol IN ('teacher','admin')",
+                                (autor_id,)).fetchone()
+            if not existe:
+                return jsonify({'ok': False, 'error': 'Esa profesora no existe'}), 400
+
+        # Admin publica directo (sea para sí misma o a nombre de otra profesora);
+        # cuando una teacher sube lo suyo, queda pendiente de aprobación.
+        estado = 'aprobado' if rol == 'admin' else 'pendiente'
+
         db_execute(conn, '''
             INSERT INTO materiales (autor_id, titulo, descripcion, tipo, url, creado_en, estado)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-        ''', (uid, titulo, descripcion, tipo, url, _ahora(), estado))
+        ''', (autor_id, titulo, descripcion, tipo, url, _ahora(), estado))
 
     return jsonify({'ok': True, 'estado': estado})
 

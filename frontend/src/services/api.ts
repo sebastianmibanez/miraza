@@ -388,9 +388,11 @@ export const getMiPerfil = () =>
 export const guardarMiPerfil = (foto_url: string, bio: string) =>
   api.patch<Ok>('/api/mi-perfil', { foto_url, bio })
 
-export const crearMaterial = (titulo: string, descripcion: string, tipo: TipoMaterial, url: string) =>
+export const crearMaterial = (
+  titulo: string, descripcion: string, tipo: TipoMaterial, url: string, autorId?: number
+) =>
   api.post<{ ok: boolean; estado?: EstadoMaterial; error?: string }>(
-    '/api/materiales', { titulo, descripcion, tipo, url }
+    '/api/materiales', { titulo, descripcion, tipo, url, autor_id: autorId }
   )
 
 export const borrarMaterial = (id: number) =>

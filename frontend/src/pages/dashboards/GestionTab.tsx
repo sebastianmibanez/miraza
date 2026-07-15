@@ -3,11 +3,16 @@ import {
   getTeacherRamos, getProfesores, getAlumnosGestion, getClases,
   crearRamo, editarRamo, borrarRamo,
   crearClase, borrarClase, matricular, desmatricular,
-  crearProfesora, cambiarActivoProfesor,
-  DIAS, TIPOS_CLASE,
+  crearProfesora, cambiarActivoProfesor, crearMaterial,
+  DIAS, TIPOS_CLASE, TIPOS_MATERIAL,
   type TeacherRamo, type Profesor, type AlumnoGestion, type Clase,
-  type CuentaProfesoraCreada,
+  type CuentaProfesoraCreada, type TipoMaterial,
 } from '../../services/api'
+
+const ETIQUETA_TIPO_MATERIAL: Record<TipoMaterial, string> = {
+  video:     '🎬 Video',
+  documento: '📄 Documento',
+}
 
 const PLANES = ['PAES', 'NEM', 'Nivelación', 'Especializada']
 
@@ -38,6 +43,14 @@ export default function GestionTab() {
   const [creandoProfe, setCreandoProfe] = useState(false)
   const [credencial, setCredencial] = useState<CuentaProfesoraCreada | null>(null)
   const [copiado, setCopiado] = useState(false)
+
+  // Subir material a nombre de una profesora que mandó el link por WhatsApp
+  // en vez de loguearse a subirlo ella misma.
+  const [materialForm, setMaterialForm] = useState({
+    profesorId: '', titulo: '', tipo: 'video' as TipoMaterial, url: '',
+  })
+  const [subiendoMaterial, setSubiendoMaterial] = useState(false)
+  const [materialMsg, setMaterialMsg] = useState('')
 
   const cargar = useCallback(async () => {
     setCargando(true)
@@ -127,6 +140,37 @@ export default function GestionTab() {
     navigator.clipboard?.writeText(texto).then(() => setCopiado(true)).catch(() => {})
   }
 
+  async function onSubirMaterial(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    setMaterialMsg('')
+    if (!materialForm.profesorId) { setError('Elige a qué profesora pertenece el video.'); return }
+    if (!materialForm.titulo.trim()) { setError('Ponle un título al video.'); return }
+    if (!/^https?:\/\//.test(materialForm.url.trim())) {
+      setError('Pega el enlace completo (empieza con https://).')
+      return
+    }
+
+    setSubiendoMaterial(true)
+    try {
+      const res = await crearMaterial(
+        materialForm.titulo.trim(), '', materialForm.tipo, materialForm.url.trim(),
+        Number(materialForm.profesorId),
+      )
+      if (res.data.ok) {
+        setMaterialMsg('Subido y publicado en la vitrina.')
+        setMaterialForm(v => ({ ...v, titulo: '', url: '' }))
+      } else {
+        setError(res.data.error || 'No se pudo subir el material.')
+      }
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { error?: string } } }
+      setError(err.response?.data?.error || 'No se pudo subir el material.')
+    } finally {
+      setSubiendoMaterial(false)
+    }
+  }
+
   function toggleActivoProfe(p: Profesor) {
     accion(() => cambiarActivoProfesor(p.id, p.activo === 0))
   }
@@ -194,6 +238,61 @@ export default function GestionTab() {
               </span>
             ))}
           </div>
+        )}
+      </div>
+
+      {/* ── Subir material a nombre de una profesora ── */}
+      <div className="docente-card">
+        <h2 className="docente-card-title">Subir un video a nombre de una profesora</h2>
+        <p className="insc-subtitle">
+          Para cuando te manda el link por WhatsApp en vez de subirlo ella misma. Queda
+          publicado en la vitrina de inmediato, bajo su perfil.
+        </p>
+
+        {profesores.filter(p => p.rol === 'teacher').length === 0 ? (
+          <p className="gestion-hint">Todavía no hay profesoras creadas.</p>
+        ) : (
+          <form className="gestion-form" onSubmit={onSubirMaterial}>
+            <select
+              className="docente-select"
+              value={materialForm.profesorId}
+              onChange={e => setMaterialForm(v => ({ ...v, profesorId: e.target.value }))}
+            >
+              <option value="">Elige una profesora…</option>
+              {profesores.filter(p => p.rol === 'teacher').map(p => (
+                <option key={p.id} value={p.id}>{p.nombre} {p.apellido}</option>
+              ))}
+            </select>
+            <input
+              className="gestion-input"
+              placeholder="Título (ej: Clase demo — Factorización)"
+              value={materialForm.titulo}
+              onChange={e => setMaterialForm(v => ({ ...v, titulo: e.target.value }))}
+            />
+            <input
+              className="gestion-input"
+              placeholder="https://youtube.com/watch?v=… (o cualquier link)"
+              value={materialForm.url}
+              onChange={e => setMaterialForm(v => ({ ...v, url: e.target.value }))}
+            />
+            <select
+              className="docente-select"
+              value={materialForm.tipo}
+              onChange={e => setMaterialForm(v => ({ ...v, tipo: e.target.value as TipoMaterial }))}
+            >
+              {TIPOS_MATERIAL.map(t => (
+                <option key={t} value={t}>{ETIQUETA_TIPO_MATERIAL[t]}</option>
+              ))}
+            </select>
+            <button className="insc-btn-crear" type="submit" disabled={subiendoMaterial}>
+              {subiendoMaterial ? 'Subiendo…' : 'Subir'}
+            </button>
+          </form>
+        )}
+        {materialMsg && (
+          <p className="insc-subtitle" style={{ color: '#16a34a', fontWeight: 600, marginTop: '0.6rem' }}>
+            {materialMsg}
+          </p>
         )}
       </div>
 
