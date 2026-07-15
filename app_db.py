@@ -8,6 +8,8 @@ db_execute las traduce a ? cuando corre sobre SQLite.
 """
 import os
 import sqlite3
+import time
+from collections import defaultdict
 from contextlib import contextmanager
 
 DATABASE_URL = os.getenv('DATABASE_URL', '').strip()
@@ -68,6 +70,23 @@ def db_execute(conn, query, params=None):
         cur.execute(query.replace('%s', '?'), params or ())
 
     return cur
+
+
+# ── Rate limiting (en memoria) ─────────────────────────────────
+# ponytail: el store vive en cada worker de gunicorn (2 workers ⇒ el límite
+# efectivo se duplica). Suficiente a esta escala; si algún día importa de
+# verdad, moverlo a la BD o a Redis.
+_rate_store = defaultdict(list)
+
+
+def is_rate_limited(key, limit=10, window=3600):
+    """True si `key` ya agotó sus `limit` intentos en los últimos `window` seg."""
+    now = time.time()
+    _rate_store[key] = [t for t in _rate_store[key] if now - t < window]
+    if len(_rate_store[key]) >= limit:
+        return True
+    _rate_store[key].append(now)
+    return False
 
 
 GMAIL_DOMINIOS = ('gmail.com', 'googlemail.com')

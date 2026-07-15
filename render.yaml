@@ -25,8 +25,12 @@ services:
       # sobre el disco efímero de Render y se perderían todos los datos.
       - key: DATABASE_URL
         sync: false
-      - key: ADMIN_USER
+      # Aviso por correo de cada inscripción nueva. API key de resend.com
+      # (plan gratis) y el correo que recibe los avisos. Ojo: con el remitente
+      # onboarding@resend.dev solo entrega al correo dueño de la cuenta Resend;
+      # para otros destinos hay que verificar miraza.cl en Resend.
+      - key: RESEND_API_KEY
         sync: false
-      - key: ADMIN_PASSWORD
+      - key: AVISO_EMAIL
         sync: false
 

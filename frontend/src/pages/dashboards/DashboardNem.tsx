@@ -3,7 +3,6 @@ import ScheduleWidget from '../../components/dashboard/ScheduleWidget'
 import LiveClassButton from '../../components/dashboard/LiveClassButton'
 import AnnouncementsWidget from '../../components/dashboard/AnnouncementsWidget'
 import MisRamosWidget from '../../components/dashboard/MisRamosWidget'
-import ChatWidget from '../../components/dashboard/ChatWidget'
 import './Dashboard.css'
 
 const COLOR = '#16a34a'
@@ -22,8 +21,6 @@ export default function DashboardNem() {
         <MisRamosWidget />
         <AnnouncementsWidget />
       </div>
-
-      <ChatWidget accentColor={COLOR} />
     </div>
   )
 }

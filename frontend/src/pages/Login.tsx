@@ -108,7 +108,7 @@ export default function Login() {
         <p className="login-help">
           ¿Problemas para acceder?{' '}
           <a
-            href="https://wa.me/56912345678?text=Hola%2C+tengo+problemas+para+acceder+a+mi+panel"
+            href="https://wa.me/56933325788?text=Hola%2C+tengo+problemas+para+acceder+a+mi+panel"
             target="_blank"
             rel="noopener noreferrer"
           >

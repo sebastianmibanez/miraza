@@ -6,7 +6,7 @@ Landing page + backend para inscripciones PAES.
 - **Backend:** Python + Flask
 - **Base de datos:** PostgreSQL en [Neon](https://neon.tech) (producción) / SQLite (local)
 - **Frontend:** React + TypeScript + Vite
-- **Auth:** JWT (alumnos y profesoras) + sesión Flask (panel admin)
+- **Auth:** JWT (alumnos, profesoras y dirección) + Google Sign-In
 - **Deploy:** Render (plan gratis)
 
 ## Seguridad incluida
@@ -62,7 +62,9 @@ miraza/
    Render lee `render.yaml` y arma el servicio solo.
 3. En **Environment**, define las variables marcadas como `sync: false`:
    - `DATABASE_URL` → el connection string de Neon del paso anterior
-   - `ADMIN_USER` y `ADMIN_PASSWORD` → para entrar al panel `/admin`
+   - `RESEND_API_KEY` y `AVISO_EMAIL` → aviso por correo de cada inscripción
+     nueva (API key gratis en [resend.com](https://resend.com); el correo debe
+     ser el dueño de la cuenta Resend mientras no se verifique el dominio)
 
    (`SECRET_KEY` la genera Render automáticamente. **No la borres**: sin ella la app
    se niega a arrancar en producción, a propósito — firma los JWT.)

@@ -7,7 +7,7 @@ import jwt
 import requests as http
 import logging
 
-from app_db import get_db, db_execute, normalizar_email
+from app_db import get_db, db_execute, normalizar_email, is_rate_limited
 
 logger = logging.getLogger(__name__)
 
@@ -234,6 +234,10 @@ def login_google():
     if not credential:
         return jsonify({'ok': False, 'error': 'Falta el token de Google'}), 400
 
+    client_ip = request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
+    if is_rate_limited(f'login_g:{client_ip}', limit=8, window=900):
+        return jsonify({'ok': False, 'error': 'Demasiados intentos. Espera unos minutos.'}), 429
+
     try:
         claims = verificar_token_google(credential)
     except Exception as e:
@@ -270,7 +274,6 @@ def login_google():
             db_execute(conn, 'UPDATE usuarios SET google_sub = %s WHERE id = %s',
                        (google_sub, row['id']))
 
-    client_ip = request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
     geo = get_geo(client_ip)
     log_session(row['id'], client_ip, request.headers.get('User-Agent', ''), geo)
 
@@ -293,6 +296,13 @@ def login():
     if not email or not password:
         return jsonify({'ok': False, 'error': 'Email y contraseña requeridos'}), 400
 
+    client_ip = request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
+
+    # Llave ip+email: frena fuerza bruta contra una cuenta sin bloquear a todo
+    # un colegio que comparte IP (NAT) cuando un alumno olvida su clave.
+    if is_rate_limited(f'login:{client_ip}:{email}', limit=8, window=900):
+        return jsonify({'ok': False, 'error': 'Demasiados intentos. Espera unos minutos.'}), 429
+
     with get_db() as conn:
         # Misma normalización que en Google: quien escriba su Gmail con o sin
         # puntos llega igual a su cuenta.
@@ -307,7 +317,6 @@ def login():
     if not row['activo']:
         return jsonify({'ok': False, 'error': 'Cuenta desactivada. Contacta a Miraza.'}), 403
 
-    client_ip = request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
     user_agent = request.headers.get('User-Agent', '')
     geo = get_geo(client_ip)
     log_session(row['id'], client_ip, user_agent, geo)

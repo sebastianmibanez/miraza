@@ -1,13 +1,11 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from collections import defaultdict
-from functools import wraps
 import os
 import re
-import secrets
-import time
 import logging
 from datetime import datetime, timezone
+
+import requests as http
 
 # ── Configuración ──────────────────────────────────────────────
 app = Flask(__name__)
@@ -16,8 +14,6 @@ CORS(app, resources={r"/api/*": {"origins": [
     "https://miraza.cl", "https://www.miraza.cl"
 ]}}, supports_credentials=True)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Logging
 logging.basicConfig(
@@ -28,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ── Base de datos (shared utilities) ──────────────────────────
-from app_db import get_db, db_execute, init_db
+from app_db import get_db, db_execute, init_db, is_rate_limited
 
 # ── Blueprints ─────────────────────────────────────────────────
 from blueprints.auth import auth_bp, seed_users, SECRET_KEY, verificar_token_google
@@ -37,8 +33,7 @@ from blueprints.chat import chat_bp
 from blueprints.admin import admin_bp
 from blueprints.materiales import materiales_bp
 
-# Mismo secreto que firma los JWT. Debe ser estable entre los workers de
-# gunicorn, o las sesiones del panel admin se romperían al azar.
+# El mismo secreto que firma los JWT (auth.py valida su presencia en prod).
 app.secret_key = SECRET_KEY
 
 app.register_blueprint(auth_bp)
@@ -63,19 +58,40 @@ MAX_LENGTHS = {
 EMAIL_REGEX = re.compile(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
 TELEFONO_REGEX = re.compile(r'^[\d\s\+\-\(\)]{7,20}$')
 
-# ── Rate limiting ──────────────────────────────────────────────
-_rate_store = defaultdict(list)
-RATE_LIMIT = 10
-RATE_WINDOW = 3600
+# ── Aviso de inscripciones nuevas (Resend) ─────────────────────
+RESEND_API_KEY = os.getenv('RESEND_API_KEY', '')
+AVISO_EMAIL = os.getenv('AVISO_EMAIL', '')
 
 
-def is_rate_limited(ip):
-    now = time.time()
-    _rate_store[ip] = [t for t in _rate_store[ip] if now - t < RATE_WINDOW]
-    if len(_rate_store[ip]) >= RATE_LIMIT:
-        return True
-    _rate_store[ip].append(now)
-    return False
+def avisar_inscripcion(campos, materias):
+    """Manda el aviso por correo. Best-effort: jamás rompe la inscripción.
+
+    El remitente onboarding@resend.dev funciona sin configurar nada, pero solo
+    entrega al correo dueño de la cuenta Resend. Para avisar a otros correos
+    hay que verificar el dominio miraza.cl en Resend y cambiar el 'from'.
+    """
+    if not RESEND_API_KEY or not AVISO_EMAIL:
+        return
+    try:
+        texto = '\n'.join(
+            [f'{k.capitalize()}: {v}' for k, v in campos.items() if v]
+            + [f'Materias: {materias or "—"}']
+        )
+        resp = http.post(
+            'https://api.resend.com/emails',
+            headers={'Authorization': f'Bearer {RESEND_API_KEY}'},
+            json={
+                'from': 'Miraza <onboarding@resend.dev>',
+                'to': [AVISO_EMAIL],
+                'subject': f"Nueva inscripción: {campos['nombre']} {campos['apellido']}",
+                'text': texto,
+            },
+            timeout=5,
+        )
+        if resp.status_code >= 400:
+            logger.warning("Resend respondió %s: %s", resp.status_code, resp.text[:200])
+    except Exception as e:
+        logger.warning("No se pudo enviar el aviso de inscripción: %s", e)
 
 
 # ── Inicializar BD + seed ──────────────────────────────────────
@@ -200,57 +216,11 @@ def inscripcion():
                   email_verificado))
         logger.info("Nueva inscripción: %s %s <%s>%s", nombre, apellido, email,
                     ' [correo verificado con Google]' if email_verificado else '')
+        avisar_inscripcion(campos, materias)
         return jsonify({'ok': True, 'mensaje': '¡Inscripción recibida! Te contactaremos pronto.'})
     except Exception:
         logger.exception("Error guardando inscripción para %s", email)
         return jsonify({'ok': False, 'error': 'Error al guardar. Intenta de nuevo.'}), 500
-
-
-# ── Admin (sesión Flask, panel servidor) ───────────────────────
-ADMIN_USER     = os.getenv('ADMIN_USER', '')
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', '')
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not session.get('admin_logged_in'):
-            return redirect(url_for('admin_login'))
-        return f(*args, **kwargs)
-    return decorated
-
-
-@app.route('/admin/login', methods=['GET', 'POST'])
-def admin_login():
-    if not ADMIN_USER or not ADMIN_PASSWORD:
-        return 'Admin no configurado. Define ADMIN_USER y ADMIN_PASSWORD en Render.', 503
-    error = None
-    if request.method == 'POST':
-        user_ok = secrets.compare_digest(request.form.get('usuario', ''), ADMIN_USER)
-        pwd_ok  = secrets.compare_digest(request.form.get('password', ''), ADMIN_PASSWORD)
-        if user_ok and pwd_ok:
-            session['admin_logged_in'] = True
-            return redirect(url_for('admin'))
-        error = 'Usuario o contraseña incorrectos.'
-    return render_template('admin_login.html', error=error)
-
-
-@app.route('/admin/logout')
-def admin_logout():
-    session.clear()
-    return redirect(url_for('admin_login'))
-
-
-@app.route('/admin')
-@login_required
-def admin():
-    with get_db() as conn:
-        cur = db_execute(conn, '''
-            SELECT id, nombre, apellido, email, telefono, curso, materias, mensaje, fecha
-            FROM inscripciones ORDER BY fecha DESC
-        ''')
-        rows = [dict(r) for r in cur.fetchall()]
-    return render_template('admin.html', inscripciones=rows)
 
 
 # ── Error handlers ─────────────────────────────────────────────
