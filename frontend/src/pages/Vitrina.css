@@ -92,4 +92,22 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: #b45309;
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.vit-card-autor:hover {
+  text-decoration: underline;
+}
+
+.vit-volver {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #1b4db8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.vit-volver:hover {
+  text-decoration: underline;
 }

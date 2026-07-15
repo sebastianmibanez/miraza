@@ -319,6 +319,7 @@ export interface Material {
 }
 
 export interface MaterialPublico extends Material {
+  autor_id: number
   autor_nombre: string
   autor_apellido: string
 }

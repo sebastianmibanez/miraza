@@ -37,7 +37,7 @@ def vitrina():
     with get_db() as conn:
         filas = db_execute(conn, '''
             SELECT m.id, m.titulo, m.descripcion, m.tipo, m.url, m.creado_en,
-                   u.nombre AS autor_nombre, u.apellido AS autor_apellido
+                   m.autor_id, u.nombre AS autor_nombre, u.apellido AS autor_apellido
             FROM materiales m
             JOIN usuarios u ON u.id = m.autor_id
             ORDER BY m.id DESC
