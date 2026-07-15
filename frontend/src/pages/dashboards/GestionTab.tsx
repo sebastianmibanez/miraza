@@ -3,8 +3,10 @@ import {
   getTeacherRamos, getProfesores, getAlumnosGestion, getClases,
   crearRamo, editarRamo, borrarRamo,
   crearClase, borrarClase, matricular, desmatricular,
+  crearProfesora, cambiarActivoProfesor,
   DIAS, TIPOS_CLASE,
   type TeacherRamo, type Profesor, type AlumnoGestion, type Clase,
+  type CuentaProfesoraCreada,
 } from '../../services/api'
 
 const PLANES = ['PAES', 'NEM', 'Nivelación', 'Especializada']
@@ -30,6 +32,12 @@ export default function GestionTab() {
 
   const [nuevaClase, setNuevaClase] = useState({ dia: 'Lunes', hora: '18:00', tipo: 'clase' })
   const [nuevoAlumno, setNuevoAlumno] = useState('')
+
+  // Alta de profesora
+  const [nuevaProfe, setNuevaProfe] = useState({ nombre: '', apellido: '', email: '' })
+  const [creandoProfe, setCreandoProfe] = useState(false)
+  const [credencial, setCredencial] = useState<CuentaProfesoraCreada | null>(null)
+  const [copiado, setCopiado] = useState(false)
 
   const cargar = useCallback(async () => {
     setCargando(true)
@@ -83,6 +91,46 @@ export default function GestionTab() {
     setCreando(false)
   }
 
+  async function onCrearProfesora(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    if (!nuevaProfe.nombre.trim() || !nuevaProfe.apellido.trim() || !nuevaProfe.email.trim()) {
+      setError('Nombre, apellido y correo son obligatorios.')
+      return
+    }
+    setCreandoProfe(true)
+    try {
+      const res = await crearProfesora(nuevaProfe.nombre.trim(), nuevaProfe.apellido.trim(), nuevaProfe.email.trim())
+      if (res.data.ok) {
+        setCredencial(res.data)
+        setCopiado(false)
+        setNuevaProfe({ nombre: '', apellido: '', email: '' })
+        await cargar()
+      } else {
+        setError(res.data.error || 'No se pudo crear la cuenta.')
+      }
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { error?: string } } }
+      setError(err.response?.data?.error || 'No se pudo crear la cuenta.')
+    } finally {
+      setCreandoProfe(false)
+    }
+  }
+
+  function copiarCredencial() {
+    if (!credencial?.user || !credencial.password) return
+    const texto =
+      `Hola ${credencial.user.nombre}, tu acceso a Miraza:\n` +
+      `Sitio: https://miraza.cl/login\n` +
+      `Correo: ${credencial.user.email}\n` +
+      `Contraseña: ${credencial.password}`
+    navigator.clipboard?.writeText(texto).then(() => setCopiado(true)).catch(() => {})
+  }
+
+  function toggleActivoProfe(p: Profesor) {
+    accion(() => cambiarActivoProfesor(p.id, p.activo === 0))
+  }
+
   // El ramo abierto, releído de la lista fresca.
   const detalle = abierto ? ramos.find(r => r.id === abierto.id) ?? null : null
   const enElRamo = detalle ? alumnos.filter(a => a.ramos.some(r => r.id === detalle.id)) : []
@@ -93,6 +141,61 @@ export default function GestionTab() {
   return (
     <div className="docente-tab-content">
       {error && <p className="insc-error">{error}</p>}
+
+      {/* ── Crear profesora ── */}
+      <div className="docente-card">
+        <h2 className="docente-card-title">Crear cuenta de profesora</h2>
+        <p className="insc-subtitle">
+          Genera el acceso al panel para una profesora nueva. La contraseña se muestra
+          una sola vez: cópiala y envíasela por un canal privado.
+        </p>
+
+        <form className="gestion-form" onSubmit={onCrearProfesora}>
+          <input
+            className="gestion-input"
+            placeholder="Nombre"
+            value={nuevaProfe.nombre}
+            onChange={e => setNuevaProfe(v => ({ ...v, nombre: e.target.value }))}
+          />
+          <input
+            className="gestion-input"
+            placeholder="Apellido"
+            value={nuevaProfe.apellido}
+            onChange={e => setNuevaProfe(v => ({ ...v, apellido: e.target.value }))}
+          />
+          <input
+            className="gestion-input"
+            type="email"
+            placeholder="correo@ejemplo.cl"
+            value={nuevaProfe.email}
+            onChange={e => setNuevaProfe(v => ({ ...v, email: e.target.value }))}
+          />
+          <button className="insc-btn-crear" type="submit" disabled={creandoProfe}>
+            {creandoProfe ? 'Creando…' : 'Crear cuenta'}
+          </button>
+        </form>
+
+        {profesores.length > 0 && (
+          <div className="gestion-clases" style={{ marginTop: '1rem' }}>
+            {profesores.map(p => (
+              <span key={p.id} className="gestion-alumno">
+                {p.nombre} {p.apellido}
+                {p.rol === 'admin' ? (
+                  <em className="gestion-falta"> · dirección</em>
+                ) : (
+                  <button
+                    className={`profe-toggle${p.activo ? '' : ' inactiva'}`}
+                    onClick={() => toggleActivoProfe(p)}
+                    title={p.activo ? 'Desactivar acceso' : 'Reactivar acceso'}
+                  >
+                    {p.activo ? '✓ activa' : '✕ inactiva'}
+                  </button>
+                )}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* ── Crear ramo ── */}
       <div className="docente-card">
@@ -349,6 +452,39 @@ export default function GestionTab() {
           </div>
         )}
       </div>
+
+      {/* La contraseña se muestra una sola vez: en la BD solo queda el hash. */}
+      {credencial?.user && credencial.password && (
+        <div className="insc-modal-bg" onClick={() => setCredencial(null)}>
+          <div className="insc-modal" onClick={e => e.stopPropagation()}>
+            <h3 className="insc-modal-title">Cuenta creada ✅</h3>
+            <p className="insc-modal-sub">
+              Copia estos datos y envíaselos a {credencial.user.nombre} por WhatsApp o correo.
+              <strong> La contraseña no se puede volver a ver.</strong>
+            </p>
+
+            <div className="insc-cred">
+              <div className="insc-cred-row">
+                <span className="insc-cred-label">Correo</span>
+                <span className="insc-cred-valor">{credencial.user.email}</span>
+              </div>
+              <div className="insc-cred-row">
+                <span className="insc-cred-label">Contraseña</span>
+                <span className="insc-cred-valor insc-cred-pass">{credencial.password}</span>
+              </div>
+            </div>
+
+            <div className="insc-modal-acciones">
+              <button className="insc-btn-copiar" onClick={copiarCredencial}>
+                {copiado ? '¡Copiado!' : 'Copiar mensaje'}
+              </button>
+              <button className="insc-btn-cerrar" onClick={() => setCredencial(null)}>
+                Listo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

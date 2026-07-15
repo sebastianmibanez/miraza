@@ -6,6 +6,7 @@ asignada, eso sería dejarlas fijar su propio sueldo. Solo publican avisos en lo
 ramos que dictan.
 """
 import logging
+import re
 import secrets
 import string
 from datetime import datetime, timezone
@@ -25,6 +26,7 @@ logger = logging.getLogger(__name__)
 ESTADOS = ('pendiente', 'aprobada', 'descartada')
 PASSWORD_LARGO = 12
 COLOR_POR_DEFECTO = '#1B4DB8'
+EMAIL_REGEX = re.compile(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
 
 
 def _ahora():
@@ -267,6 +269,74 @@ def listar_profesores():
             FROM usuarios WHERE rol IN ('teacher','admin') ORDER BY apellido, nombre
         ''').fetchall()
     return jsonify({'ok': True, 'profesores': [dict(f) for f in filas]})
+
+
+@admin_bp.route('/api/admin/profesoras', methods=['POST'])
+@roles_required('admin')
+def crear_profesora():
+    """Alta de una profesora desde el panel.
+
+    Sin esto, con ~100 postulantes la única forma de crear cuentas era la
+    Shell de Render (manage.py) — no escala. Siempre crea rol 'teacher'; las
+    cuentas admin son para las fundadoras y se crean aparte, a mano.
+    """
+    data = request.get_json(silent=True) or {}
+    nombre = _texto(data, 'nombre', 100)
+    apellido = _texto(data, 'apellido', 100)
+    email = (data.get('email') or '').strip().lower()
+
+    if not nombre:
+        return jsonify({'ok': False, 'error': 'El nombre es obligatorio'}), 400
+    if not apellido:
+        return jsonify({'ok': False, 'error': 'El apellido es obligatorio'}), 400
+    if not EMAIL_REGEX.match(email):
+        return jsonify({'ok': False, 'error': 'Correo electrónico inválido'}), 400
+
+    email_norm = normalizar_email(email)
+    password = _generar_password()
+    ahora = _ahora()
+
+    with get_db() as conn:
+        if db_execute(conn, 'SELECT id FROM usuarios WHERE email_norm = %s', (email_norm,)).fetchone():
+            return jsonify({'ok': False, 'error': f'Ya existe una cuenta con {email}.'}), 409
+
+        db_execute(conn, '''
+            INSERT INTO usuarios (nombre, apellido, email, email_norm, password_hash, rol, activo, creado_en)
+            VALUES (%s, %s, %s, %s, %s, 'teacher', 1, %s)
+        ''', (nombre, apellido, email, email_norm, generate_password_hash(password), ahora))
+
+        nueva = db_execute(conn, 'SELECT id FROM usuarios WHERE email_norm = %s', (email_norm,)).fetchone()
+
+    logger.info("Profesora creada desde el panel: %s %s <%s>", nombre, apellido, email)
+
+    # La contraseña viaja UNA sola vez, acá. En la BD solo queda el hash.
+    return jsonify({
+        'ok': True,
+        'password': password,
+        'user': {'id': nueva['id'], 'nombre': nombre, 'apellido': apellido, 'email': email, 'rol': 'teacher'},
+    })
+
+
+@admin_bp.route('/api/admin/profesores/<int:prof_id>/activo', methods=['PATCH'])
+@roles_required('admin')
+def cambiar_activo_profesor(prof_id):
+    """Bloquea o reactiva el acceso de una profesora, sin borrar nada de lo suyo.
+
+    Solo aplica a rol 'teacher': una cuenta admin no se desactiva desde acá
+    para que dirección no pueda bloquearse a sí misma por error.
+    """
+    data = request.get_json(silent=True) or {}
+    activo = data.get('activo')
+    if activo not in (0, 1, True, False):
+        return jsonify({'ok': False, 'error': 'Valor inválido'}), 400
+
+    with get_db() as conn:
+        fila = db_execute(conn, "SELECT id FROM usuarios WHERE id = %s AND rol = 'teacher'", (prof_id,)).fetchone()
+        if not fila:
+            return jsonify({'ok': False, 'error': 'Profesora no encontrada'}), 404
+        db_execute(conn, 'UPDATE usuarios SET activo = %s WHERE id = %s', (1 if activo else 0, prof_id))
+
+    return jsonify({'ok': True})
 
 
 @admin_bp.route('/api/admin/alumnos', methods=['GET'])

@@ -224,6 +224,19 @@ type Ok = { ok: boolean; error?: string }
 export const getProfesores = () =>
   api.get<{ ok: boolean; profesores: Profesor[] }>('/api/admin/profesores')
 
+export interface CuentaProfesoraCreada {
+  ok: boolean
+  password?: string
+  user?: { id: number; nombre: string; apellido: string; email: string; rol: 'teacher' }
+  error?: string
+}
+
+export const crearProfesora = (nombre: string, apellido: string, email: string) =>
+  api.post<CuentaProfesoraCreada>('/api/admin/profesoras', { nombre, apellido, email })
+
+export const cambiarActivoProfesor = (id: number, activo: boolean) =>
+  api.patch<Ok>(`/api/admin/profesores/${id}/activo`, { activo })
+
 export const getAlumnosGestion = () =>
   api.get<{ ok: boolean; alumnos: AlumnoGestion[] }>('/api/admin/alumnos')
 

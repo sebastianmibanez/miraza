@@ -1073,3 +1073,16 @@
   padding: 0.5rem 0.9rem 0.9rem;
 }
 .aprob-acciones button { flex: 1; }
+
+/* ── Toggle activo/inactivo de una profesora ── */
+.profe-toggle {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0 2px;
+  color: #166534;
+}
+.profe-toggle.inactiva { color: #991b1b; }
+.profe-toggle:hover { text-decoration: underline; }
