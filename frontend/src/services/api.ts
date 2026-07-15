@@ -322,14 +322,43 @@ export interface MaterialPublico extends Material {
   autor_id: number
   autor_nombre: string
   autor_apellido: string
+  autor_foto: string
+}
+
+export interface PerfilProfesor {
+  id: number
+  nombre: string
+  apellido: string
+  foto_url: string
+  bio: string
 }
 
 /** Grilla pública — no requiere sesión. */
 export const getVitrina = () =>
   api.get<{ ok: boolean; materiales: MaterialPublico[] }>('/api/materiales')
 
+/** Perfil público de una profesora + su material. No requiere sesión. */
+export const getPerfilProfe = (id: number) =>
+  api.get<{ ok: boolean; profesor: PerfilProfesor; materiales: Material[]; error?: string }>(
+    `/api/profes/${id}`
+  )
+
 export const getMisMateriales = () =>
   api.get<{ ok: boolean; materiales: Material[] }>('/api/materiales/mios')
+
+// Mi perfil (foto + bio) — staff edita el suyo
+export interface MiPerfil {
+  nombre: string
+  apellido: string
+  foto_url: string
+  bio: string
+}
+
+export const getMiPerfil = () =>
+  api.get<{ ok: boolean; perfil: MiPerfil }>('/api/mi-perfil')
+
+export const guardarMiPerfil = (foto_url: string, bio: string) =>
+  api.patch<Ok>('/api/mi-perfil', { foto_url, bio })
 
 export const crearMaterial = (titulo: string, descripcion: string, tipo: TipoMaterial, url: string) =>
   api.post<Ok>('/api/materiales', { titulo, descripcion, tipo, url })

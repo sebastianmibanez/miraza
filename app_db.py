@@ -245,6 +245,11 @@ def init_db():
         # lleguen a la misma cuenta en vez de dejar al alumno afuera.
         _agregar_columna(conn, 'usuarios', 'email_norm', 'TEXT')
 
+        # Perfil público de la profesora en la vitrina: foto (URL a una imagen
+        # externa, no la hosteamos) y bio corta.
+        _agregar_columna(conn, 'usuarios', 'foto_url', "TEXT DEFAULT ''")
+        _agregar_columna(conn, 'usuarios', 'bio', "TEXT DEFAULT ''")
+
         # Rellena las cuentas que ya existían antes de esta columna.
         pendientes = db_execute(conn, '''
             SELECT id, email FROM usuarios WHERE email_norm IS NULL OR email_norm = ''

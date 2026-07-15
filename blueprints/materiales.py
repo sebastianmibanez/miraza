@@ -37,12 +37,32 @@ def vitrina():
     with get_db() as conn:
         filas = db_execute(conn, '''
             SELECT m.id, m.titulo, m.descripcion, m.tipo, m.url, m.creado_en,
-                   m.autor_id, u.nombre AS autor_nombre, u.apellido AS autor_apellido
+                   m.autor_id, u.nombre AS autor_nombre, u.apellido AS autor_apellido,
+                   u.foto_url AS autor_foto
             FROM materiales m
             JOIN usuarios u ON u.id = m.autor_id
             ORDER BY m.id DESC
         ''').fetchall()
     return jsonify({'ok': True, 'materiales': [dict(f) for f in filas]})
+
+
+@materiales_bp.route('/api/profes/<int:prof_id>', methods=['GET'])
+def perfil_publico(prof_id):
+    """Perfil público de una profesora: sus datos + su material. Sin auth."""
+    with get_db() as conn:
+        prof = db_execute(conn, '''
+            SELECT id, nombre, apellido, foto_url, bio
+            FROM usuarios WHERE id = %s AND rol IN ('teacher','admin')
+        ''', (prof_id,)).fetchone()
+        if not prof:
+            return jsonify({'ok': False, 'error': 'Profesor no encontrado'}), 404
+
+        filas = db_execute(conn, '''
+            SELECT id, titulo, descripcion, tipo, url, creado_en
+            FROM materiales WHERE autor_id = %s ORDER BY id DESC
+        ''', (prof_id,)).fetchall()
+
+    return jsonify({'ok': True, 'profesor': dict(prof), 'materiales': [dict(f) for f in filas]})
 
 
 @materiales_bp.route('/api/materiales/mios', methods=['GET'])
@@ -98,5 +118,37 @@ def borrar_material(material_id):
         if rol != 'admin' and mat['autor_id'] != uid:
             return jsonify({'ok': False, 'error': 'Ese material no es tuyo'}), 403
         db_execute(conn, 'DELETE FROM materiales WHERE id = %s', (material_id,))
+
+    return jsonify({'ok': True})
+
+
+# ── Mi perfil (foto + bio para la vitrina) ────────────────────
+
+@materiales_bp.route('/api/mi-perfil', methods=['GET'])
+@roles_required('teacher', 'admin')
+def mi_perfil():
+    uid = g.current_user['sub']
+    with get_db() as conn:
+        fila = db_execute(conn,
+            'SELECT nombre, apellido, foto_url, bio FROM usuarios WHERE id = %s', (uid,)
+        ).fetchone()
+    return jsonify({'ok': True, 'perfil': dict(fila)})
+
+
+@materiales_bp.route('/api/mi-perfil', methods=['PATCH'])
+@roles_required('teacher', 'admin')
+def editar_mi_perfil():
+    uid = g.current_user['sub']
+    data = request.get_json(silent=True) or {}
+
+    foto_url = (data.get('foto_url') or '').strip()[:URL_MAX]
+    bio = (data.get('bio') or '').strip()[:600]
+
+    if foto_url and not (foto_url.startswith('https://') or foto_url.startswith('http://')):
+        return jsonify({'ok': False, 'error': 'El enlace de la foto debe empezar con http:// o https://'}), 400
+
+    with get_db() as conn:
+        db_execute(conn, 'UPDATE usuarios SET foto_url = %s, bio = %s WHERE id = %s',
+                   (foto_url, bio, uid))
 
     return jsonify({'ok': True})

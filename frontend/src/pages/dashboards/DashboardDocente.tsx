@@ -17,6 +17,7 @@ import InscripcionesTab from './InscripcionesTab'
 import GestionTab from './GestionTab'
 import AvisosTab from './AvisosTab'
 import MaterialTab from './MaterialTab'
+import PerfilTab from './PerfilTab'
 import './DashboardDocente.css'
 
 const COLOR = '#b45309'
@@ -53,6 +54,7 @@ export default function DashboardDocente() {
     ...(esAdmin ? [{ key: 'inscripciones', label: '📥 Inscripciones' }] : []),
     ...(esAdmin ? [{ key: 'gestion',       label: '⚙️ Gestión' }] : []),
     { key: 'material',      label: '🎬 Mi Material' },
+    { key: 'perfil',        label: '🪪 Mi Perfil' },
     { key: 'avisos',        label: '📢 Avisos' },
     { key: 'horario',       label: '📅 Mi Horario' },
     { key: 'ramos',         label: '📚 Mis Ramos' },
@@ -285,6 +287,7 @@ export default function DashboardDocente() {
       {tab === 'inscripciones' && esAdmin && <InscripcionesTab onResumen={onResumen} />}
       {tab === 'gestion' && esAdmin && <GestionTab />}
       {tab === 'material' && <MaterialTab />}
+      {tab === 'perfil' && <PerfilTab />}
       {tab === 'avisos' && <AvisosTab esAdmin={!!esAdmin} />}
 
       {/* ── HORARIO ── */}

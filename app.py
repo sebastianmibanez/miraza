@@ -99,7 +99,11 @@ def set_security_headers(response):
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; "
         "font-src 'self' https://fonts.gstatic.com; "
         "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com; "
-        "img-src 'self' data: https://i.ytimg.com https://lh3.googleusercontent.com; "
+        # https: (no solo hosts fijos) para que las profesoras peguen la URL de
+        # su foto de perfil desde cualquier lado. Una imagen no ejecuta código;
+        # el riesgo es a lo más un pixel de tracking. ponytail: si molesta, pasar
+        # a fotos subidas a un bucket propio y volver a lista blanca.
+        "img-src 'self' data: https:; "
         "connect-src 'self' https://accounts.google.com; "
         "frame-src https://www.youtube.com https://drive.google.com https://accounts.google.com; "
         "frame-ancestors 'none'"

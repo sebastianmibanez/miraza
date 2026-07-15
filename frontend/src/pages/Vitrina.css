@@ -87,17 +87,119 @@
   line-height: 1.45;
 }
 
-.vit-card-autor {
-  margin-top: 0.35rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #b45309;
+.vit-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.vit-theater-btn {
+  flex-shrink: 0;
+  border: 1px solid #dbe2ec;
+  background: #f4f7fb;
+  color: #1b4db8;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.15s ease;
+}
+
+.vit-theater-btn:hover {
+  background: #e5ecf6;
+}
+
+.vit-autor-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
   text-decoration: none;
   align-self: flex-start;
 }
 
-.vit-card-autor:hover {
+.vit-autor-nombre {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #b45309;
+}
+
+.vit-autor-row:hover .vit-autor-nombre {
   text-decoration: underline;
+}
+
+/* ── Theater (dialog nativo) ── */
+.vit-theater {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  max-width: 90vw;
+  max-height: 92vh;
+}
+
+.vit-theater::backdrop {
+  background: rgba(6, 12, 28, 0.82);
+  backdrop-filter: blur(2px);
+}
+
+.vit-theater-inner {
+  width: min(1000px, 90vw);
+  position: relative;
+}
+
+.vit-theater-embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.vit-theater-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.vit-theater-title {
+  color: #fff;
+  font-weight: 600;
+  margin: 0.8rem 0 0;
+  text-align: center;
+}
+
+.vit-theater-close {
+  position: absolute;
+  top: -2.6rem;
+  right: 0;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.perfil-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.perfil-hero-inner .avatar {
+  margin-bottom: 1rem;
+}
+
+.perfil-bio {
+  max-width: 620px;
+  margin: 0.8rem auto 0;
+  line-height: 1.6;
 }
 
 .vit-volver {
