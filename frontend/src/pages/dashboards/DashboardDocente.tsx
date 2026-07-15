@@ -7,6 +7,7 @@ import {
   getTeacherAlumnos,
   getDashboardAnnouncements,
   getInscripciones,
+  getMaterialesPendientes,
   type TeacherRamo,
   type TeacherAlumno,
   type Announcement,
@@ -18,6 +19,7 @@ import GestionTab from './GestionTab'
 import AvisosTab from './AvisosTab'
 import MaterialTab from './MaterialTab'
 import PerfilTab from './PerfilTab'
+import AprobacionesTab from './AprobacionesTab'
 import './DashboardDocente.css'
 
 const COLOR = '#b45309'
@@ -46,12 +48,14 @@ export default function DashboardDocente() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [ramoFiltro, setRamoFiltro]       = useState('')
   const [pendientes, setPendientes]       = useState(0)
+  const [matPendientes, setMatPendientes] = useState(0)
   const [cargando, setCargando]           = useState(true)
 
   // Las pestañas de gestión solo existen para dirección.
   const TABS = [
     { key: 'inicio',        label: '🏠 Inicio' },
     ...(esAdmin ? [{ key: 'inscripciones', label: '📥 Inscripciones' }] : []),
+    ...(esAdmin ? [{ key: 'aprobaciones',  label: '✅ Revisar material' }] : []),
     ...(esAdmin ? [{ key: 'gestion',       label: '⚙️ Gestión' }] : []),
     { key: 'material',      label: '🎬 Mi Material' },
     { key: 'perfil',        label: '🪪 Mi Perfil' },
@@ -70,6 +74,9 @@ export default function DashboardDocente() {
       getTeacherAlumnos().then(r => setAlumnos(r.data.alumnos || [])).catch(() => {}),
       esAdmin
         ? getInscripciones().then(r => setPendientes(r.data.resumen?.pendiente ?? 0)).catch(() => {})
+        : Promise.resolve(),
+      esAdmin
+        ? getMaterialesPendientes().then(r => setMatPendientes(r.data.materiales?.length ?? 0)).catch(() => {})
         : Promise.resolve(),
     ]).finally(() => setCargando(false))
   }, [esAdmin])
@@ -148,6 +155,9 @@ export default function DashboardDocente() {
             {t.label}
             {t.key === 'inscripciones' && pendientes > 0 && (
               <span className="docente-tab-badge">{pendientes}</span>
+            )}
+            {t.key === 'aprobaciones' && matPendientes > 0 && (
+              <span className="docente-tab-badge">{matPendientes}</span>
             )}
           </button>
         ))}
@@ -285,6 +295,7 @@ export default function DashboardDocente() {
       )}
 
       {tab === 'inscripciones' && esAdmin && <InscripcionesTab onResumen={onResumen} />}
+      {tab === 'aprobaciones' && esAdmin && <AprobacionesTab onCount={setMatPendientes} />}
       {tab === 'gestion' && esAdmin && <GestionTab />}
       {tab === 'material' && <MaterialTab />}
       {tab === 'perfil' && <PerfilTab />}

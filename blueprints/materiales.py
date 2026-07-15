@@ -3,11 +3,9 @@
 El video no se hostea acá — se guarda solo el link (YouTube / Vimeo / Drive).
 Autoservicio para staff (teacher y admin): cada quien ve y borra lo suyo.
 
-Ojo: todavía no hay grilla pública ni gate de aprobación. Se agrega cuando
-entren profesoras externas (los ~90 postulantes); por ahora son 2 dueños de
-confianza subiendo lo suyo.
-ponytail: sin estado/aprobación, agregar columna 'estado' + vista admin cuando
-haya autores externos que curar.
+Gate de aprobación: lo que sube un teacher queda 'pendiente' y no aparece en la
+vitrina pública hasta que dirección (admin) lo aprueba. Lo que sube un admin
+entra 'aprobado' directo — son las dueñas.
 """
 import logging
 from datetime import datetime, timezone
@@ -21,6 +19,7 @@ materiales_bp = Blueprint('materiales', __name__)
 logger = logging.getLogger(__name__)
 
 URL_MAX = 500
+ESTADOS = ('pendiente', 'aprobado', 'rechazado')
 
 
 def _ahora():
@@ -29,10 +28,9 @@ def _ahora():
 
 @materiales_bp.route('/api/materiales', methods=['GET'])
 def vitrina():
-    """Grilla pública: todo el material, con el nombre de quien lo subió.
+    """Grilla pública: solo material aprobado, con el nombre de quien lo subió.
 
     Sin auth — es la vitrina que ve cualquier visitante. No se expone el correo.
-    ponytail: cuando haya autores externos, filtrar por estado='aprobada'.
     """
     with get_db() as conn:
         filas = db_execute(conn, '''
@@ -41,6 +39,7 @@ def vitrina():
                    u.foto_url AS autor_foto
             FROM materiales m
             JOIN usuarios u ON u.id = m.autor_id
+            WHERE m.estado = 'aprobado'
             ORDER BY m.id DESC
         ''').fetchall()
     return jsonify({'ok': True, 'materiales': [dict(f) for f in filas]})
@@ -59,7 +58,7 @@ def perfil_publico(prof_id):
 
         filas = db_execute(conn, '''
             SELECT id, titulo, descripcion, tipo, url, creado_en
-            FROM materiales WHERE autor_id = %s ORDER BY id DESC
+            FROM materiales WHERE autor_id = %s AND estado = 'aprobado' ORDER BY id DESC
         ''', (prof_id,)).fetchall()
 
     return jsonify({'ok': True, 'profesor': dict(prof), 'materiales': [dict(f) for f in filas]})
@@ -71,7 +70,7 @@ def mis_materiales():
     uid = g.current_user['sub']
     with get_db() as conn:
         filas = db_execute(conn, '''
-            SELECT id, titulo, descripcion, tipo, url, creado_en
+            SELECT id, titulo, descripcion, tipo, url, creado_en, estado
             FROM materiales WHERE autor_id = %s ORDER BY id DESC
         ''', (uid,)).fetchall()
     return jsonify({'ok': True, 'materiales': [dict(f) for f in filas]})
@@ -81,6 +80,7 @@ def mis_materiales():
 @roles_required('teacher', 'admin')
 def crear_material():
     uid = g.current_user['sub']
+    rol = g.current_user.get('rol')
     data = request.get_json(silent=True) or {}
 
     titulo = (data.get('titulo') or '').strip()[:120]
@@ -95,13 +95,16 @@ def crear_material():
     if not (url.startswith('https://') or url.startswith('http://')):
         return jsonify({'ok': False, 'error': 'El enlace debe empezar con http:// o https://'}), 400
 
+    # Admin publica directo; teacher queda pendiente de aprobación.
+    estado = 'aprobado' if rol == 'admin' else 'pendiente'
+
     with get_db() as conn:
         db_execute(conn, '''
-            INSERT INTO materiales (autor_id, titulo, descripcion, tipo, url, creado_en)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        ''', (uid, titulo, descripcion, tipo, url, _ahora()))
+            INSERT INTO materiales (autor_id, titulo, descripcion, tipo, url, creado_en, estado)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ''', (uid, titulo, descripcion, tipo, url, _ahora(), estado))
 
-    return jsonify({'ok': True})
+    return jsonify({'ok': True, 'estado': estado})
 
 
 @materiales_bp.route('/api/materiales/<int:material_id>', methods=['DELETE'])
@@ -119,6 +122,44 @@ def borrar_material(material_id):
             return jsonify({'ok': False, 'error': 'Ese material no es tuyo'}), 403
         db_execute(conn, 'DELETE FROM materiales WHERE id = %s', (material_id,))
 
+    return jsonify({'ok': True})
+
+
+# ── Aprobación (solo dirección) ───────────────────────────────
+
+@materiales_bp.route('/api/admin/materiales/pendientes', methods=['GET'])
+@roles_required('admin')
+def materiales_pendientes():
+    """Material esperando revisión, con su autor. Para el panel de dirección."""
+    with get_db() as conn:
+        filas = db_execute(conn, '''
+            SELECT m.id, m.titulo, m.descripcion, m.tipo, m.url, m.creado_en,
+                   u.nombre AS autor_nombre, u.apellido AS autor_apellido
+            FROM materiales m
+            JOIN usuarios u ON u.id = m.autor_id
+            WHERE m.estado = 'pendiente'
+            ORDER BY m.id ASC
+        ''').fetchall()
+    return jsonify({'ok': True, 'materiales': [dict(f) for f in filas]})
+
+
+@materiales_bp.route('/api/admin/materiales/<int:material_id>/estado', methods=['POST'])
+@roles_required('admin')
+def revisar_material(material_id):
+    data = request.get_json(silent=True) or {}
+    estado = (data.get('estado') or '').strip()
+
+    # Desde el panel solo se aprueba o se rechaza.
+    if estado not in ('aprobado', 'rechazado'):
+        return jsonify({'ok': False, 'error': 'Estado inválido'}), 400
+
+    with get_db() as conn:
+        mat = db_execute(conn, 'SELECT id FROM materiales WHERE id = %s', (material_id,)).fetchone()
+        if not mat:
+            return jsonify({'ok': False, 'error': 'Material no encontrado'}), 404
+        db_execute(conn, 'UPDATE materiales SET estado = %s WHERE id = %s', (estado, material_id))
+
+    logger.info("Material %s → %s por admin %s", material_id, estado, g.current_user['sub'])
     return jsonify({'ok': True})
 
 

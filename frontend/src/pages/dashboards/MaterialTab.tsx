@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '../../contexts/AuthContext'
 import {
   getMisMateriales, crearMaterial, borrarMaterial,
-  type Material, type TipoMaterial,
+  type Material, type TipoMaterial, type EstadoMaterial,
 } from '../../services/api'
 
 const ETIQUETA_TIPO: Record<TipoMaterial, string> = {
@@ -9,10 +10,20 @@ const ETIQUETA_TIPO: Record<TipoMaterial, string> = {
   documento: '📄 Documento',
 }
 
+const ETIQUETA_ESTADO: Record<EstadoMaterial, string> = {
+  pendiente: '⏳ En revisión',
+  aprobado:  '✓ Publicado',
+  rechazado: '✕ Rechazado',
+}
+
 export default function MaterialTab() {
+  const { state } = useAuth()
+  const esAdmin = state.user?.rol === 'admin'
+
   const [items, setItems]       = useState<Material[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError]       = useState('')
+  const [aviso, setAviso]       = useState('')
   const [enviando, setEnviando] = useState(false)
 
   const [form, setForm] = useState({ titulo: '', descripcion: '', tipo: 'video' as TipoMaterial, url: '' })
@@ -45,10 +56,14 @@ export default function MaterialTab() {
 
     setEnviando(true)
     setError('')
+    setAviso('')
     try {
       const res = await crearMaterial(form.titulo.trim(), form.descripcion.trim(), form.tipo, url)
       if (res.data.ok) {
         setForm({ titulo: '', descripcion: '', tipo: 'video', url: '' })
+        setAviso(res.data.estado === 'pendiente'
+          ? 'Subido. Queda en revisión: dirección lo aprueba y ahí aparece en la vitrina.'
+          : 'Subido y publicado en la vitrina.')
         await cargar()
       } else {
         setError(res.data.error || 'No se pudo guardar.')
@@ -76,12 +91,15 @@ export default function MaterialTab() {
     <div className="docente-tab-content">
       {error && <p className="insc-error">{error}</p>}
 
+      {aviso && <p className="insc-subtitle" style={{ color: '#16a34a', fontWeight: 600 }}>{aviso}</p>}
+
       <div className="docente-card">
         <h2 className="docente-card-title">Subir material</h2>
         <p className="insc-subtitle">
           Sube tus videos demo, cursos o shorts para mostrarte. El video no se aloja
           en Miraza: súbelo a <strong>YouTube</strong> (sin listar, si es privado),
           Vimeo o Drive, y pega el enlace acá.
+          {!esAdmin && ' Tu material pasa por una revisión antes de aparecer en la vitrina.'}
         </p>
 
         <form className="aviso-form" onSubmit={publicar}>
@@ -142,6 +160,11 @@ export default function MaterialTab() {
                   <a href={m.url} target="_blank" rel="noopener noreferrer" className="docente-announce-date">
                     Ver enlace ↗
                   </a>
+                  {m.estado && (
+                    <span className={`mat-estado mat-estado-${m.estado}`}>
+                      {ETIQUETA_ESTADO[m.estado]}
+                    </span>
+                  )}
                   <button className="gestion-x" onClick={() => quitar(m.id)}>Borrar</button>
                 </div>
               </div>

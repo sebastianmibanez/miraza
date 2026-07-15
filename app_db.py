@@ -375,3 +375,13 @@ def init_db():
         db_execute(conn, '''
             CREATE INDEX IF NOT EXISTS idx_materiales_autor ON materiales(autor_id)
         ''')
+
+        # Gate de aprobación: el material de las profesoras externas queda oculto
+        # hasta que dirección lo apruebe. DEFAULT 'aprobado' para no ocultar lo
+        # que ya estaba subido antes de este cambio; lo nuevo de un teacher entra
+        # 'pendiente' (lo decide materiales.py según el rol).
+        #   estado -> pendiente | aprobado | rechazado
+        _agregar_columna(conn, 'materiales', 'estado', "TEXT NOT NULL DEFAULT 'aprobado'")
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_materiales_estado ON materiales(estado)
+        ''')

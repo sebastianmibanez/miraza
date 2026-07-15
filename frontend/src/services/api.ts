@@ -308,6 +308,7 @@ export const reabrirInscripcion = (id: number) =>
 
 // ── Material / Vitrina ────────────────────────────────────────
 export type TipoMaterial = 'video' | 'documento'
+export type EstadoMaterial = 'pendiente' | 'aprobado' | 'rechazado'
 
 export interface Material {
   id: number
@@ -316,6 +317,20 @@ export interface Material {
   tipo: TipoMaterial
   url: string
   creado_en: string
+  /** Solo presente en "mi material": pendiente/aprobado/rechazado. */
+  estado?: EstadoMaterial
+}
+
+/** Material pendiente visto por dirección, con su autor. */
+export interface MaterialPendiente {
+  id: number
+  titulo: string
+  descripcion: string
+  tipo: TipoMaterial
+  url: string
+  creado_en: string
+  autor_nombre: string
+  autor_apellido: string
 }
 
 export interface MaterialPublico extends Material {
@@ -361,10 +376,19 @@ export const guardarMiPerfil = (foto_url: string, bio: string) =>
   api.patch<Ok>('/api/mi-perfil', { foto_url, bio })
 
 export const crearMaterial = (titulo: string, descripcion: string, tipo: TipoMaterial, url: string) =>
-  api.post<Ok>('/api/materiales', { titulo, descripcion, tipo, url })
+  api.post<{ ok: boolean; estado?: EstadoMaterial; error?: string }>(
+    '/api/materiales', { titulo, descripcion, tipo, url }
+  )
 
 export const borrarMaterial = (id: number) =>
   api.delete<Ok>(`/api/materiales/${id}`)
+
+// Aprobación (solo dirección)
+export const getMaterialesPendientes = () =>
+  api.get<{ ok: boolean; materiales: MaterialPendiente[] }>('/api/admin/materiales/pendientes')
+
+export const revisarMaterial = (id: number, estado: 'aprobado' | 'rechazado') =>
+  api.post<Ok>(`/api/admin/materiales/${id}/estado`, { estado })
 
 // ── Chat ──────────────────────────────────────────────────────
 export const sendChatMessage = (message: string) =>
