@@ -117,7 +117,7 @@ export default function AvisosTab({ esAdmin }: Props) {
               value={form.ramoId}
               onChange={e => setForm(v => ({ ...v, ramoId: e.target.value }))}
             >
-              {esAdmin && <option value="">📣 Aviso general (todo Miraza)</option>}
+              {esAdmin && <option value="">Aviso general (todo Miraza)</option>}
               {!esAdmin && <option value="">Elige un ramo…</option>}
               {ramos.map(r => (
                 <option key={r.id} value={r.id}>{r.nombre} ({r.plan})</option>
@@ -160,7 +160,7 @@ export default function AvisosTab({ esAdmin }: Props) {
                 <div className="aviso-head">
                   <span className="docente-announce-title">{a.titulo}</span>
                   <span className={`aviso-destino${a.ramo ? '' : ' general'}`}>
-                    {a.ramo ? a.ramo : '📣 General'}
+                    {a.ramo ? a.ramo : 'General'}
                   </span>
                 </div>
                 <span className="docente-announce-text">{a.texto}</span>

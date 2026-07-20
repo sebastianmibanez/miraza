@@ -18,7 +18,7 @@ export default function MisRamosWidget() {
 
   return (
     <div className="widget-card">
-      <h3 className="widget-title">📚 Mis ramos</h3>
+      <h3 className="widget-title">Mis ramos</h3>
 
       {cargando ? (
         <p className="widget-empty">Cargando…</p>

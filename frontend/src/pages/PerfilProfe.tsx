@@ -70,15 +70,46 @@ export default function PerfilProfe() {
       <section className="vit-section">
         <Link to="/vitrina" className="vit-volver">← Volver a la vitrina</Link>
 
-        {cargando ? (
-          <p className="vit-estado">Cargando…</p>
-        ) : items.length === 0 ? (
-          <p className="vit-estado">Este profesor todavía no ha publicado material.</p>
-        ) : (
-          <div className="vit-grid">
-            {items.map(m => <MaterialCard key={m.id} m={m} showAutor={false} />)}
+        <div className="perfil-layout">
+          {profesor && (profesor.estudios || profesor.especialidades || profesor.intereses) && (
+            <aside className="perfil-cv">
+              {profesor.especialidades && (
+                <div className="perfil-cv-block">
+                  <h3>Especialidades</h3>
+                  <div className="perfil-chips">
+                    {profesor.especialidades.split(',').map(s => s.trim()).filter(Boolean).map(s => (
+                      <span key={s} className="perfil-chip">{s}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {profesor.estudios && (
+                <div className="perfil-cv-block">
+                  <h3>Formación</h3>
+                  <p>{profesor.estudios}</p>
+                </div>
+              )}
+              {profesor.intereses && (
+                <div className="perfil-cv-block">
+                  <h3>Le gusta</h3>
+                  <p>{profesor.intereses}</p>
+                </div>
+              )}
+            </aside>
+          )}
+
+          <div className="perfil-material">
+            {cargando ? (
+              <p className="vit-estado">Cargando…</p>
+            ) : items.length === 0 ? (
+              <p className="vit-estado">Este profesor todavía no ha publicado material.</p>
+            ) : (
+              <div className="vit-grid">
+                {items.map(m => <MaterialCard key={m.id} m={m} showAutor={false} />)}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </section>
 
       <section className="testim-cta reveal">

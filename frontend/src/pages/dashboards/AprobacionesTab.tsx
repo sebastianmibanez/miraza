@@ -56,7 +56,7 @@ export default function AprobacionesTab({ onCount }: Props) {
         {cargando ? (
           <div className="docente-loading">Cargando…</div>
         ) : items.length === 0 ? (
-          <p className="docente-empty">No hay material pendiente. Todo al día. ✨</p>
+          <p className="docente-empty">No hay material pendiente. Todo al día.</p>
         ) : (
           <div className="aprob-grid">
             {items.map(m => {
@@ -75,7 +75,7 @@ export default function AprobacionesTab({ onCount }: Props) {
                     </div>
                   ) : (
                     <a href={m.url} target="_blank" rel="noopener noreferrer" className="aprob-link">
-                      {m.tipo === 'documento' ? '📄 Ver documento ↗' : '▶ Ver enlace ↗'}
+                      {m.tipo === 'documento' ? 'Ver documento ↗' : 'Ver enlace ↗'}
                     </a>
                   )}
                   <div className="aprob-body">

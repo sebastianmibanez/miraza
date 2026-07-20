@@ -269,6 +269,12 @@ def init_db():
         _agregar_columna(conn, 'usuarios', 'foto_url', "TEXT DEFAULT ''")
         _agregar_columna(conn, 'usuarios', 'bio', "TEXT DEFAULT ''")
 
+        # Ficha tipo CV al costado del perfil público: formación, especialidades
+        # (chips, separadas por coma) e intereses. Todo opcional.
+        _agregar_columna(conn, 'usuarios', 'estudios', "TEXT DEFAULT ''")
+        _agregar_columna(conn, 'usuarios', 'especialidades', "TEXT DEFAULT ''")
+        _agregar_columna(conn, 'usuarios', 'intereses', "TEXT DEFAULT ''")
+
         # Rellena las cuentas que ya existían antes de esta columna.
         pendientes = db_execute(conn, '''
             SELECT id, email FROM usuarios WHERE email_norm IS NULL OR email_norm = ''

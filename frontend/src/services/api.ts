@@ -359,6 +359,9 @@ export interface PerfilProfesor {
   apellido: string
   foto_url: string
   bio: string
+  estudios: string
+  especialidades: string
+  intereses: string
 }
 
 /** Grilla pública — no requiere sesión. */
@@ -380,13 +383,18 @@ export interface MiPerfil {
   apellido: string
   foto_url: string
   bio: string
+  estudios: string
+  especialidades: string
+  intereses: string
 }
 
 export const getMiPerfil = () =>
   api.get<{ ok: boolean; perfil: MiPerfil }>('/api/mi-perfil')
 
-export const guardarMiPerfil = (foto_url: string, bio: string) =>
-  api.patch<Ok>('/api/mi-perfil', { foto_url, bio })
+export const guardarMiPerfil = (datos: {
+  foto_url: string; bio: string; estudios: string; especialidades: string; intereses: string
+}) =>
+  api.patch<Ok>('/api/mi-perfil', datos)
 
 export const crearMaterial = (
   titulo: string, descripcion: string, tipo: TipoMaterial, url: string, autorId?: number

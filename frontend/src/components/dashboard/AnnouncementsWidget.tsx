@@ -2,13 +2,9 @@ import { useEffect, useState } from 'react'
 import { getDashboardAnnouncements, Announcement } from '../../services/api'
 import './WidgetCard.css'
 
-const TIPO_BG: Record<string, string> = {
-  info:  '#eff6ff',
-  aviso: '#fefce8',
-}
 const TIPO_BORDER: Record<string, string> = {
-  info:  '#bfdbfe',
-  aviso: '#fde68a',
+  info:  'var(--d-info)',
+  aviso: 'var(--d-warn)',
 }
 
 export default function AnnouncementsWidget() {
@@ -20,7 +16,7 @@ export default function AnnouncementsWidget() {
 
   return (
     <div className="widget-card">
-      <h3 className="widget-title">📢 Avisos</h3>
+      <h3 className="widget-title">Avisos</h3>
       {items.length === 0 ? (
         <p className="widget-empty">Sin avisos recientes.</p>
       ) : (
@@ -29,10 +25,7 @@ export default function AnnouncementsWidget() {
             <div
               key={item.id}
               className="announcement-item"
-              style={{
-                background: TIPO_BG[item.tipo] ?? '#f8fafc',
-                borderColor: TIPO_BORDER[item.tipo] ?? '#e2e8f0',
-              }}
+              style={{ borderLeftColor: TIPO_BORDER[item.tipo] ?? 'var(--d-muted)' }}
             >
               <strong>{item.titulo}</strong>
               <p>{item.texto}</p>

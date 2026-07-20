@@ -22,13 +22,14 @@ import PerfilTab from './PerfilTab'
 import AprobacionesTab from './AprobacionesTab'
 import './DashboardDocente.css'
 
-const COLOR = '#b45309'
+/* Los colores reales viven en el tema activo (DashboardLayout.css). */
+const COLOR = 'var(--d-muted)'
 
 const TIPO_COLORS: Record<string, string> = {
-  clase:   '#1B4DB8',
-  ensayo:  '#9333ea',
-  'tutoría': '#0e7490',
-  apoyo:   '#16a34a',
+  clase:   'var(--d-tipo-clase)',
+  ensayo:  'var(--d-tipo-ensayo)',
+  'tutoría': 'var(--d-tipo-tutoria)',
+  apoyo:   'var(--d-tipo-apoyo)',
 }
 
 const DIAS_ORDER = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
@@ -50,20 +51,6 @@ export default function DashboardDocente() {
   const [pendientes, setPendientes]       = useState(0)
   const [matPendientes, setMatPendientes] = useState(0)
   const [cargando, setCargando]           = useState(true)
-
-  // Las pestañas de gestión solo existen para dirección.
-  const TABS = [
-    { key: 'inicio',        label: '🏠 Inicio' },
-    ...(esAdmin ? [{ key: 'inscripciones', label: '📥 Inscripciones' }] : []),
-    ...(esAdmin ? [{ key: 'aprobaciones',  label: '✅ Revisar material' }] : []),
-    ...(esAdmin ? [{ key: 'gestion',       label: '⚙️ Gestión' }] : []),
-    { key: 'material',      label: '🎬 Mi Material' },
-    { key: 'perfil',        label: '🪪 Mi Perfil' },
-    { key: 'avisos',        label: '📢 Avisos' },
-    { key: 'horario',       label: '📅 Mi Horario' },
-    { key: 'ramos',         label: '📚 Mis Ramos' },
-    { key: 'alumnos',       label: '👥 Mis Alumnos' },
-  ]
 
   const cargar = useCallback(() => {
     setCargando(true)
@@ -142,25 +129,13 @@ export default function DashboardDocente() {
               <span className="docente-stat-label">Inscripciones nuevas</span>
             </div>
           )}
+          {esAdmin && (
+            <div className={`docente-stat-pill${matPendientes > 0 ? ' destacada' : ''}`}>
+              <span className="docente-stat-num">{matPendientes}</span>
+              <span className="docente-stat-label">Material por revisar</span>
+            </div>
+          )}
         </div>
-      </div>
-
-      <div className="docente-tabs">
-        {TABS.map(t => (
-          <button
-            key={t.key}
-            className={`docente-tab${tab === t.key ? ' active' : ''}`}
-            onClick={() => setTab(t.key)}
-          >
-            {t.label}
-            {t.key === 'inscripciones' && pendientes > 0 && (
-              <span className="docente-tab-badge">{pendientes}</span>
-            )}
-            {t.key === 'aprobaciones' && matPendientes > 0 && (
-              <span className="docente-tab-badge">{matPendientes}</span>
-            )}
-          </button>
-        ))}
       </div>
 
       {/* ── INICIO ── */}
@@ -254,7 +229,7 @@ export default function DashboardDocente() {
                           <div className="aviso-head">
                             <span className="docente-announce-title">{a.titulo}</span>
                             <span className={`aviso-destino${a.ramo ? '' : ' general'}`}>
-                              {a.ramo ?? '📣 General'}
+                              {a.ramo ?? 'General'}
                             </span>
                           </div>
                           <span className="docente-announce-text">{a.texto}</span>
@@ -270,7 +245,7 @@ export default function DashboardDocente() {
                 <h2 className="docente-card-title">Mis ramos</h2>
                 <div className="docente-ramos-grid">
                   {ramos.map(r => (
-                    <div key={r.id} className="docente-ramo-card" style={{ borderColor: r.color }}>
+                    <div key={r.id} className="docente-ramo-card">
                       <div className="docente-ramo-color" style={{ background: r.color }} />
                       <div className="docente-ramo-info">
                         <span className="docente-ramo-nombre">{r.nombre}</span>
@@ -334,7 +309,7 @@ export default function DashboardDocente() {
                               <div className="docente-clase-tags">
                                 {c.plan && <span className="docente-tag plan-tag">{c.plan}</span>}
                                 {typeof c.alumnos === 'number' && (
-                                  <span className="docente-tag alumnos-tag">👥 {c.alumnos}</span>
+                                  <span className="docente-tag alumnos-tag">{c.alumnos} alumnos</span>
                                 )}
                                 <span
                                   className="docente-tag tipo-tag"

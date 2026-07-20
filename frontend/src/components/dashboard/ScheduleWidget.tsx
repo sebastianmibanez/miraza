@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react'
 import { getDashboardSchedule, ScheduleItem } from '../../services/api'
 import './WidgetCard.css'
 
+/* Los colores reales viven en el tema activo (DashboardLayout.css). */
 const TIPO_COLOR: Record<string, string> = {
-  clase:   '#2563eb',
-  ensayo:  '#dc2626',
-  tutoría: '#16a34a',
-  apoyo:   '#9333ea',
+  clase:   'var(--d-tipo-clase)',
+  ensayo:  'var(--d-tipo-ensayo)',
+  tutoría: 'var(--d-tipo-tutoria)',
+  apoyo:   'var(--d-tipo-apoyo)',
 }
 
 export default function ScheduleWidget() {
@@ -18,7 +19,7 @@ export default function ScheduleWidget() {
 
   return (
     <div className="widget-card">
-      <h3 className="widget-title">📅 Horario semanal</h3>
+      <h3 className="widget-title">Horario semanal</h3>
       {schedule.length === 0 ? (
         <p className="widget-empty">Sin clases programadas.</p>
       ) : (
@@ -27,7 +28,7 @@ export default function ScheduleWidget() {
             <li key={i} className="schedule-item">
               <span
                 className="schedule-tipo"
-                style={{ background: TIPO_COLOR[item.tipo] ?? '#64748b' }}
+                style={{ background: TIPO_COLOR[item.tipo] ?? 'var(--d-muted)' }}
               >
                 {item.tipo}
               </span>

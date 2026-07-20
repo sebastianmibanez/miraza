@@ -7,6 +7,9 @@ export default function PerfilTab() {
   const [apellido, setApellido] = useState('')
   const [fotoUrl, setFotoUrl]   = useState('')
   const [bio, setBio]           = useState('')
+  const [estudios, setEstudios]           = useState('')
+  const [especialidades, setEspecialidades] = useState('')
+  const [intereses, setIntereses]         = useState('')
   const [cargando, setCargando] = useState(true)
   const [guardando, setGuardando] = useState(false)
   const [msg, setMsg]           = useState('')
@@ -19,6 +22,7 @@ export default function PerfilTab() {
       const p = r.data.perfil
       setNombre(p.nombre); setApellido(p.apellido)
       setFotoUrl(p.foto_url || ''); setBio(p.bio || '')
+      setEstudios(p.estudios || ''); setEspecialidades(p.especialidades || ''); setIntereses(p.intereses || '')
     } catch {
       setError('No pudimos cargar tu perfil.')
     } finally {
@@ -38,7 +42,10 @@ export default function PerfilTab() {
     }
     setGuardando(true)
     try {
-      const res = await guardarMiPerfil(url, bio.trim())
+      const res = await guardarMiPerfil({
+        foto_url: url, bio: bio.trim(),
+        estudios: estudios.trim(), especialidades: especialidades.trim(), intereses: intereses.trim(),
+      })
       if (res.data.ok) setMsg('Perfil guardado. Así te verán en la vitrina.')
       else setError(res.data.error || 'No se pudo guardar.')
     } catch (err: unknown) {
@@ -87,11 +94,32 @@ export default function PerfilTab() {
             value={bio}
             onChange={e => setBio(e.target.value)}
           />
+          <input
+            className="gestion-input"
+            placeholder="Formación: ej. Licenciada en Educación Matemática, U. de Chile"
+            maxLength={300}
+            value={estudios}
+            onChange={e => setEstudios(e.target.value)}
+          />
+          <input
+            className="gestion-input"
+            placeholder="Especialidades separadas por coma: ej. PAES, Álgebra, Geometría"
+            maxLength={200}
+            value={especialidades}
+            onChange={e => setEspecialidades(e.target.value)}
+          />
+          <input
+            className="gestion-input"
+            placeholder="Qué te gusta: ej. Ajedrez, series de misterio, trekking"
+            maxLength={200}
+            value={intereses}
+            onChange={e => setIntereses(e.target.value)}
+          />
           <div className="gestion-fila">
             <button className="insc-btn-crear" type="submit" disabled={guardando}>
               {guardando ? 'Guardando…' : 'Guardar perfil'}
             </button>
-            {msg && <span style={{ color: '#16a34a', fontWeight: 600, alignSelf: 'center' }}>{msg}</span>}
+            {msg && <span style={{ color: 'var(--d-ok)', fontWeight: 600, alignSelf: 'center' }}>{msg}</span>}
           </div>
         </form>
       </div>

@@ -10,15 +10,15 @@ import {
 } from '../../services/api'
 
 const ETIQUETA_TIPO_MATERIAL: Record<TipoMaterial, string> = {
-  video:     '🎬 Video',
-  documento: '📄 Documento',
+  video:     'Video',
+  documento: 'Documento',
 }
 
 const PLANES = ['PAES', 'NEM', 'Nivelación', 'Especializada']
 
 const COLORES = [
-  '#1B4DB8', '#16a34a', '#9333ea', '#0e7490',
-  '#b45309', '#be123c', '#4338ca', '#0f766e',
+  '#1F3A68', '#2F5D46', '#4A3F6B', '#23555E',
+  '#8A6D3B', '#8C3A46', '#3E4C63', '#5B3A5E',
 ]
 
 export default function GestionTab() {
@@ -290,7 +290,7 @@ export default function GestionTab() {
           </form>
         )}
         {materialMsg && (
-          <p className="insc-subtitle" style={{ color: '#16a34a', fontWeight: 600, marginTop: '0.6rem' }}>
+          <p className="insc-subtitle" style={{ color: 'var(--d-ok)', fontWeight: 600, marginTop: '0.6rem' }}>
             {materialMsg}
           </p>
         )}
@@ -556,7 +556,7 @@ export default function GestionTab() {
       {credencial?.user && credencial.password && (
         <div className="insc-modal-bg" onClick={() => setCredencial(null)}>
           <div className="insc-modal" onClick={e => e.stopPropagation()}>
-            <h3 className="insc-modal-title">Cuenta creada ✅</h3>
+            <h3 className="insc-modal-title">Cuenta creada</h3>
             <p className="insc-modal-sub">
               Copia estos datos y envíaselos a {credencial.user.nombre} por WhatsApp o correo.
               <strong> La contraseña no se puede volver a ver.</strong>

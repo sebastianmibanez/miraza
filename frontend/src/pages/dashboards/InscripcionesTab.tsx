@@ -173,7 +173,7 @@ export default function InscripcionesTab({ onResumen }: Props) {
                   <tr key={i.id}>
                     <td className="docente-alumno-nombre">
                       {i.nombre} {i.apellido}
-                      {i.mensaje && <span className="insc-mensaje" title={i.mensaje}>💬</span>}
+                      {i.mensaje && <span className="insc-mensaje" title={i.mensaje}>ver mensaje</span>}
                     </td>
                     <td className="insc-contacto">
                       <span>
@@ -260,7 +260,7 @@ export default function InscripcionesTab({ onResumen }: Props) {
       {credencial?.user && credencial.password && (
         <div className="insc-modal-bg" onClick={() => setCredencial(null)}>
           <div className="insc-modal" onClick={e => e.stopPropagation()}>
-            <h3 className="insc-modal-title">Cuenta creada ✅</h3>
+            <h3 className="insc-modal-title">Cuenta creada</h3>
             <p className="insc-modal-sub">
               Copia estos datos y envíaselos a {credencial.user.nombre} por WhatsApp.
               <strong> La contraseña no se puede volver a ver.</strong>

@@ -11,6 +11,41 @@
   padding: 3rem 0;
 }
 
+.vit-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #94a3b8;
+  padding: 4rem 0;
+}
+.vit-vacio svg { width: 44px; height: 44px; }
+.vit-vacio p { margin: 0; font-size: 1.02rem; color: #64748b; max-width: 360px; text-align: center; }
+
+/* ── Skeleton de carga ─────────────────────────────────────── */
+@keyframes vit-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+.vit-skel {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #eef1f6;
+  display: flex;
+  flex-direction: column;
+}
+.vit-skel-embed { aspect-ratio: 16 / 9; background: #eef1f6; animation: vit-pulse 1.4s ease-in-out infinite; }
+.vit-skel-body { padding: 1.1rem 1.2rem 1.3rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.vit-skel-line { height: 12px; border-radius: 4px; background: #eef1f6; animation: vit-pulse 1.4s ease-in-out infinite; }
+.vit-skel-line.w70 { width: 70%; height: 16px; }
+.vit-skel-line.w40 { width: 40%; }
+.vit-skel-line.w30 { width: 90px; }
+.vit-skel-autor { display: flex; align-items: center; gap: 0.55rem; margin-top: 0.4rem; }
+.vit-skel-avatar { width: 34px; height: 34px; border-radius: 50%; background: #eef1f6; flex-shrink: 0; animation: vit-pulse 1.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vit-skel-embed, .vit-skel-line, .vit-skel-avatar { animation: none; }
+}
+
 .vit-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -62,7 +97,8 @@
   font-weight: 600;
 }
 
-.vit-linkbox-icon { font-size: 2.4rem; }
+.vit-linkbox-icon { display: inline-flex; }
+.vit-linkbox-icon svg { width: 2.4rem; height: 2.4rem; }
 .vit-linkbox:hover { filter: brightness(1.1); }
 
 .vit-card-body {
@@ -96,17 +132,19 @@
 
 .vit-theater-btn {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid #dbe2ec;
   background: #f4f7fb;
   color: #1b4db8;
   border-radius: 8px;
   width: 30px;
   height: 30px;
-  font-size: 1rem;
   cursor: pointer;
-  line-height: 1;
   transition: background 0.15s ease;
 }
+.vit-theater-btn svg { width: 15px; height: 15px; }
 
 .vit-theater-btn:hover {
   background: #e5ecf6;
@@ -178,12 +216,64 @@
   position: absolute;
   top: -2.6rem;
   right: 0;
+  display: inline-flex;
   background: transparent;
   border: 0;
   color: #fff;
-  font-size: 1.5rem;
   cursor: pointer;
-  line-height: 1;
+}
+.vit-theater-close svg { width: 22px; height: 22px; }
+
+/* ── Ficha CV al costado del perfil público ──────────────────── */
+.perfil-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+.perfil-material { min-width: 0; }
+
+.perfil-cv {
+  background: #fff;
+  border: 1px solid #eef1f6;
+  border-radius: 16px;
+  padding: 1.4rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.perfil-cv-block h3 {
+  margin: 0 0 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+.perfil-cv-block p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.perfil-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.perfil-chip {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #b45309;
+  background: #fdf4e3;
+  border: 1px solid #f3e0b8;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+}
+
+@media (max-width: 720px) {
+  .perfil-layout { grid-template-columns: 1fr; }
+  .perfil-cv { position: static; }
 }
 
 .perfil-hero-inner {

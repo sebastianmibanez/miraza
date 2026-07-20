@@ -50,7 +50,7 @@ def perfil_publico(prof_id):
     """Perfil público de una profesora: sus datos + su material. Sin auth."""
     with get_db() as conn:
         prof = db_execute(conn, '''
-            SELECT id, nombre, apellido, foto_url, bio
+            SELECT id, nombre, apellido, foto_url, bio, estudios, especialidades, intereses
             FROM usuarios WHERE id = %s AND rol IN ('teacher','admin')
         ''', (prof_id,)).fetchone()
         if not prof:
@@ -185,7 +185,8 @@ def mi_perfil():
     uid = g.current_user['sub']
     with get_db() as conn:
         fila = db_execute(conn,
-            'SELECT nombre, apellido, foto_url, bio FROM usuarios WHERE id = %s', (uid,)
+            'SELECT nombre, apellido, foto_url, bio, estudios, especialidades, intereses '
+            'FROM usuarios WHERE id = %s', (uid,)
         ).fetchone()
     return jsonify({'ok': True, 'perfil': dict(fila)})
 
@@ -198,12 +199,17 @@ def editar_mi_perfil():
 
     foto_url = (data.get('foto_url') or '').strip()[:URL_MAX]
     bio = (data.get('bio') or '').strip()[:600]
+    estudios = (data.get('estudios') or '').strip()[:300]
+    especialidades = (data.get('especialidades') or '').strip()[:200]
+    intereses = (data.get('intereses') or '').strip()[:200]
 
     if foto_url and not (foto_url.startswith('https://') or foto_url.startswith('http://')):
         return jsonify({'ok': False, 'error': 'El enlace de la foto debe empezar con http:// o https://'}), 400
 
     with get_db() as conn:
-        db_execute(conn, 'UPDATE usuarios SET foto_url = %s, bio = %s WHERE id = %s',
-                   (foto_url, bio, uid))
+        db_execute(conn, '''
+            UPDATE usuarios SET foto_url = %s, bio = %s, estudios = %s,
+                especialidades = %s, intereses = %s WHERE id = %s
+        ''', (foto_url, bio, estudios, especialidades, intereses, uid))
 
     return jsonify({'ok': True})

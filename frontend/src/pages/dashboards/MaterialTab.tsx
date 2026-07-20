@@ -6,14 +6,14 @@ import {
 } from '../../services/api'
 
 const ETIQUETA_TIPO: Record<TipoMaterial, string> = {
-  video:     '🎬 Video',
-  documento: '📄 Documento',
+  video:     'Video',
+  documento: 'Documento',
 }
 
 const ETIQUETA_ESTADO: Record<EstadoMaterial, string> = {
-  pendiente: '⏳ En revisión',
-  aprobado:  '✓ Publicado',
-  rechazado: '✕ Rechazado',
+  pendiente: 'En revisión',
+  aprobado:  'Publicado',
+  rechazado: 'Rechazado',
 }
 
 export default function MaterialTab() {
@@ -91,7 +91,7 @@ export default function MaterialTab() {
     <div className="docente-tab-content">
       {error && <p className="insc-error">{error}</p>}
 
-      {aviso && <p className="insc-subtitle" style={{ color: '#16a34a', fontWeight: 600 }}>{aviso}</p>}
+      {aviso && <p className="insc-subtitle" style={{ color: 'var(--d-ok)', fontWeight: 600 }}>{aviso}</p>}
 
       <div className="docente-card">
         <h2 className="docente-card-title">Subir material</h2>
@@ -128,8 +128,8 @@ export default function MaterialTab() {
               value={form.tipo}
               onChange={e => setForm(v => ({ ...v, tipo: e.target.value as TipoMaterial }))}
             >
-              <option value="video">🎬 Video</option>
-              <option value="documento">📄 Documento</option>
+              <option value="video">Video</option>
+              <option value="documento">Documento</option>
             </select>
             <button className="insc-btn-crear" type="submit" disabled={enviando}>
               {enviando ? 'Guardando…' : 'Subir'}

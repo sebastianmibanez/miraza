@@ -5,15 +5,13 @@ import AnnouncementsWidget from '../../components/dashboard/AnnouncementsWidget'
 import MisRamosWidget from '../../components/dashboard/MisRamosWidget'
 import './Dashboard.css'
 
-const COLOR = '#2563eb'
-
 export default function DashboardPaes() {
   return (
     <div className="dashboard-page">
-      <WelcomeCard planLabel="Preparación PAES" accentColor={COLOR} icon="📘" />
+      <WelcomeCard planLabel="Preparación PAES" />
 
       <div className="dash-grid-2">
-        <LiveClassButton accentColor={COLOR} />
+        <LiveClassButton />
         <ScheduleWidget />
       </div>
 

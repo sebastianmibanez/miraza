@@ -5,15 +5,13 @@ import AnnouncementsWidget from '../../components/dashboard/AnnouncementsWidget'
 import MisRamosWidget from '../../components/dashboard/MisRamosWidget'
 import './Dashboard.css'
 
-const COLOR = '#9333ea'
-
 export default function DashboardNivelacion() {
   return (
     <div className="dashboard-page">
-      <WelcomeCard planLabel="Nivelación de Estudios" accentColor={COLOR} icon="📙" />
+      <WelcomeCard planLabel="Nivelación de Estudios" />
 
       <div className="dash-grid-2">
-        <LiveClassButton accentColor={COLOR} />
+        <LiveClassButton />
         <ScheduleWidget />
       </div>
 

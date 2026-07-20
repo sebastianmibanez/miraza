@@ -5,15 +5,13 @@ import AnnouncementsWidget from '../../components/dashboard/AnnouncementsWidget'
 import MisRamosWidget from '../../components/dashboard/MisRamosWidget'
 import './Dashboard.css'
 
-const COLOR = '#16a34a'
-
 export default function DashboardNem() {
   return (
     <div className="dashboard-page">
-      <WelcomeCard planLabel="Mejora tu NEM" accentColor={COLOR} icon="📗" />
+      <WelcomeCard planLabel="Mejora tu NEM" />
 
       <div className="dash-grid-2">
-        <LiveClassButton accentColor={COLOR} />
+        <LiveClassButton />
         <ScheduleWidget />
       </div>
 

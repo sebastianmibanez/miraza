@@ -2,14 +2,10 @@ import { useEffect, useState } from 'react'
 import { getMisRamos, type MiRamo } from '../../services/api'
 import './WidgetCard.css'
 
-interface Props {
-  accentColor: string
-}
-
 /** Antes esto decía "EN VIVO" siempre y el botón apuntaba a '#': no llevaba a
  *  ninguna parte. Ahora muestra las salas de Meet reales de los ramos del
  *  alumno, y si nadie ha cargado ningún enlace, lo dice en vez de fingir. */
-export default function LiveClassButton({ accentColor }: Props) {
+export default function LiveClassButton() {
   const [ramos, setRamos] = useState<MiRamo[]>([])
   const [cargando, setCargando] = useState(true)
 
@@ -23,10 +19,9 @@ export default function LiveClassButton({ accentColor }: Props) {
   const conSala = ramos.filter(r => r.meet_url)
 
   return (
-    <div className="widget-card live-card">
-      <div className="live-pulse-ring" style={{ '--color': accentColor } as React.CSSProperties} />
+    <div className="widget-card">
       <div className="live-content">
-        <h3>Clases en vivo</h3>
+        <h3 className="widget-title">Clases en vivo</h3>
 
         {cargando ? (
           <p>Cargando tus salas…</p>
@@ -47,9 +42,8 @@ export default function LiveClassButton({ accentColor }: Props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="live-btn"
-                  style={{ background: accentColor }}
                 >
-                  🎥 {r.nombre}
+                  {r.nombre}
                 </a>
               ))}
             </div>

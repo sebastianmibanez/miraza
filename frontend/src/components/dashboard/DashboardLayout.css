@@ -1,16 +1,137 @@
+/* ══ TEMAS DEL PANEL ══════════════════════════════════════════
+Cada tema define los mismos tokens; todo el CSS de dashboards
+consume var(--d-*). El tema activo va en data-theme del shell
+y se persiste en localStorage (miraza_theme).
+
+3 paletas profesionales ancladas en los colores de marca Miraza
+(azul, crema, ocre) — sin acentos rainbow. Un solo acento
+protagonista por tema; --d-accent2 es un tono frío discreto
+(foco de inputs, badge de plan, link activo del sidebar), nunca
+compite con el acento principal. Los --d-tipo-* distinguen tipo
+de clase por función (info), no por decoración.
+                                                                   */
+
+/* ── 1. Ejecutivo (oscuro, gris neutro + oro) — default ── */
+.dash-shell {
+  --d-bg:       #14161C;
+  --d-surface:  #1B1E26;
+  --d-surface2: #20242D;
+  --d-border:   #2B303B;
+  --d-shadow:   0 1px 3px rgba(0,0,0,0.4);
+  --d-text:     #C4C8D4;
+  --d-muted:    #7B8194;
+  --d-heading:  #F2F3F7;
+  --d-accent:     #C9A227;
+  --d-accent2:    #6E86A8;
+  --d-accent-glow: rgba(201,162,39,0.25);
+  --d-on-accent:  #14161C;
+  --d-soft:       rgba(201,162,39,0.14);
+  --d-soft2:      rgba(110,134,168,0.14);
+  --d-input-bg:   #1B1E26;
+  --d-ok:     #5FA37A;  --d-ok-bg:     rgba(95,163,122,0.14);
+  --d-warn:   #C9A227;  --d-warn-bg:   rgba(201,162,39,0.14);
+  --d-danger: #C4574F;  --d-danger-bg: rgba(196,87,79,0.13);
+  --d-info:   #5B87B8;
+  --d-side-bg:     #0E1015;
+  --d-side-text:   #E8EAF0;
+  --d-side-muted:  #6E7386;
+  --d-side-hover:  rgba(232,234,240,0.05);
+  --d-side-active: rgba(232,234,240,0.08);
+  --d-side-accent: #D9B54A;
+  --d-side-accent2:#6E86A8;
+  --d-side-border: rgba(232,234,240,0.08);
+  --d-tipo-clase:   #5B87B8;
+  --d-tipo-ensayo:  #8B7BA8;
+  --d-tipo-tutoria: #5FA37A;
+  --d-tipo-apoyo:   #C9A227;
+  --d-on-tipo:      #14161C;
+}
+
+/* ── 2. Papel corporativo (claro, crema + azul marino) ── */
+.dash-shell[data-theme="papel"] {
+  --d-bg:       #F6F3EC;
+  --d-surface:  #FFFFFF;
+  --d-surface2: #EFEAE0;
+  --d-border:   #DED6C4;
+  --d-shadow:   0 1px 2px rgba(20,32,60,0.08);
+  --d-text:     #2B2E38;
+  --d-muted:    #6B7280;
+  --d-heading:  #14203C;
+  --d-accent:     #A9781E;
+  --d-accent2:    #3F5C86;
+  --d-accent-glow: rgba(169,120,30,0.18);
+  --d-on-accent:  #FFFFFF;
+  --d-soft:       rgba(169,120,30,0.12);
+  --d-soft2:      rgba(63,92,134,0.12);
+  --d-input-bg:   #FFFFFF;
+  --d-ok:     #3F7A5C;  --d-ok-bg:     rgba(63,122,92,0.12);
+  --d-warn:   #A9781E;  --d-warn-bg:   rgba(169,120,30,0.12);
+  --d-danger: #A14B44;  --d-danger-bg: rgba(161,75,68,0.1);
+  --d-info:   #2F5C8A;
+  --d-side-bg:     #0F1C38;
+  --d-side-text:   #EDE6D3;
+  --d-side-muted:  #8B96AE;
+  --d-side-hover:  rgba(255,255,255,0.05);
+  --d-side-active: rgba(255,255,255,0.08);
+  --d-side-accent: #D9B54A;
+  --d-side-accent2:#8FA6C7;
+  --d-side-border: rgba(255,255,255,0.08);
+  --d-tipo-clase:   #2F5C8A;
+  --d-tipo-ensayo:  #6B4E85;
+  --d-tipo-tutoria: #3F7A5C;
+  --d-tipo-apoyo:   #A9781E;
+  --d-on-tipo:      #FFFFFF;
+}
+
+/* ── 3. Azul profundo (oscuro, navy de marca + oro) ── */
+.dash-shell[data-theme="azul-profundo"] {
+  --d-bg:       #0B1424;
+  --d-surface:  #101C34;
+  --d-surface2: #152036;
+  --d-border:   #223354;
+  --d-shadow:   0 1px 3px rgba(0,0,0,0.45);
+  --d-text:     #C6CEDE;
+  --d-muted:    #7C88A4;
+  --d-heading:  #EDE6D3;
+  --d-accent:     #D1A53A;
+  --d-accent2:    #7C93B8;
+  --d-accent-glow: rgba(209,165,58,0.28);
+  --d-on-accent:  #0B1424;
+  --d-soft:       rgba(209,165,58,0.14);
+  --d-soft2:      rgba(124,147,184,0.14);
+  --d-input-bg:   #152036;
+  --d-ok:     #5B9E82;  --d-ok-bg:     rgba(91,158,130,0.14);
+  --d-warn:   #D1A53A;  --d-warn-bg:   rgba(209,165,58,0.14);
+  --d-danger: #C25C55;  --d-danger-bg: rgba(194,92,85,0.13);
+  --d-info:   #6C93C4;
+  --d-side-bg:     #060C18;
+  --d-side-text:   #EDE6D3;
+  --d-side-muted:  #6A7690;
+  --d-side-hover:  rgba(237,230,211,0.05);
+  --d-side-active: rgba(237,230,211,0.08);
+  --d-side-accent: #D1A53A;
+  --d-side-accent2:#7C93B8;
+  --d-side-border: rgba(237,230,211,0.08);
+  --d-tipo-clase:   #7CA3D4;
+  --d-tipo-ensayo:  #A08FBE;
+  --d-tipo-tutoria: #6FB090;
+  --d-tipo-apoyo:   #D1A53A;
+  --d-on-tipo:      #0B1424;
+}
+
+/* ══ SHELL ═════════════════════════════════════════════════════ */
 .dash-shell {
   display: flex;
   min-height: 100vh;
-  background: #f1f5f9;
+  background: var(--d-bg);
+  color: var(--d-text);
 }
-
 .dash-main {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
   min-width: 0;
 }
-
 @media (max-width: 768px) {
   .dash-shell { flex-direction: column; }
   .dash-main  { padding: 1rem; }

@@ -36,9 +36,29 @@ export default function Vitrina() {
 
       <section className="vit-section">
         {cargando ? (
-          <p className="vit-estado">Cargando…</p>
+          <div className="vit-grid" aria-busy="true" aria-label="Cargando material">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="vit-skel">
+                <div className="vit-skel-embed" />
+                <div className="vit-skel-body">
+                  <div className="vit-skel-line w70" />
+                  <div className="vit-skel-line w40" />
+                  <div className="vit-skel-autor">
+                    <div className="vit-skel-avatar" />
+                    <div className="vit-skel-line w30" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : items.length === 0 ? (
-          <p className="vit-estado">Pronto encontrarás aquí el material de nuestros profesores.</p>
+          <div className="vit-vacio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <polygon points="10 9 15 12 10 15 10 9" />
+            </svg>
+            <p>Pronto encontrarás aquí el material de nuestros profesores.</p>
+          </div>
         ) : (
           <div className="vit-grid">
             {items.map(m => <MaterialCard key={m.id} m={m} />)}
