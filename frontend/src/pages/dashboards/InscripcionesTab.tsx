@@ -4,6 +4,9 @@ import {
   crearCuentaDesdeInscripcion,
   descartarInscripcion,
   reabrirInscripcion,
+  crearAlumnoRegistro,
+  editarInscripcion,
+  eliminarInscripcion,
   type Inscripcion,
   type EstadoInscripcion,
   type ResumenInscripciones,
@@ -18,8 +21,14 @@ const PLANES: { valor: RolAlumno; label: string }[] = [
   { valor: 'especial',   label: 'Clases Especializadas' },
 ]
 
+// Mismos nombres que PLANES, para el registro rápido (texto libre en la base,
+// pero elegido de una lista en vez de tipeado) — más "Particular" para lo que
+// no encaja en el catálogo formal.
+const PLANES_TEXTO = [...PLANES.map(p => p.label), 'Particular']
+
 const FILTROS: { valor: EstadoInscripcion | 'todas'; label: string }[] = [
   { valor: 'pendiente',  label: 'Pendientes' },
+  { valor: 'registrada', label: 'Registrados (sin cuenta)' },
   { valor: 'aprobada',   label: 'Con cuenta' },
   { valor: 'descartada', label: 'Descartadas' },
   { valor: 'todas',      label: 'Todas' },
@@ -31,7 +40,7 @@ interface Props {
 
 export default function InscripcionesTab({ onResumen }: Props) {
   const [inscripciones, setInscripciones] = useState<Inscripcion[]>([])
-  const [filtro, setFiltro]   = useState<EstadoInscripcion | 'todas'>('pendiente')
+  const [filtro, setFiltro]   = useState<EstadoInscripcion | 'todas'>('todas')
   const [cargando, setCargando] = useState(true)
   const [error, setError]     = useState('')
 
@@ -43,6 +52,18 @@ export default function InscripcionesTab({ onResumen }: Props) {
   const [credencial, setCredencial] = useState<CuentaCreada | null>(null)
   const [copiado, setCopiado] = useState(false)
   const [falloCopia, setFalloCopia] = useState(false)
+
+  // Alta manual: dirección agrega un alumno directo, sin esperar el formulario público.
+  const [mostrarAlta, setMostrarAlta] = useState(false)
+  const [enviandoAlta, setEnviandoAlta] = useState(false)
+  const [formAlta, setFormAlta] = useState({ nombre: '', apellido: '', email: '', telefono: '', plan: '' })
+
+  // Editar datos de contacto de una inscripción existente (típicamente para
+  // completarle el correo a un alta rápida antes de poder crearle cuenta).
+  const [editando, setEditando] = useState<{
+    id: number; nombre: string; apellido: string; email: string; telefono: string; plan: string
+  } | null>(null)
+  const [guardandoEdicion, setGuardandoEdicion] = useState(false)
 
   const cargar = useCallback(() => {
     setCargando(true)
@@ -81,6 +102,84 @@ export default function InscripcionesTab({ onResumen }: Props) {
       setError(err.response?.data?.error || 'No se pudo crear la cuenta.')
     } finally {
       setOcupada(null)
+    }
+  }
+
+  async function agregarManual(e: React.FormEvent) {
+    e.preventDefault()
+    if (!formAlta.nombre.trim()) { setError('El nombre es obligatorio.'); return }
+    setEnviandoAlta(true)
+    setError('')
+    try {
+      const res = await crearAlumnoRegistro({
+        nombre: formAlta.nombre.trim(), apellido: formAlta.apellido.trim(),
+        email: formAlta.email.trim(), telefono: formAlta.telefono.trim(), plan: formAlta.plan.trim(),
+      })
+      if (res.data.ok) {
+        setFormAlta({ nombre: '', apellido: '', email: '', telefono: '', plan: '' })
+        setMostrarAlta(false)
+        setFiltro('registrada')
+      } else {
+        setError(res.data.error || 'No se pudo agregar.')
+      }
+    } catch (e2: unknown) {
+      const err = e2 as { response?: { data?: { error?: string } } }
+      setError(err.response?.data?.error || 'No se pudo agregar.')
+    } finally {
+      setEnviandoAlta(false)
+    }
+  }
+
+  async function eliminar(insc: Inscripcion) {
+    const aviso = insc.estado === 'aprobada'
+      ? `${insc.nombre} ya tiene cuenta de acceso — al eliminarla también se borra su cuenta y no podrá volver a entrar. ¿Seguro?`
+      : `¿Eliminar a ${insc.nombre} por completo? No se puede deshacer.`
+    if (!window.confirm(aviso)) return
+
+    setOcupada(insc.id)
+    setError('')
+    try {
+      const res = await eliminarInscripcion(insc.id)
+      if (res.data.ok) cargar()
+      else setError(res.data.error || 'No se pudo eliminar.')
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { error?: string } } }
+      setError(err.response?.data?.error || 'No se pudo eliminar.')
+    } finally {
+      setOcupada(null)
+    }
+  }
+
+  function abrirEdicion(insc: Inscripcion) {
+    setError('')
+    setEditando({
+      id: insc.id, nombre: insc.nombre, apellido: insc.apellido,
+      email: insc.email, telefono: insc.telefono, plan: insc.plan,
+    })
+  }
+
+  async function guardarEdicion(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editando) return
+    if (!editando.nombre.trim()) { setError('El nombre es obligatorio.'); return }
+    setGuardandoEdicion(true)
+    setError('')
+    try {
+      const res = await editarInscripcion(editando.id, {
+        nombre: editando.nombre.trim(), apellido: editando.apellido.trim(),
+        email: editando.email.trim(), telefono: editando.telefono.trim(), plan: editando.plan.trim(),
+      })
+      if (res.data.ok) {
+        setEditando(null)
+        cargar()
+      } else {
+        setError(res.data.error || 'No se pudo guardar.')
+      }
+    } catch (e2: unknown) {
+      const err = e2 as { response?: { data?: { error?: string } } }
+      setError(err.response?.data?.error || 'No se pudo guardar.')
+    } finally {
+      setGuardandoEdicion(false)
     }
   }
 
@@ -143,8 +242,51 @@ export default function InscripcionesTab({ onResumen }: Props) {
                 {f.label}
               </button>
             ))}
+            <button className="insc-btn-crear" onClick={() => setMostrarAlta(v => !v)}>
+              {mostrarAlta ? 'Cancelar' : '+ Agregar alumno'}
+            </button>
           </div>
         </div>
+
+        {mostrarAlta && (
+          <form className="gestion-form horario-form-alumno" onSubmit={agregarManual} style={{ marginBottom: '1rem' }}>
+            <input
+              className="gestion-input"
+              placeholder="Nombre"
+              value={formAlta.nombre}
+              onChange={e => setFormAlta(v => ({ ...v, nombre: e.target.value }))}
+            />
+            <input
+              className="gestion-input"
+              placeholder="Apellido"
+              value={formAlta.apellido}
+              onChange={e => setFormAlta(v => ({ ...v, apellido: e.target.value }))}
+            />
+            <select
+              className="docente-select"
+              value={formAlta.plan}
+              onChange={e => setFormAlta(v => ({ ...v, plan: e.target.value }))}
+            >
+              <option value="">Elige el plan…</option>
+              {PLANES_TEXTO.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+            <input
+              className="gestion-input"
+              placeholder="Correo (opcional por ahora)"
+              value={formAlta.email}
+              onChange={e => setFormAlta(v => ({ ...v, email: e.target.value }))}
+            />
+            <input
+              className="gestion-input"
+              placeholder="Teléfono (opcional)"
+              value={formAlta.telefono}
+              onChange={e => setFormAlta(v => ({ ...v, telefono: e.target.value }))}
+            />
+            <button className="insc-btn-crear" type="submit" disabled={enviandoAlta}>
+              {enviandoAlta ? 'Guardando…' : 'Guardar alumno'}
+            </button>
+          </form>
+        )}
 
         {error && <p className="insc-error">{error}</p>}
 
@@ -154,6 +296,8 @@ export default function InscripcionesTab({ onResumen }: Props) {
           <p className="docente-empty">
             {filtro === 'pendiente'
               ? 'No hay inscripciones pendientes. Cuando alguien complete el formulario del sitio, aparecerá acá.'
+              : filtro === 'registrada'
+              ? 'No hay alumnos agregados manualmente todavía.'
               : 'No hay inscripciones con ese filtro.'}
           </p>
         ) : (
@@ -162,7 +306,8 @@ export default function InscripcionesTab({ onResumen }: Props) {
               <thead>
                 <tr>
                   <th>Alumno</th>
-                  <th>Contacto</th>
+                  <th>Correo</th>
+                  <th>Teléfono</th>
                   <th>Curso / Materias</th>
                   <th>Fecha</th>
                   <th>Acción</th>
@@ -173,76 +318,98 @@ export default function InscripcionesTab({ onResumen }: Props) {
                   <tr key={i.id}>
                     <td className="docente-alumno-nombre">
                       {i.nombre} {i.apellido}
+                      {i.estado === 'registrada' && (
+                        <span className="insc-mensaje" title="Agregado manualmente, todavía sin cuenta">
+                          registro rápido
+                        </span>
+                      )}
                       {i.mensaje && <span className="insc-mensaje" title={i.mensaje}>ver mensaje</span>}
                     </td>
                     <td className="insc-contacto">
-                      <span>
-                        {i.email}
-                        {/* Verificado por Google: el correo existe de verdad.
-                            Sin esta marca, pudo ser tipeado con un error. */}
-                        {i.email_verificado === 1 && (
-                          <span className="insc-verificado" title="Correo verificado con Google">
-                            ✓
-                          </span>
-                        )}
-                      </span>
-                      <span className="insc-tel">{i.telefono}</span>
+                      {i.email}
+                      {/* Verificado por Google: el correo existe de verdad.
+                          Sin esta marca, pudo ser tipeado con un error. */}
+                      {i.email_verificado === 1 && (
+                        <span className="insc-verificado" title="Correo verificado con Google">✓</span>
+                      )}
                     </td>
+                    <td className="insc-contacto insc-tel">{i.telefono}</td>
                     <td>
-                      <span className="docente-plan-chip">{i.curso}</span>
+                      {i.curso
+                        ? <span className="docente-plan-chip">{i.curso}</span>
+                        : i.plan && <span className="docente-plan-chip">{i.plan}</span>}
                       {i.materias && <span className="insc-materias">{i.materias}</span>}
                     </td>
                     <td className="insc-fecha">{i.fecha?.slice(0, 10)}</td>
                     <td>
-                      {i.estado === 'pendiente' && (
-                        <div className="insc-acciones">
-                          <select
-                            className="docente-select insc-select"
-                            value={planes[i.id] || ''}
-                            onChange={e =>
-                              setPlanes(p => ({ ...p, [i.id]: e.target.value as RolAlumno }))
-                            }
-                            disabled={ocupada === i.id}
-                          >
-                            <option value="">Elige el plan…</option>
-                            {PLANES.map(p => (
-                              <option key={p.valor} value={p.valor}>{p.label}</option>
-                            ))}
-                          </select>
-                          <button
-                            className="insc-btn-crear"
-                            onClick={() => crearCuenta(i)}
-                            disabled={ocupada === i.id}
-                          >
-                            {ocupada === i.id ? 'Creando…' : 'Crear cuenta'}
-                          </button>
-                          <button
-                            className="insc-btn-descartar"
-                            onClick={() => cambiarEstado(i, 'descartar')}
-                            disabled={ocupada === i.id}
-                            title="Descartar esta inscripción"
-                          >
-                            Descartar
-                          </button>
-                        </div>
-                      )}
+                      <div className="insc-acciones">
+                        {(i.estado === 'pendiente' || i.estado === 'registrada') && (
+                          <>
+                            <select
+                              className="docente-select insc-select"
+                              value={planes[i.id] || ''}
+                              onChange={e =>
+                                setPlanes(p => ({ ...p, [i.id]: e.target.value as RolAlumno }))
+                              }
+                              disabled={ocupada === i.id}
+                            >
+                              <option value="">Elige el plan…</option>
+                              {PLANES.map(p => (
+                                <option key={p.valor} value={p.valor}>{p.label}</option>
+                              ))}
+                            </select>
+                            <button
+                              className="insc-btn-crear"
+                              onClick={() => crearCuenta(i)}
+                              disabled={ocupada === i.id}
+                            >
+                              {ocupada === i.id ? 'Creando…' : 'Crear cuenta'}
+                            </button>
+                            <button
+                              className="insc-btn-descartar"
+                              onClick={() => cambiarEstado(i, 'descartar')}
+                              disabled={ocupada === i.id}
+                              title="Descartar esta inscripción"
+                            >
+                              Descartar
+                            </button>
+                          </>
+                        )}
 
-                      {i.estado === 'aprobada' && (
-                        <span className="docente-estado-chip activo">Cuenta creada</span>
-                      )}
+                        {i.estado === 'aprobada' && (
+                          <span className="docente-estado-chip activo">Cuenta creada</span>
+                        )}
 
-                      {i.estado === 'descartada' && (
-                        <div className="insc-acciones">
-                          <span className="docente-estado-chip inactivo">Descartada</span>
-                          <button
-                            className="insc-btn-descartar"
-                            onClick={() => cambiarEstado(i, 'reabrir')}
-                            disabled={ocupada === i.id}
-                          >
-                            Reabrir
-                          </button>
-                        </div>
-                      )}
+                        {i.estado === 'descartada' && (
+                          <>
+                            <span className="docente-estado-chip inactivo">Descartada</span>
+                            <button
+                              className="insc-btn-descartar"
+                              onClick={() => cambiarEstado(i, 'reabrir')}
+                              disabled={ocupada === i.id}
+                            >
+                              Reabrir
+                            </button>
+                          </>
+                        )}
+
+                        <button
+                          className="insc-btn-descartar"
+                          onClick={() => abrirEdicion(i)}
+                          disabled={ocupada === i.id}
+                          title="Corregir nombre, correo, teléfono o plan"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="insc-btn-descartar"
+                          onClick={() => eliminar(i)}
+                          disabled={ocupada === i.id}
+                          title="Eliminar por completo"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -292,6 +459,60 @@ export default function InscripcionesTab({ onResumen }: Props) {
                 Listo
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {editando && (
+        <div className="insc-modal-bg" onClick={() => setEditando(null)}>
+          <div className="insc-modal" onClick={e => e.stopPropagation()}>
+            <h3 className="insc-modal-title">Editar alumno</h3>
+            <p className="insc-modal-sub">
+              Completa o corrige sus datos — por ejemplo, el correo que falta para poder crearle la cuenta.
+            </p>
+            <form className="horario-modal-form" onSubmit={guardarEdicion}>
+              <input
+                className="gestion-input"
+                placeholder="Nombre"
+                value={editando.nombre}
+                onChange={e => setEditando(v => v && ({ ...v, nombre: e.target.value }))}
+              />
+              <input
+                className="gestion-input"
+                placeholder="Apellido"
+                value={editando.apellido}
+                onChange={e => setEditando(v => v && ({ ...v, apellido: e.target.value }))}
+              />
+              <select
+                className="docente-select"
+                value={editando.plan}
+                onChange={e => setEditando(v => v && ({ ...v, plan: e.target.value }))}
+              >
+                <option value="">Elige el plan…</option>
+                {PLANES_TEXTO.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <input
+                className="gestion-input"
+                placeholder="Correo"
+                value={editando.email}
+                onChange={e => setEditando(v => v && ({ ...v, email: e.target.value }))}
+              />
+              <input
+                className="gestion-input"
+                placeholder="Teléfono"
+                value={editando.telefono}
+                onChange={e => setEditando(v => v && ({ ...v, telefono: e.target.value }))}
+              />
+
+              <div className="insc-modal-acciones">
+                <button className="insc-btn-copiar" type="submit" disabled={guardandoEdicion}>
+                  {guardandoEdicion ? 'Guardando…' : 'Guardar cambios'}
+                </button>
+                <button type="button" className="insc-btn-cerrar" onClick={() => setEditando(null)}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

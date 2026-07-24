@@ -21,7 +21,6 @@ const svg = (d: React.ReactNode) => (
 
 const ICONS: Record<string, JSX.Element> = {
   inicio: svg(<><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>),
-  inscripciones: svg(<><path d="M3 13h5l2 3h4l2-3h5" /><path d="M5 5h14l2 8v6H3v-6l2-8Z" /></>),
   aprobaciones: svg(<><path d="m9 11.5 2 2 4-4.5" /><rect x="3" y="4" width="18" height="16" rx="2" /></>),
   gestion: svg(<><path d="M4 8h10M18 8h2M4 16h2M10 16h10" /><circle cx="16" cy="8" r="2" /><circle cx="8" cy="16" r="2" /></>),
   material: svg(<><rect x="2.5" y="5" width="19" height="14" rx="2" /><path d="m10 9.5 5 2.5-5 2.5Z" /></>),
@@ -39,7 +38,6 @@ const ICONS: Record<string, JSX.Element> = {
  *  de cada rol (antes el panel docente repetía esto en una fila de tabs). */
 const TABS: Record<string, { tab: string; icono: string; texto: string }[]> = {
   admin: [
-    { tab: 'inscripciones', icono: 'inscripciones', texto: 'Inscripciones' },
     { tab: 'aprobaciones',  icono: 'aprobaciones',  texto: 'Revisar material' },
     { tab: 'gestion',       icono: 'gestion',       texto: 'Gestión' },
     { tab: 'material',      icono: 'material',      texto: 'Mi Material' },

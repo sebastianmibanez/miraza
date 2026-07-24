@@ -579,12 +579,7 @@
 
 .insc-table td { vertical-align: middle; }
 
-.insc-contacto {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 0.83rem;
-}
+.insc-contacto { font-size: 0.83rem; }
 
 .insc-tel,
 .insc-materias,
@@ -917,6 +912,168 @@
   transition: color 0.15s;
 }
 .gestion-x:hover { color: var(--d-danger); }
+
+/* ── Mi horario (alumnos particulares) — grilla semanal completa ── */
+.horario-semana-wrap {
+  overflow: auto;
+  max-height: 460px;
+  border: 1px solid var(--d-border);
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+.horario-semana {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.horario-semana th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--d-muted);
+  border-bottom: 1px solid var(--d-border);
+  background: var(--d-surface2);
+}
+.horario-semana td {
+  border-bottom: 1px solid var(--d-border);
+  border-left: 1px solid var(--d-border);
+  vertical-align: top;
+  height: 2.4rem;
+}
+.horario-semana-hora-col {
+  width: 54px;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--d-muted);
+  font-variant-numeric: tabular-nums;
+  border-left: none !important;
+  white-space: nowrap;
+}
+
+.horario-semana-libre-celda { padding: 0; }
+.horario-slot-libre {
+  width: 100%;
+  height: 100%;
+  min-height: 2.4rem;
+  border: none;
+  background: transparent;
+  color: var(--d-muted);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.horario-semana-libre-celda:hover .horario-slot-libre { opacity: 0.55; }
+.horario-slot-libre:hover, .horario-slot-libre.activo {
+  opacity: 1;
+  background: var(--d-soft2);
+  color: var(--d-accent2);
+}
+/* Sin hover (touch): el espacio libre debe verse sin necesidad de tocar primero. */
+@media (hover: none) {
+  .horario-slot-libre { opacity: 0.4; }
+}
+
+.horario-semana-ocupada { padding: 3px; background: var(--d-soft); }
+.horario-semana-bloque {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px 7px;
+  border-radius: 6px;
+  border-left: 3px solid var(--d-accent);
+  background: var(--d-surface);
+  font-size: 0.72rem;
+  cursor: grab;
+}
+.horario-semana-bloque:active { cursor: grabbing; }
+.horario-semana-bloque.arrastrando { opacity: 0.35; }
+.horario-semana-libre-celda { transition: background 0.12s ease; }
+.horario-semana-libre-celda.sobre-destino {
+  background: var(--d-soft2);
+  box-shadow: inset 0 0 0 2px var(--d-accent2);
+}
+.horario-semana-libre-celda.sobre-destino .horario-slot-libre { opacity: 1; color: var(--d-accent2); }
+
+.horario-modal-form { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+.horario-modal-fila { display: flex; gap: 8px; }
+.horario-modal-fila .docente-select { flex: 1; min-width: 0; }
+.horario-semana-alumno { font-weight: 700; color: var(--d-heading); }
+.horario-semana-hora { color: var(--d-muted); font-variant-numeric: tabular-nums; }
+.horario-semana-bloque em { color: var(--d-muted); font-style: italic; }
+.horario-semana-bloque .gestion-x { align-self: flex-start; font-size: 0.68rem; }
+
+.horario-plan-chip {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--d-accent2);
+  background: var(--d-soft2);
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.horario-form { margin-bottom: 10px; }
+.horario-form .gestion-input { min-width: 150px; }
+.horario-form-alumno {
+  background: var(--d-surface2);
+  border: 1px solid var(--d-border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.horario-form-alumno .gestion-input { min-width: 140px; }
+
+/* ── Mis alumnos registrados (acordeón por alumno) ────────────── */
+.alumnoreg-lista { display: flex; flex-direction: column; gap: 8px; }
+.alumnoreg-item {
+  border: 1px solid var(--d-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.alumnoreg-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--d-surface2);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+.alumnoreg-nombre { font-size: 0.88rem; font-weight: 600; color: var(--d-heading); }
+.alumnoreg-count { margin-left: auto; font-size: 0.75rem; color: var(--d-muted); }
+
+.alumnoreg-detalle {
+  padding: 14px;
+  border-top: 1px solid var(--d-border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.alumnoreg-bloques { display: flex; flex-direction: column; gap: 6px; }
+.alumnoreg-bloque {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--d-soft);
+  font-size: 0.82rem;
+}
+.alumnoreg-dia { font-weight: 700; color: var(--d-heading); min-width: 70px; }
+.alumnoreg-bloque em { color: var(--d-muted); font-style: italic; }
+.alumnoreg-bloque .gestion-x { margin-left: auto; }
 
 /* ── AVISOS ────────────────────────────────────────────────── */
 .aviso-head {

@@ -20,6 +20,8 @@ import AvisosTab from './AvisosTab'
 import MaterialTab from './MaterialTab'
 import PerfilTab from './PerfilTab'
 import AprobacionesTab from './AprobacionesTab'
+import HorarioPersonalTab from './HorarioPersonalTab'
+import AlumnosRegistroTab from './AlumnosRegistroTab'
 import './DashboardDocente.css'
 
 /* Los colores reales viven en el tema activo (DashboardLayout.css). */
@@ -269,7 +271,6 @@ export default function DashboardDocente() {
         </div>
       )}
 
-      {tab === 'inscripciones' && esAdmin && <InscripcionesTab onResumen={onResumen} />}
       {tab === 'aprobaciones' && esAdmin && <AprobacionesTab onCount={setMatPendientes} />}
       {tab === 'gestion' && esAdmin && <GestionTab />}
       {tab === 'material' && <MaterialTab />}
@@ -328,6 +329,7 @@ export default function DashboardDocente() {
               </div>
             )}
           </div>
+          <HorarioPersonalTab />
         </div>
       )}
 
@@ -381,9 +383,11 @@ export default function DashboardDocente() {
       {/* ── ALUMNOS ── */}
       {tab === 'alumnos' && (
         <div className="docente-tab-content">
+          {esAdmin && <InscripcionesTab onResumen={onResumen} />}
+
           <div className="docente-card">
             <div className="docente-alumnos-toolbar">
-              <h2 className="docente-card-title" style={{ margin: 0 }}>Mis alumnos</h2>
+              <h2 className="docente-card-title" style={{ margin: 0 }}>Alumnos matriculados en ramos</h2>
               <select
                 className="docente-select"
                 value={ramoFiltro}
@@ -436,6 +440,8 @@ export default function DashboardDocente() {
               {alumnosFiltrados.length} matrícula{alumnosFiltrados.length !== 1 ? 's' : ''}
             </p>
           </div>
+
+          <AlumnosRegistroTab />
         </div>
       )}
     </div>

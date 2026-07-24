@@ -23,7 +23,7 @@ from blueprints.auth import roles_required
 admin_bp = Blueprint('admin_api', __name__)
 logger = logging.getLogger(__name__)
 
-ESTADOS = ('pendiente', 'aprobada', 'descartada')
+ESTADOS = ('pendiente', 'aprobada', 'descartada', 'registrada')
 PASSWORD_LARGO = 12
 COLOR_POR_DEFECTO = '#1B4DB8'
 EMAIL_REGEX = re.compile(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
@@ -56,7 +56,7 @@ def listar_inscripciones():
 
     sql = '''
         SELECT id, nombre, apellido, email, telefono, curso, materias,
-               mensaje, fecha, estado, usuario_id, email_verificado
+               mensaje, fecha, estado, usuario_id, email_verificado, plan
         FROM inscripciones
     '''
     params = ()
@@ -98,10 +98,14 @@ def crear_cuenta(insc_id):
         if not insc:
             return jsonify({'ok': False, 'error': 'Inscripción no encontrada'}), 404
 
-        if insc['estado'] != 'pendiente':
+        # 'registrada' = alta rápida de un profesor, sin cuenta todavía: dirección
+        # puede formalizarla en cualquier momento, igual que una pendiente normal.
+        if insc['estado'] not in ('pendiente', 'registrada'):
             return jsonify({'ok': False, 'error': 'Esta inscripción ya fue procesada.'}), 409
 
-        email = insc['email'].strip().lower()
+        email = (insc['email'] or '').strip().lower()
+        if not EMAIL_REGEX.match(email):
+            return jsonify({'ok': False, 'error': 'Este alumno no tiene un correo válido. Complétalo antes de crear su cuenta.'}), 400
         email_norm = normalizar_email(email)
 
         if db_execute(conn, 'SELECT id FROM usuarios WHERE email_norm = %s', (email_norm,)).fetchone():
@@ -140,6 +144,56 @@ def crear_cuenta(insc_id):
             'email': email, 'rol': rol,
         },
     })
+
+
+@admin_bp.route('/api/admin/inscripciones/<int:insc_id>', methods=['PATCH'])
+@roles_required('admin')
+def editar_inscripcion(insc_id):
+    """Corrige datos de contacto — típicamente para completar el correo de un alta
+    rápida ('registrada') antes de poder crearle la cuenta de acceso."""
+    data = request.get_json(silent=True) or {}
+
+    nombre = _texto(data, 'nombre', 80)
+    apellido = _texto(data, 'apellido', 80)
+    email = _texto(data, 'email', 120).lower()
+    telefono = _texto(data, 'telefono', 20)
+    plan = _texto(data, 'plan', 80)
+
+    if not nombre:
+        return jsonify({'ok': False, 'error': 'El nombre es obligatorio'}), 400
+    if email and not EMAIL_REGEX.match(email):
+        return jsonify({'ok': False, 'error': 'Correo inválido'}), 400
+
+    with get_db() as conn:
+        insc = db_execute(conn, 'SELECT id FROM inscripciones WHERE id = %s', (insc_id,)).fetchone()
+        if not insc:
+            return jsonify({'ok': False, 'error': 'Inscripción no encontrada'}), 404
+
+        db_execute(conn, '''
+            UPDATE inscripciones SET nombre = %s, apellido = %s, email = %s, telefono = %s, plan = %s
+            WHERE id = %s
+        ''', (nombre, apellido, email, telefono, plan, insc_id))
+
+    return jsonify({'ok': True})
+
+
+@admin_bp.route('/api/admin/inscripciones/<int:insc_id>', methods=['DELETE'])
+@roles_required('admin')
+def eliminar_inscripcion(insc_id):
+    """Borra el registro por completo (no solo lo descarta) — para sacar altas de
+    prueba o duplicadas. Si ya tenía cuenta de acceso, también borra esa cuenta."""
+    with get_db() as conn:
+        insc = db_execute(conn, 'SELECT usuario_id FROM inscripciones WHERE id = %s', (insc_id,)).fetchone()
+        if not insc:
+            return jsonify({'ok': False, 'error': 'Inscripción no encontrada'}), 404
+
+        db_execute(conn, 'DELETE FROM horario_personal WHERE alumno_id = %s', (insc_id,))
+        db_execute(conn, 'DELETE FROM inscripciones WHERE id = %s', (insc_id,))
+        if insc['usuario_id']:
+            db_execute(conn, 'DELETE FROM usuarios WHERE id = %s', (insc['usuario_id'],))
+
+    logger.info("Inscripción %s eliminada por admin %s", insc_id, g.current_user['sub'])
+    return jsonify({'ok': True})
 
 
 @admin_bp.route('/api/admin/inscripciones/<int:insc_id>/descartar', methods=['POST'])

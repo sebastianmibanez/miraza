@@ -197,6 +197,51 @@ export const getDashboardSchedule = () =>
 export const getDashboardAnnouncements = () =>
   api.get<{ ok: boolean; announcements: Announcement[] }>('/api/dashboard/announcements')
 
+// ── Registro rápido de alumnos (base compartida para el horario propio) ──
+export interface AlumnoRegistro {
+  id: number
+  nombre: string
+  apellido: string
+  plan: string
+}
+
+export const getAlumnosRegistro = () =>
+  api.get<{ ok: boolean; alumnos: AlumnoRegistro[] }>('/api/alumnos-registro')
+
+export const crearAlumnoRegistro = (datos: {
+  nombre: string; apellido: string; email: string; telefono: string; plan: string
+}) =>
+  api.post<Ok>('/api/alumnos-registro', datos)
+
+// ── Horario propio (alumnos particulares) ──────────────────────
+export interface HorarioPersonalItem {
+  id: number
+  alumno_id: number
+  alumno_nombre: string
+  alumno_apellido: string
+  alumno_plan: string
+  dia: string
+  hora_inicio: string
+  hora_fin: string
+  nota: string
+}
+
+export const getHorarioPersonal = () =>
+  api.get<{ ok: boolean; horario: HorarioPersonalItem[] }>('/api/horario-personal')
+
+export const crearHorarioPersonal = (datos: {
+  alumno_id: number; dia: string; hora_inicio: string; hora_fin: string; nota: string
+}) =>
+  api.post<Ok>('/api/horario-personal', datos)
+
+export const borrarHorarioPersonal = (id: number) =>
+  api.delete<Ok>(`/api/horario-personal/${id}`)
+
+export const moverHorarioPersonal = (id: number, datos: {
+  dia: string; hora_inicio: string; hora_fin: string; alumno_id?: number; nota?: string
+}) =>
+  api.patch<Ok>(`/api/horario-personal/${id}`, datos)
+
 // ── Teacher ───────────────────────────────────────────────────
 export const getTeacherRamos = () =>
   api.get<{ ok: boolean; ramos: TeacherRamo[] }>('/api/dashboard/teacher/ramos')
@@ -272,7 +317,8 @@ export const borrarAviso = (id: number) =>
   api.delete<Ok>(`/api/avisos/${id}`)
 
 // ── Inscripciones (panel docente) ─────────────────────────────
-export type EstadoInscripcion = 'pendiente' | 'aprobada' | 'descartada'
+/** 'registrada' = alta rápida de un profesor (sin pasar por el formulario público), sin cuenta todavía. */
+export type EstadoInscripcion = 'pendiente' | 'aprobada' | 'descartada' | 'registrada'
 export type RolAlumno = 'paes' | 'nem' | 'nivelacion' | 'especial'
 
 export interface Inscripcion {
@@ -289,12 +335,15 @@ export interface Inscripcion {
   usuario_id: number | null
   /** 1 si se inscribió con Google: el correo está probado, no solo tipeado. */
   email_verificado: number
+  /** Plan libre para altas rápidas (PAES, Particular, etc.) — separado del rol de cuenta. */
+  plan: string
 }
 
 export interface ResumenInscripciones {
   pendiente: number
   aprobada: number
   descartada: number
+  registrada: number
 }
 
 export interface CuentaCreada {
@@ -318,6 +367,14 @@ export const descartarInscripcion = (id: number) =>
 
 export const reabrirInscripcion = (id: number) =>
   api.post<{ ok: boolean; error?: string }>(`/api/admin/inscripciones/${id}/reabrir`)
+
+export const editarInscripcion = (id: number, datos: {
+  nombre: string; apellido: string; email: string; telefono: string; plan: string
+}) =>
+  api.patch<{ ok: boolean; error?: string }>(`/api/admin/inscripciones/${id}`, datos)
+
+export const eliminarInscripcion = (id: number) =>
+  api.delete<{ ok: boolean; error?: string }>(`/api/admin/inscripciones/${id}`)
 
 // ── Material / Vitrina ────────────────────────────────────────
 export type TipoMaterial = 'video' | 'documento'

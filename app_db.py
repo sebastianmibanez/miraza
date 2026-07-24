@@ -250,6 +250,11 @@ def init_db():
         _agregar_columna(conn, 'inscripciones', 'estado', "TEXT NOT NULL DEFAULT 'pendiente'")
         _agregar_columna(conn, 'inscripciones', 'usuario_id', 'INTEGER')
 
+        # Plan del alumno para el registro rápido de profesor(a) (ej. "PAES",
+        # "Particular — Educación básica"). Libre, no atado a ROLES_ALUMNO:
+        # ese rol solo se decide si más adelante se le crea cuenta de acceso.
+        _agregar_columna(conn, 'inscripciones', 'plan', "TEXT DEFAULT ''")
+
         # Se pone en 1 cuando la persona se inscribió con Google: entonces el
         # correo está probado, no es lo que alguien tipeó en un formulario.
         _agregar_columna(conn, 'inscripciones', 'email_verificado', 'INTEGER NOT NULL DEFAULT 0')
@@ -390,4 +395,26 @@ def init_db():
         _agregar_columna(conn, 'materiales', 'estado', "TEXT NOT NULL DEFAULT 'aprobado'")
         db_execute(conn, '''
             CREATE INDEX IF NOT EXISTS idx_materiales_estado ON materiales(estado)
+        ''')
+
+        # Horario propio del profesor: alumnos particulares o con contrato Miraza
+        # que ella misma agenda, sin pasar por el sistema de ramos (ese requiere
+        # que dirección cree el ramo primero). Reemplaza el cuaderno.
+        # alumno_id -> inscripciones.id: el alumno se registra una vez (nombre,
+        # contacto, plan) y de ahí en adelante se elige de una lista al armar
+        # el horario, en vez de tipear el nombre cada vez.
+        db_execute(conn, f'''
+            CREATE TABLE IF NOT EXISTS horario_personal (
+                id {pk},
+                profesor_id INTEGER NOT NULL,
+                alumno_id INTEGER NOT NULL,
+                dia TEXT NOT NULL,
+                hora_inicio TEXT NOT NULL,
+                hora_fin TEXT DEFAULT '',
+                nota TEXT DEFAULT '',
+                creado_en TEXT NOT NULL
+            )
+        ''')
+        db_execute(conn, '''
+            CREATE INDEX IF NOT EXISTS idx_horario_personal_profesor ON horario_personal(profesor_id)
         ''')
