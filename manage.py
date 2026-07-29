@@ -11,6 +11,7 @@ Comandos:
     python manage.py activar <email>
     python manage.py desactivar <email>
     python manage.py cambiar-rol <email> <rol>
+    python manage.py cambiar-email <email-actual> <email-nuevo>
     python manage.py purgar-usuarios-demo
 
 Lo que no pases por flag se pregunta de forma interactiva.
@@ -219,6 +220,31 @@ def cambiar_password(args):
         _mostrar_password(password, email)
 
 
+def cambiar_email(args):
+    email_actual = args.email.strip().lower()
+    email_nuevo = args.nuevo_email.strip().lower()
+
+    error = _validar_email(email_nuevo)
+    if error:
+        raise Error(error)
+
+    with get_db() as conn:
+        fila = _buscar_por_email(conn, email_actual)
+
+        email_norm_nuevo = normalizar_email(email_nuevo)
+        existe = db_execute(conn, 'SELECT email FROM usuarios WHERE email_norm = %s',
+                             (email_norm_nuevo,)).fetchone()
+        if existe:
+            raise Error(f'Ya existe una cuenta con ese correo ({existe["email"]}).')
+
+        # google_sub queda de la cuenta de Google anterior; se re-liga sola la
+        # próxima vez que entre con Google, no hace falta limpiarla a mano.
+        db_execute(conn, 'UPDATE usuarios SET email = %s, email_norm = %s WHERE email = %s',
+                   (email_nuevo, email_norm_nuevo, email_actual))
+
+    print(f'\n✓ {fila["nombre"]} {fila["apellido"]}: {email_actual} → {email_nuevo}.\n')
+
+
 def cambiar_estado(args):
     email = args.email.strip().lower()
     activo = 1 if args.comando == 'activar' else 0
@@ -300,6 +326,11 @@ def build_parser():
     rol.add_argument('email')
     rol.add_argument('rol', choices=list(ROLES))
     rol.set_defaults(func=cambiar_rol)
+
+    email_cmd = sub.add_parser('cambiar-email', help='Cambiar el correo de acceso de una cuenta.')
+    email_cmd.add_argument('email', help='Correo actual de la cuenta.')
+    email_cmd.add_argument('nuevo_email', help='Correo nuevo.')
+    email_cmd.set_defaults(func=cambiar_email)
 
     purgar = sub.add_parser('purgar-usuarios-demo', help='Borrar las cuentas de demo del repo.')
     purgar.set_defaults(func=purgar_usuarios_demo)
