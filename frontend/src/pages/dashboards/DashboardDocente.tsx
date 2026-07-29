@@ -50,6 +50,7 @@ export default function DashboardDocente() {
   const [alumnos, setAlumnos]             = useState<TeacherAlumno[]>([])
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [ramoFiltro, setRamoFiltro]       = useState('')
+  const [vistaHorario, setVistaHorario]   = useState<'dia' | 'alumno'>('dia')
   const [pendientes, setPendientes]       = useState(0)
   const [matPendientes, setMatPendientes] = useState(0)
   const [cargando, setCargando]           = useState(true)
@@ -280,56 +281,74 @@ export default function DashboardDocente() {
       {/* ── HORARIO ── */}
       {tab === 'horario' && (
         <div className="docente-tab-content">
-          <div className="docente-card">
-            <h2 className="docente-card-title">Horario semanal</h2>
-            {sortedSchedule.length === 0 ? (
-              <p className="docente-empty">
-                No hay clases cargadas.
-                {esAdmin
-                  ? ' Crea un ramo en Gestión y agrégale su horario.'
-                  : ' Dirección todavía no ha cargado el horario de tus ramos.'}
-              </p>
-            ) : (
-              <div className="docente-schedule-full">
-                {DIAS_ORDER.map(dia => {
-                  const clases = sortedSchedule.filter(s => s.dia === dia)
-                  if (clases.length === 0) return null
-                  return (
-                    <div key={dia} className="docente-dia-block">
-                      <div className="docente-dia-label">{dia}</div>
-                      <div className="docente-dia-clases">
-                        {clases.map((c, i) => (
-                          <div
-                            key={i}
-                            className="docente-clase-card"
-                            style={{ borderLeftColor: TIPO_COLORS[c.tipo] ?? COLOR }}
-                          >
-                            <div className="docente-clase-hora">{c.hora}</div>
-                            <div className="docente-clase-body">
-                              <span className="docente-clase-materia">{c.materia}</span>
-                              <div className="docente-clase-tags">
-                                {c.plan && <span className="docente-tag plan-tag">{c.plan}</span>}
-                                {typeof c.alumnos === 'number' && (
-                                  <span className="docente-tag alumnos-tag">{c.alumnos} alumnos</span>
-                                )}
-                                <span
-                                  className="docente-tag tipo-tag"
-                                  style={{ background: TIPO_COLORS[c.tipo] ?? COLOR }}
-                                >
-                                  {c.tipo}
-                                </span>
+          {ramos.length > 0 && (
+            <div className="docente-card">
+              <h2 className="docente-card-title">Horario semanal (ramos)</h2>
+              {sortedSchedule.length === 0 ? (
+                <p className="docente-empty">
+                  No hay clases cargadas.
+                  {esAdmin
+                    ? ' Crea un ramo en Gestión y agrégale su horario.'
+                    : ' Dirección todavía no ha cargado el horario de tus ramos.'}
+                </p>
+              ) : (
+                <div className="docente-schedule-full">
+                  {DIAS_ORDER.map(dia => {
+                    const clases = sortedSchedule.filter(s => s.dia === dia)
+                    if (clases.length === 0) return null
+                    return (
+                      <div key={dia} className="docente-dia-block">
+                        <div className="docente-dia-label">{dia}</div>
+                        <div className="docente-dia-clases">
+                          {clases.map((c, i) => (
+                            <div
+                              key={i}
+                              className="docente-clase-card"
+                              style={{ borderLeftColor: TIPO_COLORS[c.tipo] ?? COLOR }}
+                            >
+                              <div className="docente-clase-hora">{c.hora}</div>
+                              <div className="docente-clase-body">
+                                <span className="docente-clase-materia">{c.materia}</span>
+                                <div className="docente-clase-tags">
+                                  {c.plan && <span className="docente-tag plan-tag">{c.plan}</span>}
+                                  {typeof c.alumnos === 'number' && (
+                                    <span className="docente-tag alumnos-tag">{c.alumnos} alumnos</span>
+                                  )}
+                                  <span
+                                    className="docente-tag tipo-tag"
+                                    style={{ background: TIPO_COLORS[c.tipo] ?? COLOR }}
+                                  >
+                                    {c.tipo}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="docente-estado-btns">
+            <button
+              className={`docente-estado-btn${vistaHorario === 'dia' ? ' active' : ''}`}
+              onClick={() => setVistaHorario('dia')}
+            >
+              Por día
+            </button>
+            <button
+              className={`docente-estado-btn${vistaHorario === 'alumno' ? ' active' : ''}`}
+              onClick={() => setVistaHorario('alumno')}
+            >
+              Por alumno
+            </button>
           </div>
-          <HorarioPersonalTab />
+
+          {vistaHorario === 'dia' ? <HorarioPersonalTab /> : <AlumnosRegistroTab />}
         </div>
       )}
 
@@ -385,63 +404,63 @@ export default function DashboardDocente() {
         <div className="docente-tab-content">
           {esAdmin && <InscripcionesTab onResumen={onResumen} />}
 
-          <div className="docente-card">
-            <div className="docente-alumnos-toolbar">
-              <h2 className="docente-card-title" style={{ margin: 0 }}>Alumnos matriculados en ramos</h2>
-              <select
-                className="docente-select"
-                value={ramoFiltro}
-                onChange={e => setRamoFiltro(e.target.value)}
-              >
-                <option value="">Todos los ramos</option>
-                {ramos.map(r => (
-                  <option key={r.id} value={r.nombre}>{r.nombre} ({r.plan})</option>
-                ))}
-              </select>
-            </div>
-
-            {alumnosFiltrados.length === 0 ? (
-              <p className="docente-empty">
-                {alumnos.length === 0
-                  ? (esAdmin
-                      ? 'Todavía no hay alumnos matriculados. Aprueba inscripciones y matricúlalos en un ramo desde Gestión.'
-                      : 'Tus ramos todavía no tienen alumnos matriculados.')
-                  : 'Ningún alumno en ese ramo.'}
-              </p>
-            ) : (
-              <div className="docente-alumnos-table-wrap">
-                <table className="docente-alumnos-table">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Correo</th>
-                      <th>Ramo</th>
-                      <th>Plan</th>
-                      <th>Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {alumnosFiltrados.map(a => (
-                      <tr key={`${a.ramo_id}-${a.id}`}>
-                        <td className="docente-alumno-nombre">{a.nombre} {a.apellido}</td>
-                        <td className="insc-tel">{a.email}</td>
-                        <td>{a.ramo}</td>
-                        <td><span className="docente-plan-chip">{a.plan}</span></td>
-                        <td>
-                          <span className={`docente-estado-chip ${a.estado}`}>{a.estado}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          {ramos.length > 0 && (
+            <div className="docente-card">
+              <div className="docente-alumnos-toolbar">
+                <h2 className="docente-card-title" style={{ margin: 0 }}>Alumnos matriculados en ramos</h2>
+                <select
+                  className="docente-select"
+                  value={ramoFiltro}
+                  onChange={e => setRamoFiltro(e.target.value)}
+                >
+                  <option value="">Todos los ramos</option>
+                  {ramos.map(r => (
+                    <option key={r.id} value={r.nombre}>{r.nombre} ({r.plan})</option>
+                  ))}
+                </select>
               </div>
-            )}
-            <p className="docente-alumnos-count">
-              {alumnosFiltrados.length} matrícula{alumnosFiltrados.length !== 1 ? 's' : ''}
-            </p>
-          </div>
 
-          <AlumnosRegistroTab />
+              {alumnosFiltrados.length === 0 ? (
+                <p className="docente-empty">
+                  {alumnos.length === 0
+                    ? (esAdmin
+                        ? 'Todavía no hay alumnos matriculados. Aprueba inscripciones y matricúlalos en un ramo desde Gestión.'
+                        : 'Tus ramos todavía no tienen alumnos matriculados.')
+                    : 'Ningún alumno en ese ramo.'}
+                </p>
+              ) : (
+                <div className="docente-alumnos-table-wrap">
+                  <table className="docente-alumnos-table">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Ramo</th>
+                        <th>Plan</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {alumnosFiltrados.map(a => (
+                        <tr key={`${a.ramo_id}-${a.id}`}>
+                          <td className="docente-alumno-nombre">{a.nombre} {a.apellido}</td>
+                          <td className="insc-tel">{a.email}</td>
+                          <td>{a.ramo}</td>
+                          <td><span className="docente-plan-chip">{a.plan}</span></td>
+                          <td>
+                            <span className={`docente-estado-chip ${a.estado}`}>{a.estado}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <p className="docente-alumnos-count">
+                {alumnosFiltrados.length} matrícula{alumnosFiltrados.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>
