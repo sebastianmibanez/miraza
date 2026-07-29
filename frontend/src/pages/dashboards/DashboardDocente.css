@@ -460,6 +460,7 @@
 .docente-estado-btns {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
 }
 
 .docente-estado-btn {
@@ -1124,6 +1125,55 @@
   .docente-alumnos-toolbar { flex-direction: column; align-items: flex-start; }
   .insc-acciones { flex-direction: column; align-items: stretch; }
   .insc-select { min-width: 0; width: 100%; }
+}
+
+@media (max-width: 640px) {
+  /* Calendario: en vez de aplastar 7 columnas en el ancho del teléfono, se
+     ensancha para scroll horizontal cómodo y la columna de horas queda fija. */
+  .horario-semana { min-width: 600px; }
+  .horario-semana-hora-col {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--d-surface);
+  }
+  .horario-semana th.horario-semana-hora-col { z-index: 3; background: var(--d-surface2); }
+
+  /* Inscripciones: la tabla de 6 columnas se vuelve una tarjeta por alumno,
+     con la etiqueta de cada dato al lado (data-label). Deja de descuadrarse. */
+  .insc-table thead { display: none; }
+  .insc-table,
+  .insc-table tbody,
+  .insc-table tr,
+  .insc-table td { display: block; width: 100%; }
+  .insc-table tr {
+    border: 1px solid var(--d-border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    padding: 6px 12px;
+    background: var(--d-surface);
+  }
+  .insc-table td {
+    border: none !important;
+    padding: 7px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .insc-table td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--d-muted);
+  }
+  /* La celda de acciones ocupa toda la fila, con sus botones apilados debajo. */
+  .insc-table td[data-label="Acción"] { flex-direction: column; align-items: stretch; gap: 8px; }
+  .insc-table td[data-label="Acción"]::before { margin-bottom: 2px; }
+  .insc-acciones { width: 100%; }
 }
 
 /* ── Estado del material (Mi Material) ── */

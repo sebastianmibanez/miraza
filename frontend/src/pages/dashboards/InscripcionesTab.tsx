@@ -316,7 +316,7 @@ export default function InscripcionesTab({ onResumen }: Props) {
               <tbody>
                 {inscripciones.map(i => (
                   <tr key={i.id}>
-                    <td className="docente-alumno-nombre">
+                    <td className="docente-alumno-nombre" data-label="Alumno">
                       {i.nombre} {i.apellido}
                       {i.estado === 'registrada' && (
                         <span className="insc-mensaje" title="Agregado manualmente, todavía sin cuenta">
@@ -325,7 +325,7 @@ export default function InscripcionesTab({ onResumen }: Props) {
                       )}
                       {i.mensaje && <span className="insc-mensaje" title={i.mensaje}>ver mensaje</span>}
                     </td>
-                    <td className="insc-contacto">
+                    <td className="insc-contacto" data-label="Correo">
                       {i.email}
                       {/* Verificado por Google: el correo existe de verdad.
                           Sin esta marca, pudo ser tipeado con un error. */}
@@ -333,15 +333,15 @@ export default function InscripcionesTab({ onResumen }: Props) {
                         <span className="insc-verificado" title="Correo verificado con Google">✓</span>
                       )}
                     </td>
-                    <td className="insc-contacto insc-tel">{i.telefono}</td>
-                    <td>
+                    <td className="insc-contacto insc-tel" data-label="Teléfono">{i.telefono}</td>
+                    <td data-label="Plan">
                       {i.curso
                         ? <span className="docente-plan-chip">{i.curso}</span>
                         : i.plan && <span className="docente-plan-chip">{i.plan}</span>}
                       {i.materias && <span className="insc-materias">{i.materias}</span>}
                     </td>
-                    <td className="insc-fecha">{i.fecha?.slice(0, 10)}</td>
-                    <td>
+                    <td className="insc-fecha" data-label="Fecha">{i.fecha?.slice(0, 10)}</td>
+                    <td data-label="Acción">
                       <div className="insc-acciones">
                         {(i.estado === 'pendiente' || i.estado === 'registrada') && (
                           <>
