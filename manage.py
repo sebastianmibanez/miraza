@@ -12,6 +12,7 @@ Comandos:
     python manage.py desactivar <email>
     python manage.py cambiar-rol <email> <rol>
     python manage.py cambiar-email <email-actual> <email-nuevo>
+    python manage.py cambiar-nombre <email> <nombre> <apellido>
     python manage.py purgar-usuarios-demo
 
 Lo que no pases por flag se pregunta de forma interactiva.
@@ -245,6 +246,19 @@ def cambiar_email(args):
     print(f'\n✓ {fila["nombre"]} {fila["apellido"]}: {email_actual} → {email_nuevo}.\n')
 
 
+def cambiar_nombre(args):
+    email = args.email.strip().lower()
+    nombre = args.nombre.strip()
+    apellido = args.apellido.strip()
+
+    with get_db() as conn:
+        fila = _buscar_por_email(conn, email)
+        db_execute(conn, 'UPDATE usuarios SET nombre = %s, apellido = %s WHERE email = %s',
+                   (nombre, apellido, email))
+
+    print(f'\n✓ {fila["nombre"]} {fila["apellido"]} → {nombre} {apellido} <{email}>.\n')
+
+
 def cambiar_estado(args):
     email = args.email.strip().lower()
     activo = 1 if args.comando == 'activar' else 0
@@ -331,6 +345,12 @@ def build_parser():
     email_cmd.add_argument('email', help='Correo actual de la cuenta.')
     email_cmd.add_argument('nuevo_email', help='Correo nuevo.')
     email_cmd.set_defaults(func=cambiar_email)
+
+    nombre_cmd = sub.add_parser('cambiar-nombre', help='Corregir el nombre y apellido de una cuenta.')
+    nombre_cmd.add_argument('email')
+    nombre_cmd.add_argument('nombre')
+    nombre_cmd.add_argument('apellido')
+    nombre_cmd.set_defaults(func=cambiar_nombre)
 
     purgar = sub.add_parser('purgar-usuarios-demo', help='Borrar las cuentas de demo del repo.')
     purgar.set_defaults(func=purgar_usuarios_demo)
