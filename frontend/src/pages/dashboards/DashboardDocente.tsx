@@ -90,12 +90,6 @@ export default function DashboardDocente() {
     ? alumnos.filter(a => a.ramo === ramoFiltro)
     : alumnos
 
-  // Un alumno puede estar en varios ramos: se cuenta una sola vez.
-  const alumnosUnicos = new Set(alumnos.filter(a => a.estado === 'activo').map(a => a.id)).size
-
-  const hoy = DIAS_ORDER[(new Date().getDay() + 6) % 7]
-  const clasesHoy = schedule.filter(s => s.dia === hoy).length
-
   const sinNada = !cargando && ramos.length === 0
 
   // El backend igual rechaza a un alumno que llame a estos endpoints, pero sin
@@ -113,33 +107,26 @@ export default function DashboardDocente() {
             {esAdmin ? 'Dirección' : 'Panel Docente'} · Miraza Preuniversitario
           </p>
         </div>
-        <div className="docente-stats-row">
-          <div className="docente-stat-pill">
-            <span className="docente-stat-num">{ramos.length}</span>
-            <span className="docente-stat-label">Ramos</span>
-          </div>
-          <div className="docente-stat-pill">
-            <span className="docente-stat-num">{alumnosUnicos}</span>
-            <span className="docente-stat-label">Alumnos</span>
-          </div>
-          <div className="docente-stat-pill">
-            <span className="docente-stat-num">{clasesHoy}</span>
-            <span className="docente-stat-label">Clases hoy</span>
-          </div>
-          {esAdmin && (
-            <div className={`docente-stat-pill${pendientes > 0 ? ' destacada' : ''}`}>
-              <span className="docente-stat-num">{pendientes}</span>
-              <span className="docente-stat-label">Inscripciones nuevas</span>
-            </div>
+      </div>
+
+      {/* Solo aparece cuando de verdad hay algo que hacer — el resto del tiempo
+          no ocupa espacio (clave en móvil). Cada aviso salta a su pestaña. */}
+      {esAdmin && (pendientes > 0 || matPendientes > 0) && (
+        <div className="docente-avisos-accion">
+          {pendientes > 0 && (
+            <button className="docente-aviso-accion" onClick={() => setTab('alumnos')}>
+              <span className="docente-aviso-num">{pendientes}</span>
+              inscripci{pendientes === 1 ? 'ón nueva' : 'ones nuevas'}
+            </button>
           )}
-          {esAdmin && (
-            <div className={`docente-stat-pill${matPendientes > 0 ? ' destacada' : ''}`}>
-              <span className="docente-stat-num">{matPendientes}</span>
-              <span className="docente-stat-label">Material por revisar</span>
-            </div>
+          {matPendientes > 0 && (
+            <button className="docente-aviso-accion" onClick={() => setTab('aprobaciones')}>
+              <span className="docente-aviso-num">{matPendientes}</span>
+              material por revisar
+            </button>
           )}
         </div>
-      </div>
+      )}
 
       {/* ── INICIO ── */}
       {tab === 'inicio' && (
@@ -154,8 +141,7 @@ export default function DashboardDocente() {
               {esAdmin ? (
                 <>
                   <p className="insc-subtitle">
-                    Nada de lo que ves acá es de mentira: los números están en cero porque
-                    todavía no hay nada cargado. Estos son los pasos:
+                    Todavía no hay nada cargado. Estos son los pasos para partir:
                   </p>
                   <ol className="docente-pasos">
                     <li>
