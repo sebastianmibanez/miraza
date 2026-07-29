@@ -32,6 +32,8 @@ const ICONS: Record<string, JSX.Element> = {
   salir: svg(<><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="m16 17 5-5-5-5M21 12H9" /></>),
   colapsar: svg(<><path d="m14 7-5 5 5 5" /></>),
   expandir: svg(<><path d="m10 7 5 5-5 5" /></>),
+  menu: svg(<><path d="M4 6h16M4 12h16M4 18h16" /></>),
+  cerrarMenu: svg(<><path d="M6 6l12 12M18 6 6 18" /></>),
 }
 
 /** El sidebar es la única navegación del panel: lista TODAS las secciones
@@ -67,6 +69,7 @@ export default function Sidebar({ tema, setTema }: Props) {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [colapsado, setColapsado] = useState(() => localStorage.getItem('miraza_side') === '1')
+  const [menuAbierto, setMenuAbierto] = useState(false)
 
   const user = state.user
   const rol = user?.rol ?? 'paes'
@@ -88,8 +91,14 @@ export default function Sidebar({ tema, setTema }: Props) {
     localStorage.setItem('miraza_side', v ? '1' : '0')
   }
 
+  const claseSidebar = [
+    'sidebar',
+    colapsado ? 'colapsado' : '',
+    menuAbierto ? 'menu-abierto' : '',
+  ].filter(Boolean).join(' ')
+
   return (
-    <aside className={colapsado ? 'sidebar colapsado' : 'sidebar'}>
+    <aside className={claseSidebar}>
       <div className="sidebar-top">
         <div className="sidebar-head">
           <a href="/" className="sidebar-brand">
@@ -103,6 +112,14 @@ export default function Sidebar({ tema, setTema }: Props) {
             aria-label={colapsado ? 'Expandir menú' : 'Contraer menú'}
           >
             {colapsado ? ICONS.expandir : ICONS.colapsar}
+          </button>
+          <button
+            className="sidebar-mobile-toggle"
+            onClick={() => setMenuAbierto(v => !v)}
+            title={menuAbierto ? 'Cerrar menú' : 'Abrir menú'}
+            aria-label={menuAbierto ? 'Cerrar menú' : 'Abrir menú'}
+          >
+            {menuAbierto ? ICONS.cerrarMenu : ICONS.menu}
           </button>
         </div>
 
@@ -122,6 +139,7 @@ export default function Sidebar({ tema, setTema }: Props) {
           to={base}
           end
           title="Inicio"
+          onClick={() => setMenuAbierto(false)}
           className={() => tabActual === 'inicio' ? 'sidebar-link active' : 'sidebar-link'}
         >
           <span className="sidebar-icon">{ICONS.inicio}</span>
@@ -133,6 +151,7 @@ export default function Sidebar({ tema, setTema }: Props) {
             key={t.tab}
             to={`${base}?tab=${t.tab}`}
             title={t.texto}
+            onClick={() => setMenuAbierto(false)}
             className={() => tabActual === t.tab ? 'sidebar-link active' : 'sidebar-link'}
           >
             <span className="sidebar-icon">{ICONS[t.icono]}</span>

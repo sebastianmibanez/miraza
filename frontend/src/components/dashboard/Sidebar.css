@@ -221,24 +221,71 @@
   color: var(--d-side-text);
 }
 
+/* Móvil: la barra queda angosta (marca + hamburguesa); el resto vive en un
+   menú desplegable, en vez de envolver 9+ links en varias filas apretadas. */
+.sidebar-mobile-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--d-side-border);
+  border-radius: 6px;
+  color: var(--d-side-text);
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.sidebar-mobile-toggle svg { width: 18px; height: 18px; }
+
 @media (max-width: 768px) {
   .sidebar,
   .sidebar.colapsado {
     width: 100%;
     min-width: unset;
-    flex-direction: row;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    gap: 1rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
   }
-  .sidebar-top    { flex-direction: row; align-items: center; gap: 1rem; }
-  .sidebar-user   { border: none; padding: 0; }
-  .sidebar-nav    { flex-direction: row; flex: 1; gap: 0.15rem; flex-wrap: wrap; overflow: visible; }
-  .sidebar-bottom { margin-top: 0; flex-direction: row; align-items: center; }
-  .sidebar-link   { padding: 0.5rem 0.6rem; font-size: 0.8rem; }
-  .sidebar-user-name, .sidebar-plan-badge { display: none; }
+  .sidebar-top { padding: 0.65rem 1rem; }
+  .sidebar-head { flex: 1; justify-content: space-between; }
   .sidebar-toggle { display: none; }
-  .colapsado .sidebar-txt { display: inline; }
-  .colapsado .sidebar-user-info { display: flex; }
+  .sidebar-mobile-toggle { display: inline-flex; }
+
+  .colapsado .sidebar-brand-text { display: inline; }
+
+  .sidebar-user, .sidebar-nav, .sidebar-bottom { display: none; }
+
+  .sidebar.menu-abierto {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    overflow-y: auto;
+    background: var(--d-side-bg);
+  }
+  .sidebar.menu-abierto .sidebar-user {
+    display: flex;
+    padding: 0.85rem 1rem;
+    border-top: 1px solid var(--d-side-border);
+    border-bottom: 1px solid var(--d-side-border);
+  }
+  .sidebar.menu-abierto .sidebar-user-name,
+  .sidebar.menu-abierto .sidebar-plan-badge { display: block; }
+  .sidebar.menu-abierto .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 1rem;
+  }
+  .sidebar.menu-abierto .sidebar-link { padding: 0.7rem 0.8rem; font-size: 0.92rem; }
+  .sidebar.menu-abierto .sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    margin-top: 0;
+    padding: 0.85rem 1rem 1.25rem;
+    border-top: 1px solid var(--d-side-border);
+  }
+  .sidebar.menu-abierto .sidebar-temas { justify-content: flex-start; }
+  .sidebar.menu-abierto .sidebar-logout { justify-content: flex-start; }
 }
