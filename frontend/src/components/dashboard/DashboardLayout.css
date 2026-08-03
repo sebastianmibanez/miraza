@@ -11,8 +11,46 @@ compite con el acento principal. Los --d-tipo-* distinguen tipo
 de clase por función (info), no por decoración.
                                                                    */
 
-/* ── 1. Ejecutivo (oscuro, gris neutro + oro) — default ── */
+/* ── 0. Cálido (papel + navy + oro) — nuevo look Miraza, default ──
+   Nace del mockup del "kit del profe": fondo papel cálido, barra navy,
+   acento oro. Es la identidad hacia la que migra el portal. */
 .dash-shell {
+  --d-bg:       #F5F1E8;
+  --d-surface:  #FBF8F1;
+  --d-surface2: #F0EADB;
+  --d-border:   #E4DDCC;
+  --d-shadow:   0 1px 3px rgba(28,36,54,0.07);
+  --d-text:     #2A2E38;
+  --d-muted:    #6E6A5E;
+  --d-heading:  #16213A;
+  --d-accent:     #C7982F;
+  --d-accent2:    #3F5C86;
+  --d-accent-glow: rgba(199,152,47,0.22);
+  --d-on-accent:  #241A03;
+  --d-soft:       rgba(199,152,47,0.13);
+  --d-soft2:      rgba(63,92,134,0.11);
+  --d-input-bg:   #FDFBF6;
+  --d-ok:     #4F7A63;  --d-ok-bg:     rgba(79,122,99,0.13);
+  --d-warn:   #B7791F;  --d-warn-bg:   rgba(199,152,47,0.14);
+  --d-danger: #B5583F;  --d-danger-bg: rgba(181,88,63,0.11);
+  --d-info:   #3F5C86;
+  --d-side-bg:     #0C1A33;
+  --d-side-text:   #EDE6D3;
+  --d-side-muted:  #9FB0C9;
+  --d-side-hover:  rgba(237,230,211,0.07);
+  --d-side-active: rgba(237,230,211,0.11);
+  --d-side-accent: #E7C766;
+  --d-side-accent2:#9FB0C9;
+  --d-side-border: rgba(237,230,211,0.1);
+  --d-tipo-clase:   #3F5C86;
+  --d-tipo-ensayo:  #9A5A6B;
+  --d-tipo-tutoria: #4F7A63;
+  --d-tipo-apoyo:   #B7791F;
+  --d-on-tipo:      #FBF8F1;
+}
+
+/* ── 1. Ejecutivo (oscuro, gris neutro + oro) ── */
+.dash-shell[data-theme="ejecutivo"] {
   --d-bg:       #14161C;
   --d-surface:  #1B1E26;
   --d-surface2: #20242D;
