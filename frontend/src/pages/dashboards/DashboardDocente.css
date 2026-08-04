@@ -18,8 +18,10 @@
 }
 
 .docente-title {
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--d-heading);
   margin: 0 0 4px;
 }
@@ -67,6 +69,70 @@
   font-size: 0.82rem;
   font-weight: 700;
 }
+
+/* ══ INICIO — Tu página ═══════════════════════════════════════ */
+.tp-card {
+  background: var(--d-side-bg);
+  color: var(--d-side-text);
+  border-radius: 18px;
+  padding: 20px;
+}
+.tp-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tp-eyebrow { font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--d-side-muted); font-weight: 700; }
+.tp-live { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 600; color: var(--d-ok); }
+.tp-live i { width: 7px; height: 7px; border-radius: 50%; background: var(--d-ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--d-ok) 25%, transparent); }
+
+.tp-mini { display: flex; align-items: center; gap: 12px; margin: 16px 0 18px; }
+.tp-mini-info { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.tp-mini-name { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 1.1rem; font-weight: 600; }
+.tp-mini-role { font-size: 0.8rem; color: var(--d-side-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.tp-meter-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px; }
+.tp-meter-row b { font-size: 0.85rem; }
+.tp-meter-row span { font-size: 0.78rem; color: var(--d-side-muted); font-variant-numeric: tabular-nums; }
+.tp-meter { height: 7px; border-radius: 4px; background: color-mix(in srgb, #fff 12%, transparent); overflow: hidden; }
+.tp-meter i { display: block; height: 100%; border-radius: 4px; background: var(--d-side-accent); transition: width 0.4s ease; }
+.tp-nudge { margin: 9px 0 0; font-size: 0.82rem; color: var(--d-side-text); }
+.tp-nudge-ok { color: var(--d-side-muted); }
+.tp-nudge-link { background: none; border: none; padding: 0; font-family: inherit; font-size: inherit; font-weight: 600; color: var(--d-side-accent); cursor: pointer; }
+
+.tp-actions { display: flex; gap: 10px; margin-top: 18px; }
+.tp-btn {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 11px 14px; border-radius: 11px; font-size: 0.9rem; font-weight: 700;
+  font-family: inherit; cursor: pointer; border: none;
+}
+.tp-btn svg { width: 16px; height: 16px; }
+.tp-btn-gold { background: var(--d-side-accent); color: #241A03; }
+.tp-btn-ghost { background: color-mix(in srgb, #fff 8%, transparent); color: var(--d-side-text); border: 1px solid color-mix(in srgb, #fff 18%, transparent); }
+.tp-btn:hover { filter: brightness(1.06); }
+
+/* Cabecera de card con enlace */
+.inicio-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 13px; }
+.inicio-card-link { background: none; border: none; padding: 0; font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--d-accent2); cursor: pointer; }
+
+/* Próximas clases */
+.inicio-clases { display: flex; flex-direction: column; }
+.inicio-clase { display: flex; align-items: center; gap: 13px; padding: 10px 0; border-top: 1px solid var(--d-border); }
+.inicio-clase:first-child { border-top: none; padding-top: 0; }
+.inicio-clase-time { flex: 0 0 52px; font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--d-heading); line-height: 1.25; }
+.inicio-clase-body { min-width: 0; flex: 1; }
+.inicio-clase-name { display: block; font-size: 0.9rem; font-weight: 600; color: var(--d-heading); }
+.inicio-clase-meta { font-size: 0.78rem; color: var(--d-muted); }
+.inicio-clase-chip { flex-shrink: 0; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--d-on-tipo); padding: 3px 8px; border-radius: 20px; }
+
+/* Accesos rápidos */
+.inicio-label { font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--d-accent); font-weight: 700; margin: 0 0 11px; }
+.inicio-quick { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.inicio-qtile {
+  display: flex; align-items: center; gap: 11px; padding: 15px 14px;
+  background: var(--d-surface); border: 1px solid var(--d-border); border-radius: 14px;
+  color: var(--d-heading); font-size: 0.9rem; font-weight: 600; font-family: inherit;
+  cursor: pointer; text-align: left;
+}
+.inicio-qtile:hover { border-color: var(--d-accent); }
+.inicio-qtile-ic { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; display: grid; place-items: center; background: var(--d-soft); color: var(--d-accent); }
+.inicio-qtile-ic svg { width: 18px; height: 18px; }
 
 /* ── TAB CONTENT ───────────────────────────────────────────── */
 .docente-tab-content {

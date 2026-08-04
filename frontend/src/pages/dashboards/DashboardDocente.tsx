@@ -8,12 +8,17 @@ import {
   getDashboardAnnouncements,
   getInscripciones,
   getMaterialesPendientes,
+  getMiPerfil,
+  getHorarioPersonal,
   type TeacherRamo,
   type TeacherAlumno,
   type Announcement,
   type ScheduleItem,
   type ResumenInscripciones,
+  type MiPerfil,
+  type HorarioPersonalItem,
 } from '../../services/api'
+import Avatar from '../../components/Avatar'
 import InscripcionesTab from './InscripcionesTab'
 import GestionTab from './GestionTab'
 import AvisosTab from './AvisosTab'
@@ -53,6 +58,9 @@ export default function DashboardDocente() {
   const [vistaHorario, setVistaHorario]   = useState<'dia' | 'alumno'>('dia')
   const [pendientes, setPendientes]       = useState(0)
   const [matPendientes, setMatPendientes] = useState(0)
+  const [perfil, setPerfil]               = useState<MiPerfil | null>(null)
+  const [horarioPersonal, setHorarioPersonal] = useState<HorarioPersonalItem[]>([])
+  const [copiado, setCopiado]             = useState(false)
   const [cargando, setCargando]           = useState(true)
 
   const cargar = useCallback(() => {
@@ -62,6 +70,8 @@ export default function DashboardDocente() {
       getTeacherRamos().then(r => setRamos(r.data.ramos || [])).catch(() => {}),
       getDashboardAnnouncements().then(r => setAnnouncements(r.data.announcements || [])).catch(() => {}),
       getTeacherAlumnos().then(r => setAlumnos(r.data.alumnos || [])).catch(() => {}),
+      getMiPerfil().then(r => setPerfil(r.data.perfil)).catch(() => {}),
+      getHorarioPersonal().then(r => setHorarioPersonal(r.data.horario || [])).catch(() => {}),
       esAdmin
         ? getInscripciones().then(r => setPendientes(r.data.resumen?.pendiente ?? 0)).catch(() => {})
         : Promise.resolve(),
@@ -90,7 +100,31 @@ export default function DashboardDocente() {
     ? alumnos.filter(a => a.ramo === ramoFiltro)
     : alumnos
 
-  const sinNada = !cargando && ramos.length === 0
+  // ── "Tu página": completitud del perfil público ──
+  const perfilCampos = [
+    { ok: !!perfil?.foto_url,           falta: 'tu foto' },
+    { ok: !!perfil?.bio?.trim(),        falta: 'una bio corta' },
+    { ok: !!perfil?.especialidades?.trim(), falta: 'tus especialidades' },
+    { ok: !!perfil?.estudios?.trim(),   falta: 'tu formación' },
+  ]
+  const perfilPct = Math.round(perfilCampos.filter(c => c.ok).length / perfilCampos.length * 100)
+  const perfilFalta = perfilCampos.find(c => !c.ok)?.falta
+  const miPaginaUrl = user ? `${window.location.origin}/profes/${user.id}` : ''
+
+  function compartirPagina() {
+    if (!miPaginaUrl) return
+    const copia = navigator.clipboard?.writeText(miPaginaUrl)
+    if (!copia) return
+    copia.then(() => { setCopiado(true); setTimeout(() => setCopiado(false), 2000) }).catch(() => {})
+  }
+
+  // Próximas clases reales = horario personal ordenado desde HOY; si no hay, cae al de ramos.
+  const hoyIdx = (new Date().getDay() + 6) % 7
+  const proximas = [...horarioPersonal].sort((a, b) => {
+    const da = (DIAS_ORDER.indexOf(a.dia) - hoyIdx + 7) % 7
+    const db = (DIAS_ORDER.indexOf(b.dia) - hoyIdx + 7) % 7
+    return da - db || a.hora_inicio.localeCompare(b.hora_inicio)
+  })
 
   // El backend igual rechaza a un alumno que llame a estos endpoints, pero sin
   // esto podría escribir /dashboard/docente a mano y ver la cáscara del panel.
@@ -133,126 +167,161 @@ export default function DashboardDocente() {
         <div className="docente-tab-content">
           {cargando ? (
             <div className="docente-card"><div className="docente-loading">Cargando…</div></div>
-          ) : sinNada ? (
-            <div className="docente-card docente-arranque">
-              <h2 className="docente-card-title">
-                {esAdmin ? 'Miraza está vacío. Empecemos.' : 'Todavía no tienes ramos asignados'}
-              </h2>
-              {esAdmin ? (
-                <>
-                  <p className="insc-subtitle">
-                    Todavía no hay nada cargado. Estos son los pasos para partir:
-                  </p>
-                  <ol className="docente-pasos">
-                    <li>
-                      <strong>Crea tus ramos</strong> en <em>Gestión</em>, y asígnale a cada uno
-                      su profesora y su horario.
-                    </li>
-                    <li>
-                      <strong>Aprueba inscripciones</strong> para dar de alta a los alumnos.
-                    </li>
-                    <li>
-                      <strong>Matricula a cada alumno</strong> en sus ramos. Recién ahí verá su
-                      horario al entrar.
-                    </li>
-                  </ol>
-                  <button className="insc-btn-crear" onClick={() => setTab('gestion')}>
-                    Crear el primer ramo →
-                  </button>
-                </>
-              ) : (
-                <p className="insc-subtitle">
-                  Cuando dirección te asigne un ramo, acá vas a ver tu horario, tus alumnos y
-                  vas a poder publicarles avisos.
-                </p>
-              )}
-            </div>
           ) : (
             <>
-              <div className="docente-grid-2">
-                <div className="docente-card">
-                  <h2 className="docente-card-title">Próximas clases</h2>
-                  {sortedSchedule.length === 0 ? (
-                    <p className="docente-empty">
-                      Tus ramos no tienen horario cargado.
-                      {esAdmin && ' Agrégalo desde Gestión.'}
+              {/* ── Tu página pública ── */}
+              <section className="tp-card">
+                <div className="tp-top">
+                  <span className="tp-eyebrow">Tu página pública</span>
+                  <span className="tp-live"><i aria-hidden="true"></i> En línea</span>
+                </div>
+
+                <div className="tp-mini">
+                  <Avatar nombre={user?.nombre ?? ''} apellido={user?.apellido ?? ''} foto={perfil?.foto_url ?? ''} size={48} />
+                  <div className="tp-mini-info">
+                    <span className="tp-mini-name">{user?.nombre} {user?.apellido}</span>
+                    <span className="tp-mini-role">{perfil?.especialidades?.trim() || 'Completa tu perfil para que se vea acá'}</span>
+                  </div>
+                </div>
+
+                {perfilPct < 100 ? (
+                  <>
+                    <div className="tp-meter-row">
+                      <b>Tu página está casi lista</b><span>{perfilPct}%</span>
+                    </div>
+                    <div className="tp-meter" role="img" aria-label={`${perfilPct} por ciento completa`}>
+                      <i style={{ width: `${perfilPct}%` }}></i>
+                    </div>
+                    <p className="tp-nudge">
+                      Falta {perfilFalta}. <button className="tp-nudge-link" onClick={() => setTab('perfil')}>Complétala →</button>
                     </p>
-                  ) : (
-                    <div className="docente-schedule-list">
-                      {sortedSchedule.slice(0, 5).map((item, i) => (
-                        <div key={i} className="docente-schedule-row">
-                          <div
-                            className="docente-tipo-dot"
-                            style={{ background: TIPO_COLORS[item.tipo] ?? COLOR }}
-                          />
-                          <div className="docente-schedule-info">
-                            <span className="docente-schedule-materia">{item.materia}</span>
-                            <span className="docente-schedule-meta">
-                              {item.dia} {item.hora}
-                              {item.plan && ` · ${item.plan}`}
-                              {typeof item.alumnos === 'number' && ` · ${item.alumnos} alumnos`}
-                            </span>
-                          </div>
-                          <span
-                            className="docente-tipo-badge"
-                            style={{ background: TIPO_COLORS[item.tipo] ?? COLOR }}
-                          >
-                            {item.tipo}
+                  </>
+                ) : (
+                  <p className="tp-nudge tp-nudge-ok">Tu página está completa. Compártela y empieza a recibir alumnos.</p>
+                )}
+
+                <div className="tp-actions">
+                  <button className="tp-btn tp-btn-ghost" onClick={() => window.open(miPaginaUrl, '_blank', 'noopener')}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Ver mi página
+                  </button>
+                  <button className="tp-btn tp-btn-gold" onClick={compartirPagina}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v13"/><path d="M8 7l4-4 4 4"/></svg>
+                    {copiado ? '¡Link copiado!' : 'Compartir'}
+                  </button>
+                </div>
+              </section>
+
+              {/* ── Próximas clases ── */}
+              <section className="docente-card">
+                <div className="inicio-card-head">
+                  <h2 className="docente-card-title" style={{ margin: 0 }}>Tus próximas clases</h2>
+                  <button className="inicio-card-link" onClick={() => setTab('horario')}>Ver horario</button>
+                </div>
+
+                {proximas.length > 0 ? (
+                  <div className="inicio-clases">
+                    {proximas.slice(0, 4).map(c => (
+                      <div key={c.id} className="inicio-clase">
+                        <span className="inicio-clase-time">{c.dia.slice(0, 3)}<br />{c.hora_inicio}</span>
+                        <div className="inicio-clase-body">
+                          <span className="inicio-clase-name">{c.alumno_nombre} {c.alumno_apellido}</span>
+                          {(c.alumno_plan || c.nota) && (
+                            <span className="inicio-clase-meta">{[c.alumno_plan, c.nota].filter(Boolean).join(' · ')}</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : sortedSchedule.length > 0 ? (
+                  <div className="inicio-clases">
+                    {sortedSchedule.slice(0, 4).map((item, i) => (
+                      <div key={i} className="inicio-clase">
+                        <span className="inicio-clase-time">{item.dia.slice(0, 3)}<br />{item.hora}</span>
+                        <div className="inicio-clase-body">
+                          <span className="inicio-clase-name">{item.materia}</span>
+                          <span className="inicio-clase-meta">
+                            {[item.plan, typeof item.alumnos === 'number' ? `${item.alumnos} alumnos` : ''].filter(Boolean).join(' · ')}
                           </span>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                        <span className="inicio-clase-chip" style={{ background: TIPO_COLORS[item.tipo] ?? COLOR }}>{item.tipo}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="docente-empty">
+                    Todavía no tienes clases agendadas. <button className="inicio-card-link" onClick={() => setTab('horario')}>Arma tu horario →</button>
+                  </p>
+                )}
+              </section>
 
-                <div className="docente-card">
-                  <h2 className="docente-card-title">Avisos</h2>
-                  {announcements.length === 0 ? (
-                    <p className="docente-empty">
-                      Sin avisos. Publica el primero desde la pestaña <em>Avisos</em>.
-                    </p>
-                  ) : (
-                    <div className="docente-announce-list">
-                      {announcements.slice(0, 4).map(a => (
-                        <div key={a.id} className={`docente-announce-item tipo-${a.tipo}`}>
-                          <div className="aviso-head">
-                            <span className="docente-announce-title">{a.titulo}</span>
-                            <span className={`aviso-destino${a.ramo ? '' : ' general'}`}>
-                              {a.ramo ?? 'General'}
-                            </span>
-                          </div>
-                          <span className="docente-announce-text">{a.texto}</span>
-                          <span className="docente-announce-date">{a.fecha}</span>
+              {/* ── Avisos (solo si hay) ── */}
+              {announcements.length > 0 && (
+                <section className="docente-card">
+                  <div className="inicio-card-head">
+                    <h2 className="docente-card-title" style={{ margin: 0 }}>Avisos</h2>
+                    <button className="inicio-card-link" onClick={() => setTab('avisos')}>Ver todos</button>
+                  </div>
+                  <div className="docente-announce-list">
+                    {announcements.slice(0, 3).map(a => (
+                      <div key={a.id} className={`docente-announce-item tipo-${a.tipo}`}>
+                        <div className="aviso-head">
+                          <span className="docente-announce-title">{a.titulo}</span>
+                          <span className={`aviso-destino${a.ramo ? '' : ' general'}`}>{a.ramo ?? 'General'}</span>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+                        <span className="docente-announce-text">{a.texto}</span>
+                        <span className="docente-announce-date">{a.fecha}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
-              <div className="docente-card">
-                <h2 className="docente-card-title">Mis ramos</h2>
-                <div className="docente-ramos-grid">
-                  {ramos.map(r => (
-                    <div key={r.id} className="docente-ramo-card">
-                      <div className="docente-ramo-color" style={{ background: r.color }} />
-                      <div className="docente-ramo-info">
-                        <span className="docente-ramo-nombre">{r.nombre}</span>
-                        <span className="docente-ramo-plan">{r.plan}</span>
-                      </div>
-                      <div className="docente-ramo-meta">
-                        <span>{r.alumnos} alumno{r.alumnos !== 1 && 's'}</span>
-                        <span>
-                          {r.clases_semana > 0 ? `${r.clases_semana}×/sem` : 'sin horario'}
-                        </span>
-                        <span className="docente-ramo-proxima">
-                          {r.proxima ? `Próx: ${r.proxima}` : '—'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+              {/* ── Accesos rápidos ── */}
+              <section>
+                <p className="inicio-label">Administrar</p>
+                <div className="inicio-quick">
+                  <button className="inicio-qtile" onClick={() => setTab('perfil')}>
+                    <span className="inicio-qtile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></span>
+                    Editar mi página
+                  </button>
+                  <button className="inicio-qtile" onClick={() => setTab('horario')}>
+                    <span className="inicio-qtile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                    Mi horario
+                  </button>
+                  <button className="inicio-qtile" onClick={() => setTab('alumnos')}>
+                    <span className="inicio-qtile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.4 2.9-5.6 6.5-5.6s6.5 2.2 6.5 5.6"/><path d="M17 5.2a3.2 3.2 0 0 1 0 6.3"/></svg></span>
+                    Mis alumnos
+                  </button>
+                  <button className="inicio-qtile" onClick={() => setTab('material')}>
+                    <span className="inicio-qtile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m10 9.5 5 2.5-5 2.5z"/></svg></span>
+                    Mi material
+                  </button>
                 </div>
-              </div>
+              </section>
+
+              {/* ── Mis ramos (solo si dirección los creó) ── */}
+              {ramos.length > 0 && (
+                <section className="docente-card">
+                  <h2 className="docente-card-title">Mis ramos</h2>
+                  <div className="docente-ramos-grid">
+                    {ramos.map(r => (
+                      <div key={r.id} className="docente-ramo-card">
+                        <div className="docente-ramo-color" style={{ background: r.color }} />
+                        <div className="docente-ramo-info">
+                          <span className="docente-ramo-nombre">{r.nombre}</span>
+                          <span className="docente-ramo-plan">{r.plan}</span>
+                        </div>
+                        <div className="docente-ramo-meta">
+                          <span>{r.alumnos} alumno{r.alumnos !== 1 && 's'}</span>
+                          <span>{r.clases_semana > 0 ? `${r.clases_semana}×/sem` : 'sin horario'}</span>
+                          <span className="docente-ramo-proxima">{r.proxima ? `Próx: ${r.proxima}` : '—'}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
             </>
           )}
         </div>
