@@ -18,6 +18,7 @@ const Contacto       = lazy(() => import('./pages/Contacto'))
 const Testimonios    = lazy(() => import('./pages/Testimonios'))
 const Vitrina        = lazy(() => import('./pages/Vitrina'))
 const PerfilProfe    = lazy(() => import('./pages/PerfilProfe'))
+const Legal          = lazy(() => import('./pages/Legal'))
 const Login          = lazy(() => import('./pages/Login'))
 
 const DashboardPaes      = lazy(() => import('./pages/dashboards/DashboardPaes'))
@@ -56,6 +57,7 @@ function App() {
                 <Route path="testimonios"   element={<Testimonios />} />
                 <Route path="vitrina"       element={<Vitrina />} />
                 <Route path="profes/:id"    element={<PerfilProfe />} />
+                <Route path="legal"         element={<Legal />} />
               </Route>
 
               {/* Login (sin Layout) */}

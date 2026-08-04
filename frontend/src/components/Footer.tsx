@@ -53,7 +53,10 @@ function Footer() {
 
       <div className="footer-bottom">
         <span>© {year} Miraza Preuniversitario. Todos los derechos reservados.</span>
-        <span>Preparación PAES · 100% Online · Chile</span>
+        <div className="footer-bottom-links">
+          <Link to="/legal">Privacidad y Términos</Link>
+          <span>Preparación PAES · 100% Online · Chile</span>
+        </div>
       </div>
     </footer>
   )

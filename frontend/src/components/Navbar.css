@@ -272,6 +272,19 @@
   gap: 12px;
   font-size: 0.81rem;
 }
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-bottom-links a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  opacity: 0.85;
+}
+.footer-bottom-links a:hover { opacity: 1; }
 
 /* ── RESPONSIVE ── */
 
