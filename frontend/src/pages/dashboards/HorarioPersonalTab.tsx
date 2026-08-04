@@ -75,8 +75,7 @@ export default function HorarioPersonalTab() {
     alumno_id: '', dia: DIAS[HOY_IDX] ?? 'Lunes', hora_inicio: '', hora_fin: '', nota: '',
   })
 
-  const [arrastrandoId, setArrastrandoId] = useState<number | null>(null)
-  const [celdaHover, setCeldaHover]       = useState<string | null>(null)
+  const [diaActivo, setDiaActivo] = useState(DIAS[HOY_IDX] ?? 'Lunes')
 
   const [editando, setEditando] = useState<{
     id: number; alumno_id: string; dia: string; hora_inicio: string; hora_fin: string; nota: string
@@ -135,34 +134,6 @@ export default function HorarioPersonalTab() {
       setError(e2.response?.data?.error || 'No se pudo guardar.')
     } finally {
       setEnviando(false)
-    }
-  }
-
-  function iniciarArrastre(e: React.DragEvent, entrada: HorarioPersonalItem) {
-    const inicio = aMinutos(entrada.hora_inicio)
-    const fin = entrada.hora_fin ? aMinutos(entrada.hora_fin) : inicio + SLOT_MIN
-    e.dataTransfer.setData('text/plain', JSON.stringify({ id: entrada.id, duracion: fin - inicio }))
-    e.dataTransfer.effectAllowed = 'move'
-    // Imagen de arrastre = el propio bloque, en vez del fantasma feo por defecto del navegador.
-    e.dataTransfer.setDragImage(e.currentTarget, 12, 12)
-    setArrastrandoId(entrada.id)
-  }
-
-  async function soltarEnSlot(e: React.DragEvent, dia: string, slot: string) {
-    e.preventDefault()
-    setCeldaHover(null)
-    setArrastrandoId(null)
-    const datos = e.dataTransfer.getData('text/plain')
-    if (!datos) return
-    setError('')
-    try {
-      const { id, duracion } = JSON.parse(datos) as { id: number; duracion: number }
-      await moverHorarioPersonal(id, {
-        dia, hora_inicio: slot, hora_fin: aHora(aMinutos(slot) + duracion),
-      })
-      await cargar(false)
-    } catch {
-      setError('No se pudo mover esa clase.')
     }
   }
 
@@ -261,85 +232,61 @@ export default function HorarioPersonalTab() {
       {cargando ? (
         <div className="docente-loading">Cargando…</div>
       ) : (
-        <div className="horario-semana-wrap">
-          <table className="horario-semana">
-            <thead>
-              <tr>
-                <th className="horario-semana-hora-col" />
-                {DIAS.map(d => <th key={d}>{d.slice(0, 3)}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {SLOTS.map((slot, i) => (
-                <tr key={slot}>
-                  <td className="horario-semana-hora-col">{slot}</td>
-                  {DIAS.map(dia => {
-                    const celda = grilla[dia][i]
-                    if (celda === 'ocupada') return null
-                    if (celda) {
-                      const { entrada, span } = celda
-                      return (
-                        <td key={dia} rowSpan={span} className="horario-semana-ocupada">
-                          <div
-                            className={
-                              arrastrandoId === entrada.id ? 'horario-semana-bloque arrastrando' : 'horario-semana-bloque'
-                            }
-                            draggable
-                            onDragStart={e => iniciarArrastre(e, entrada)}
-                            onDragEnd={() => { setArrastrandoId(null); setCeldaHover(null) }}
-                            onClick={() => abrirDetalle(entrada)}
-                            title="Clic para ver el detalle. Arrástrala a otro día u hora para moverla."
-                          >
-                            <span className="horario-semana-alumno">{entrada.alumno_nombre} {entrada.alumno_apellido}</span>
-                            <span className="horario-semana-hora">
-                              {entrada.hora_inicio}–{entrada.hora_fin || aHora(aMinutos(entrada.hora_inicio) + SLOT_MIN)}
-                            </span>
-                            {entrada.alumno_plan && <span className="horario-plan-chip">{entrada.alumno_plan}</span>}
-                            {entrada.nota && <em>{entrada.nota}</em>}
-                          </div>
-                        </td>
-                      )
-                    }
-                    const activa = form.dia === dia && form.hora_inicio === slot
-                    const claveCelda = `${dia}-${slot}`
-                    return (
-                      <td
-                        key={dia}
-                        className={
-                          celdaHover === claveCelda
-                            ? 'horario-semana-libre-celda sobre-destino'
-                            : 'horario-semana-libre-celda'
-                        }
-                        onDragOver={e => e.preventDefault()}
-                        onDragEnter={() => setCeldaHover(claveCelda)}
-                        onDragLeave={() => setCeldaHover(c => (c === claveCelda ? null : c))}
-                        onDrop={e => soltarEnSlot(e, dia, slot)}
-                      >
-                        <button
-                          type="button"
-                          className={activa ? 'horario-slot-libre activo' : 'horario-slot-libre'}
-                          onClick={() => elegirSlotLibre(dia, slot)}
-                        >
-                          +
-                        </button>
-                      </td>
-                    )
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {/* Botones de día: al pinchar uno se ve solo ese día (cabe en el celular). */}
+          <div className="horario-dias">
+            {DIAS.map(d => (
+              <button
+                key={d}
+                type="button"
+                className={d === diaActivo ? 'horario-dia-btn activo' : 'horario-dia-btn'}
+                onClick={() => { setDiaActivo(d); setForm(v => ({ ...v, dia: d })) }}
+              >
+                {d.slice(0, 3)}
+              </button>
+            ))}
+          </div>
+
+          <div className="horario-dia-lista">
+            {SLOTS.map((slot, i) => {
+              const celda = grilla[diaActivo][i]
+              if (celda === 'ocupada') return null
+              if (celda) {
+                const { entrada } = celda
+                return (
+                  <div key={slot} className="horario-dia-row">
+                    <span className="horario-dia-hora">{slot}</span>
+                    <button type="button" className="horario-dia-bloque" onClick={() => abrirDetalle(entrada)}>
+                      <span className="horario-dia-alumno">{entrada.alumno_nombre} {entrada.alumno_apellido}</span>
+                      <span className="horario-dia-rango">
+                        {entrada.hora_inicio}–{entrada.hora_fin || aHora(aMinutos(entrada.hora_inicio) + SLOT_MIN)}
+                        {entrada.alumno_plan && <span className="horario-plan-chip">{entrada.alumno_plan}</span>}
+                      </span>
+                      {entrada.nota && <em className="horario-dia-nota">{entrada.nota}</em>}
+                    </button>
+                  </div>
+                )
+              }
+              const activa = form.dia === diaActivo && form.hora_inicio === slot
+              return (
+                <div key={slot} className="horario-dia-row">
+                  <span className="horario-dia-hora">{slot}</span>
+                  <button
+                    type="button"
+                    className={activa ? 'horario-dia-libre activo' : 'horario-dia-libre'}
+                    onClick={() => elegirSlotLibre(diaActivo, slot)}
+                  >
+                    + agendar aquí
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+        </>
       )}
 
+      <p className="horario-form-hint">Agendando para el <strong>{form.dia}</strong> · cambia el día con los botones de arriba</p>
       <form className="gestion-form horario-form" onSubmit={agregar}>
-        <select
-          className="docente-select"
-          value={form.dia}
-          onChange={e => setForm(v => ({ ...v, dia: e.target.value }))}
-        >
-          {DIAS.map(d => <option key={d} value={d}>{d}</option>)}
-        </select>
         <select
           className="docente-select"
           value={form.alumno_id}

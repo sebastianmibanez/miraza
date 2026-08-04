@@ -89,7 +89,9 @@ export default function DashboardDocente() {
   const onResumen = useCallback((r: ResumenInscripciones) => setPendientes(r.pendiente), [])
 
   function setTab(key: string) {
-    setSearchParams({ tab: key }, { replace: true })
+    // push (no replace): así el botón "atrás" del teléfono vuelve a la pestaña
+    // anterior del panel en vez de salir del dashboard al home.
+    setSearchParams({ tab: key })
   }
 
   const sortedSchedule = [...schedule].sort((a, b) =>
