@@ -255,6 +255,25 @@ def init_db():
         # ese rol solo se decide si más adelante se le crea cuenta de acceso.
         _agregar_columna(conn, 'inscripciones', 'plan', "TEXT DEFAULT ''")
 
+        # Dueño del alumno en el registro rápido: qué profesor(a) lo registró.
+        # Cada profe ve SOLO sus propios alumnos al armar su horario — el roster
+        # es privado. NULL = inscripción pública del formulario del sitio (esas
+        # las gestiona dirección en la pestaña Inscripciones, no son de un profe).
+        _agregar_columna(conn, 'inscripciones', 'registrado_por', 'INTEGER')
+
+        # Backfill: a los alumnos ya registrados (antes de esta columna) se les
+        # asigna el profesor que los tenga en su horario personal. Los que nadie
+        # agendó quedan sin dueño (no aparecen en ningún roster hasta que alguien
+        # los use).
+        db_execute(conn, '''
+            UPDATE inscripciones SET registrado_por = (
+                SELECT h.profesor_id FROM horario_personal h
+                WHERE h.alumno_id = inscripciones.id
+                ORDER BY h.id LIMIT 1
+            )
+            WHERE estado = 'registrada' AND registrado_por IS NULL
+        ''')
+
         # Se pone en 1 cuando la persona se inscribió con Google: entonces el
         # correo está probado, no es lo que alguien tipeó en un formulario.
         _agregar_columna(conn, 'inscripciones', 'email_verificado', 'INTEGER NOT NULL DEFAULT 0')

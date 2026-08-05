@@ -95,18 +95,23 @@ def dashboard_schedule():
 @dashboard_bp.route('/api/alumnos-registro', methods=['GET'])
 @roles_required('teacher', 'admin')
 def alumnos_registro_listar():
+    # Cada profe (y cada admin) ve SOLO los alumnos que registró: el roster es
+    # privado, no se filtran nombres de alumnos entre profesores.
+    uid = g.current_user['sub']
     with get_db() as conn:
         filas = db_execute(conn, '''
             SELECT id, nombre, apellido, plan
-            FROM inscripciones WHERE estado IN ('registrada', 'aprobada')
+            FROM inscripciones
+            WHERE estado IN ('registrada', 'aprobada') AND registrado_por = %s
             ORDER BY nombre, apellido
-        ''').fetchall()
+        ''', (uid,)).fetchall()
     return jsonify({'ok': True, 'alumnos': [dict(f) for f in filas]})
 
 
 @dashboard_bp.route('/api/alumnos-registro', methods=['POST'])
 @roles_required('teacher', 'admin')
 def alumnos_registro_crear():
+    uid = g.current_user['sub']
     data = request.get_json(silent=True) or {}
 
     nombre = (data.get('nombre') or '').strip()[:80]
@@ -121,9 +126,9 @@ def alumnos_registro_crear():
     with get_db() as conn:
         db_execute(conn, '''
             INSERT INTO inscripciones
-                (nombre, apellido, email, telefono, curso, materias, mensaje, fecha, ip, estado, plan)
-            VALUES (%s, %s, %s, %s, '', '', '', %s, '', 'registrada', %s)
-        ''', (nombre, apellido, email, telefono, _ahora(), plan))
+                (nombre, apellido, email, telefono, curso, materias, mensaje, fecha, ip, estado, plan, registrado_por)
+            VALUES (%s, %s, %s, %s, '', '', '', %s, '', 'registrada', %s, %s)
+        ''', (nombre, apellido, email, telefono, _ahora(), plan, uid))
 
     return jsonify({'ok': True})
 
@@ -172,9 +177,10 @@ def horario_personal_crear():
         return jsonify({'ok': False, 'error': 'La hora de término debe ser posterior a la de inicio'}), 400
 
     with get_db() as conn:
+        # Solo puedes agendar a un alumno que tú registraste (roster privado).
         existe = db_execute(conn,
-            "SELECT id FROM inscripciones WHERE id = %s AND estado IN ('registrada', 'aprobada')",
-            (alumno_id,)).fetchone()
+            "SELECT id FROM inscripciones WHERE id = %s AND registrado_por = %s",
+            (alumno_id, uid)).fetchone()
         if not existe:
             return jsonify({'ok': False, 'error': 'Ese alumno no existe'}), 400
 
@@ -221,8 +227,8 @@ def horario_personal_editar(entrada_id):
             except (TypeError, ValueError):
                 return jsonify({'ok': False, 'error': 'Alumno inválido'}), 400
             existe = db_execute(conn,
-                "SELECT id FROM inscripciones WHERE id = %s AND estado IN ('registrada', 'aprobada')",
-                (alumno_id,)).fetchone()
+                "SELECT id FROM inscripciones WHERE id = %s AND registrado_por = %s",
+                (alumno_id, uid)).fetchone()
             if not existe:
                 return jsonify({'ok': False, 'error': 'Ese alumno no existe'}), 400
             db_execute(conn, 'UPDATE horario_personal SET alumno_id = %s WHERE id = %s', (alumno_id, entrada_id))
